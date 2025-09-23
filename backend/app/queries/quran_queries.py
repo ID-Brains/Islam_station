@@ -2,13 +2,13 @@
 Quran query management for optimized SQL operations
 """
 
-import os
 from pathlib import Path
-from typing import Optional
 
 
 # Path to query files (provided by DB engineer)
-QUERIES_DIR = Path(__file__).parent.parent.parent.parent / "database" / "queries" / "quran"
+QUERIES_DIR = (
+    Path(__file__).parent.parent.parent.parent / "database" / "queries" / "quran"
+)
 
 
 def _load_query(filename: str) -> str:
@@ -17,7 +17,7 @@ def _load_query(filename: str) -> str:
     if not query_path.exists():
         raise FileNotFoundError(f"Query file not found: {query_path}")
 
-    with open(query_path, 'r', encoding='utf-8') as f:
+    with open(query_path, "r", encoding="utf-8") as f:
         return f.read().strip()
 
 

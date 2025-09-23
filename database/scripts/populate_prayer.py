@@ -62,17 +62,11 @@ Dependencies:
 
 import asyncio
 import logging
-from typing import Dict, List, Optional, Any
-import httpx
-import asyncpg
+from typing import Dict, Optional, Any
 import redis
-import json
-from datetime import datetime, timedelta
 from dataclasses import dataclass
 import argparse
 import os
-from urllib.parse import urljoin
-import pytz
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -82,6 +76,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class PrayerTimes:
     """Represents prayer times for a specific date and location"""
+
     date: str
     city: str
     country: str
@@ -104,13 +99,14 @@ class PrayerTimes:
             "asr": self.asr,
             "maghrib": self.magharib,
             "isha": self.isha,
-            "imsak": self.imsak
+            "imsak": self.imsak,
         }
 
 
 @dataclass
 class CityConfig:
     """Configuration for a city including coordinates"""
+
     name: str
     country: str
     latitude: float
@@ -121,28 +117,28 @@ class CityConfig:
 class PrayerTimesPopulator:
     """Main class for prayer times data population"""
 
-    def __init__(self, db_url: str, redis_url: str, api_base: str = "https://api.aladhan.com/v1"):
+    def __init__(
+        self, db_url: str, redis_url: str, api_base: str = "https://api.aladhan.com/v1"
+    ) -> None:
         self.db_url = db_url
         self.redis_url = redis_url
         self.api_base = api_base
         self.redis_client = redis.from_url(redis_url)
         self.cities = self._load_city_configs()
 
-    def _load_city_configs(self) -> List[CityConfig]:
+    def _load_city_configs(self) -> list[CityConfig]:
         """Load configured cities from environment or defaults"""
         # TODO: Load from environment variable PRAYER_CITIES
         # Default to Kafr El-Sheikh, Egypt
-        return [
-            CityConfig("Kafr El-Sheikh", "Egypt", 31.1143, 30.9397, "Africa/Cairo")
-        ]
+        return [CityConfig("Kafr El-Sheikh", "Egypt", 31.1143, 30.9397, "Africa/Cairo")]
 
     async def populate_prayer_times(
         self,
-        city: Optional[str] = None,
+        city: str | None = None,
         days: int = 30,
         cache_only: bool = False,
-        force_update: bool = False
-    ) -> Dict[str, Any]:
+        force_update: bool = False,
+    ) -> dict[str, Any]:
         """
         Main population method for prayer times
 
@@ -158,7 +154,9 @@ class PrayerTimesPopulator:
         logger.info(f"Starting prayer times population for {days} days")
 
         try:
-            cities_to_process = [c for c in self.cities if city is None or c.name == city]
+            cities_to_process = [
+                c for c in self.cities if city is None or c.name == city
+            ]
 
             total_processed = 0
             errors = []
@@ -182,7 +180,7 @@ class PrayerTimesPopulator:
                 "cities_processed": len(cities_to_process),
                 "total_times": total_processed,
                 "errors": errors,
-                "cache_updated": True
+                "cache_updated": True,
             }
 
             logger.info(f"Population completed: {stats}")
@@ -192,29 +190,31 @@ class PrayerTimesPopulator:
             logger.error(f"Population failed: {e}")
             raise
 
-    async def _fetch_city_prayer_times(self, city: CityConfig, days: int) -> List[PrayerTimes]:
+    async def _fetch_city_prayer_times(self, city: CityConfig, days: int) -> list[PrayerTimes]:
         """Fetch prayer times for a city using Al Adhan API"""
         # TODO: Implement API calls to /timings endpoint
         # Handle pagination for multiple days
         # Parse JSON responses into PrayerTimes objects
-        pass
+        return []
 
-    async def _save_to_database(self, times: List[PrayerTimes], force_update: bool) -> None:
+    async def _save_to_database(
+        self, times: list[PrayerTimes], force_update: bool
+    ) -> None:
         """Save prayer times to PostgreSQL database"""
         # TODO: Bulk insert with conflict resolution
         # Use ON CONFLICT DO UPDATE for existing dates
         pass
 
-    async def _update_cache(self, times: List[PrayerTimes], city: CityConfig) -> None:
+    async def _update_cache(self, times: list[PrayerTimes], city: CityConfig) -> None:
         """Update Redis cache with latest prayer times"""
         # TODO: Cache times by city and date
         # Set appropriate TTL (24 hours)
         pass
 
-    async def _validate_prayer_times(self, times: List[PrayerTimes]) -> List[str]:
+    async def _validate_prayer_times(self, times: list[PrayerTimes]) -> list[str]:
         """Validate prayer time calculations for reasonableness"""
         # TODO: Check time ordering, daylight hours, etc.
-        pass
+        return []
 
 
 async def main():
@@ -223,7 +223,9 @@ async def main():
     parser.add_argument("--city", help="Specific city to populate")
     parser.add_argument("--days", type=int, default=30, help="Days to fetch ahead")
     parser.add_argument("--cache-only", action="store_true", help="Only update cache")
-    parser.add_argument("--force-update", action="store_true", help="Force refresh existing data")
+    parser.add_argument(
+        "--force-update", action="store_true", help="Force refresh existing data"
+    )
 
     args = parser.parse_args()
 
@@ -240,7 +242,7 @@ async def main():
         city=args.city,
         days=args.days,
         cache_only=args.cache_only,
-        force_update=args.force_update
+        force_update=args.force_update,
     )
 
     print(f"Population result: {result}")

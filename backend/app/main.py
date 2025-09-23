@@ -30,21 +30,12 @@ app.include_router(prayer.router, prefix="/api/prayer", tags=["Prayer"])
 # app.include_router(mosque.router, prefix="/api/mosque", tags=["Mosque"])
 # app.include_router(dhikr.router, prefix="/api/dhikr", tags=["Dhikr"])
 
-@app.on_event("startup")
-async def startup_event():
-    """Initialize database pool and load schema on startup"""
-    # await create_database_pool()
-    # TODO: Load schema from database engineer
-
-@app.on_event("shutdown")
-async def shutdown_event():
-    """Close database connections on shutdown"""
-    # TODO: Close database pool
 
 @app.get("/")
 async def root():
     """Root endpoint"""
     return {"message": "Welcome to The Islamic Guidance Station"}
+
 
 @app.get("/health")
 async def health_check():

@@ -3,9 +3,9 @@ Quran API Router for The Islamic Guidance Station
 """
 
 from fastapi import APIRouter, Query, HTTPException
-from typing import List, Dict, Any, Optional
+from typing import Any
 
-from ..database import execute_query, execute_query_single
+from ..database import execute_query
 from ..queries.quran_queries import get_search_query, get_surah_query
 
 router = APIRouter()
@@ -14,9 +14,9 @@ router = APIRouter()
 @router.get("/search")
 async def search_quran(
     q: str = Query(..., description="Search query for Quran verses"),
-    limit: int = Query(20, description="Maximum number of results"),
-    offset: int = Query(0, description="Offset for pagination")
-) -> Dict[str, Any]:
+    limit: int = Query(default=20, description="Maximum number of results"),
+    offset: int = Query(default=0, description="Offset for pagination"),
+) -> dict[str, Any]:
     """
     Search Quran verses using full-text search
     """
@@ -32,7 +32,7 @@ async def search_quran(
             "results": results,
             "limit": limit,
             "offset": offset,
-            "total": len(results)  # TODO: Implement proper count
+            "total": len(results),  # TODO: Implement proper count
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Search failed: {str(e)}")
@@ -41,8 +41,7 @@ async def search_quran(
 @router.get("/surah/{surah_number}")
 async def get_surah(
     surah_number: int,
-    translation: Optional[str] = Query(None, description="Include translation")
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Get complete Surah by number
     """
@@ -68,9 +67,9 @@ async def get_surah(
                 "number": surah_number,
                 "name_arabic": surah_info.get("name_arabic"),
                 "name_english": surah_info.get("name_english"),
-                "verses_count": len(verses)
+                "verses_count": len(verses),
             },
-            "verses": verses
+            "verses": verses,
         }
     except HTTPException:
         raise
@@ -82,14 +81,15 @@ async def get_surah(
 async def get_verse(
     surah_number: int,
     verse_number: int,
-    translation: Optional[str] = Query(None, description="Include translation")
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Get specific verse by surah and verse number
     """
     try:
         # TODO: Implement verse retrieval
-        raise HTTPException(status_code=501, detail="Verse endpoint not implemented yet")
+        raise HTTPException(
+            status_code=501, detail="Verse endpoint not implemented yet"
+        )
     except HTTPException:
         raise
     except Exception as e:

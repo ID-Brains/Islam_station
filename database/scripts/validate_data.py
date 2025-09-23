@@ -63,10 +63,9 @@ Dependencies:
 
 import asyncio
 import logging
-from typing import Dict, List, Optional, Any, Tuple
+from typing import Any
 import asyncpg
 import json
-from pathlib import Path
 from dataclasses import dataclass
 import argparse
 import os
@@ -80,20 +79,22 @@ logger = logging.getLogger(__name__)
 @dataclass
 class ValidationResult:
     """Represents the result of a validation check"""
+
     check_name: str
     status: str  # 'PASS', 'FAIL', 'WARN'
     message: str
-    details: Optional[Dict[str, Any]] = None
+    details: dict[str, Any] | None = None
 
 
 @dataclass
 class ValidationReport:
     """Complete validation report"""
-    timestamp: datetime
-    results: List[ValidationResult]
-    summary: Dict[str, int]
 
-    def to_dict(self) -> Dict[str, Any]:
+    timestamp: datetime
+    results: list[ValidationResult]
+    summary: dict[str, int]
+
+    def to_dict(self) -> dict[str, Any]:
         """Convert report to dictionary for JSON output"""
         return {
             "timestamp": self.timestamp.isoformat(),
@@ -103,10 +104,10 @@ class ValidationReport:
                     "check": r.check_name,
                     "status": r.status,
                     "message": r.message,
-                    "details": r.details
+                    "details": r.details,
                 }
                 for r in self.results
-            ]
+            ],
         }
 
 
@@ -119,7 +120,9 @@ class DataValidator:
         self.expected_surahs = 114
         self.expected_verses = 6236  # Approximate
 
-    async def validate_all(self, quran: bool = True, prayer: bool = True, search: bool = True) -> ValidationReport:
+    async def validate_all(
+        self, quran: bool = True, prayer: bool = True, search: bool = True
+    ) -> ValidationReport:
         """
         Run all validation checks
 
@@ -149,38 +152,44 @@ class DataValidator:
             "total_checks": len(results),
             "passed": len([r for r in results if r.status == "PASS"]),
             "failed": len([r for r in results if r.status == "FAIL"]),
-            "warnings": len([r for r in results if r.status == "WARN"])
+            "warnings": len([r for r in results if r.status == "WARN"]),
         }
 
         report = ValidationReport(
-            timestamp=datetime.now(),
-            results=results,
-            summary=summary
+            timestamp=datetime.now(), results=results, summary=summary
         )
 
         logger.info(f"Validation completed: {summary}")
         return report
 
-    async def _validate_quran_data(self) -> List[ValidationResult]:
+    async def _validate_quran_data(self) -> list[ValidationResult]:
         """Validate Quran data completeness and integrity"""
         results = []
 
         async with asyncpg.connect(self.db_url) as conn:
             # Check Surah count
             surah_count = await conn.fetchval("SELECT COUNT(*) FROM surahs")
-            results.append(ValidationResult(
-                "surah_count",
-                "PASS" if surah_count == self.expected_surahs else "FAIL",
-                f"Found {surah_count} Surahs, expected {self.expected_surahs}"
-            ))
+            results.append(
+                ValidationResult(
+                    "surah_count",
+                    "PASS" if surah_count == self.expected_surahs else "FAIL",
+                    f"Found {surah_count} Surahs, expected {self.expected_surahs}",
+                )
+            )
 
             # Check verse count
             verse_count = await conn.fetchval("SELECT COUNT(*) FROM verses")
-            results.append(ValidationResult(
-                "verse_count",
-                "PASS" if abs(verse_count - self.expected_verses) < 10 else "FAIL",  # Allow small variance
-                f"Found {verse_count} verses, expected ~{self.expected_verses}"
-            ))
+            results.append(
+                ValidationResult(
+                    "verse_count",
+                    (
+                        "PASS"
+                        if abs(verse_count - self.expected_verses) < 10
+                        else "FAIL"
+                    ),  # Allow small variance
+                    f"Found {verse_count} verses, expected ~{self.expected_verses}",
+                )
+            )
 
             # TODO: Add more Quran validation checks
             # - Arabic text authenticity
@@ -190,22 +199,26 @@ class DataValidator:
 
         return results
 
-    async def _validate_prayer_data(self) -> List[ValidationResult]:
+    async def _validate_prayer_data(self) -> list[ValidationResult]:
         """Validate prayer times data"""
         results = []
 
         async with asyncpg.connect(self.db_url) as conn:
             # Check for recent prayer times
-            recent_count = await conn.fetchval("""
+            recent_count = await conn.fetchval(
+                """
                 SELECT COUNT(*) FROM prayer_times
                 WHERE date >= CURRENT_DATE - INTERVAL '7 days'
-            """)
+            """
+            )
 
-            results.append(ValidationResult(
-                "recent_prayer_times",
-                "PASS" if recent_count > 0 else "WARN",
-                f"Found {recent_count} recent prayer time entries"
-            ))
+            results.append(
+                ValidationResult(
+                    "recent_prayer_times",
+                    "PASS" if recent_count > 0 else "WARN",
+                    f"Found {recent_count} recent prayer time entries",
+                )
+            )
 
             # TODO: Add more prayer validation checks
             # - Time ordering (Fajr before Sunrise, etc.)
@@ -214,29 +227,33 @@ class DataValidator:
 
         return results
 
-    async def _validate_search_functionality(self) -> List[ValidationResult]:
+    async def _validate_search_functionality(self) -> list[ValidationResult]:
         """Test full-text search capabilities"""
         results = []
 
         async with asyncpg.connect(self.db_url) as conn:
             # Test basic search
             try:
-                search_results = await conn.fetch("""
+                search_results = await conn.fetch(
+                    """
                     SELECT COUNT(*) FROM verses
                     WHERE fts_vector @@ plainto_tsquery('mercy')
-                """)
+                """
+                )
 
-                results.append(ValidationResult(
-                    "fts_basic_search",
-                    "PASS" if search_results[0][0] > 0 else "FAIL",
-                    f"Found {search_results[0][0]} verses containing 'mercy'"
-                ))
+                results.append(
+                    ValidationResult(
+                        "fts_basic_search",
+                        "PASS" if search_results[0][0] > 0 else "FAIL",
+                        f"Found {search_results[0][0]} verses containing 'mercy'",
+                    )
+                )
             except Exception as e:
-                results.append(ValidationResult(
-                    "fts_basic_search",
-                    "FAIL",
-                    f"Search query failed: {str(e)}"
-                ))
+                results.append(
+                    ValidationResult(
+                        "fts_basic_search", "FAIL", f"Search query failed: {str(e)}"
+                    )
+                )
 
             # TODO: Add more search validation
             # - Performance benchmarks
@@ -245,12 +262,16 @@ class DataValidator:
 
         return results
 
-    def save_report(self, report: ValidationReport, filepath: Optional[str] = None) -> None:
+    def save_report(
+        self, report: ValidationReport, filepath: str | None = None
+    ) -> None:
         """Save validation report to file"""
         if filepath is None:
-            filepath = f"validation_report_{report.timestamp.strftime('%Y%m%d_%H%M%S')}.json"
+            filepath = (
+                f"validation_report_{report.timestamp.strftime('%Y%m%d_%H%M%S')}.json"
+            )
 
-        with open(filepath, 'w', encoding='utf-8') as f:
+        with open(filepath, "w", encoding="utf-8") as f:
             json.dump(report.to_dict(), f, indent=2, ensure_ascii=False)
 
         logger.info(f"Report saved to {filepath}")
@@ -260,8 +281,12 @@ async def main():
     """Main entry point"""
     parser = argparse.ArgumentParser(description="Validate database data")
     parser.add_argument("--quran", action="store_true", help="Validate Quran data only")
-    parser.add_argument("--prayer", action="store_true", help="Validate prayer data only")
-    parser.add_argument("--search", action="store_true", help="Test search functionality only")
+    parser.add_argument(
+        "--prayer", action="store_true", help="Validate prayer data only"
+    )
+    parser.add_argument(
+        "--search", action="store_true", help="Test search functionality only"
+    )
     parser.add_argument("--report", help="Output report file path")
     parser.add_argument("--fix", action="store_true", help="Attempt automatic fixes")
 
@@ -281,24 +306,22 @@ async def main():
 
     # Run validation
     report = await validator.validate_all(
-        quran=validate_quran,
-        prayer=validate_prayer,
-        search=validate_search
+        quran=validate_quran, prayer=validate_prayer, search=validate_search
     )
 
     # Print summary
-    print(f"\nValidation Summary:")
+    print("\nValidation Summary:")
     print(f"Total checks: {report.summary['total_checks']}")
     print(f"Passed: {report.summary['passed']}")
     print(f"Failed: {report.summary['failed']}")
     print(f"Warnings: {report.summary['warnings']}")
 
     # Save report if requested
-    if args.report or report.summary['failed'] > 0:
+    if args.report or report.summary["failed"] > 0:
         validator.save_report(report, args.report)
 
     # Exit with appropriate code
-    exit_code = 1 if report.summary['failed'] > 0 else 0
+    exit_code = 1 if report.summary["failed"] > 0 else 0
     exit(exit_code)
 
 

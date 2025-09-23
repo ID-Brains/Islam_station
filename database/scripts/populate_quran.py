@@ -58,15 +58,10 @@ Dependencies:
 import asyncio
 import logging
 from typing import Dict, List, Optional, Any
-import httpx
 import asyncpg
-from pathlib import Path
-import json
-import xml.etree.ElementTree as ET
 from dataclasses import dataclass
 import argparse
 import os
-from urllib.parse import urljoin
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -76,6 +71,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class QuranVerse:
     """Represents a Quran verse with all text formats"""
+
     surah_number: int
     verse_number: int
     text_uthmani: str
@@ -88,6 +84,7 @@ class QuranVerse:
 @dataclass
 class QuranSurah:
     """Represents a Quran Surah with metadata"""
+
     number: int
     name_arabic: str
     name_english: str
@@ -138,7 +135,7 @@ class QuranPopulator:
                 "surahs_inserted": 114,
                 "verses_inserted": 6236,
                 "errors": [],
-                "duration_seconds": 0
+                "duration_seconds": 0,
             }
 
             logger.info(f"Population completed: {stats}")
@@ -165,12 +162,16 @@ class QuranPopulator:
         # TODO: Call translations API for multiple languages
         pass
 
-    async def _insert_surahs(self, conn: asyncpg.Connection, surahs: List[QuranSurah]) -> int:
+    async def _insert_surahs(
+        self, conn: asyncpg.Connection, surahs: List[QuranSurah]
+    ) -> int:
         """Insert Surah metadata into database"""
         # TODO: Bulk insert surahs with proper SQL
         pass
 
-    async def _insert_verses(self, conn: asyncpg.Connection, verses: List[QuranVerse]) -> int:
+    async def _insert_verses(
+        self, conn: asyncpg.Connection, verses: List[QuranVerse]
+    ) -> int:
         """Insert verses into database with FTS vectors"""
         # TODO: Bulk insert verses with generated tsvector
         pass
@@ -184,8 +185,12 @@ class QuranPopulator:
 async def main():
     """Main entry point"""
     parser = argparse.ArgumentParser(description="Populate Quran database")
-    parser.add_argument("--dry-run", action="store_true", help="Validate without inserting")
-    parser.add_argument("--batch-size", type=int, default=100, help="Batch size for processing")
+    parser.add_argument(
+        "--dry-run", action="store_true", help="Validate without inserting"
+    )
+    parser.add_argument(
+        "--batch-size", type=int, default=100, help="Batch size for processing"
+    )
     parser.add_argument("--force", action="store_true", help="Overwrite existing data")
 
     args = parser.parse_args()
