@@ -1,0 +1,49 @@
+# Core FastAPI and async dependencies
+fastapi==0.117.1
+uvicorn[standard]==0.36.0
+gunicorn==23.0.0
+pydantic==2.5.0
+pydantic-settings==2.1.0
+
+# HTTP clients for external APIs
+httpx==0.28.1
+aiohttp==3.12.15
+
+# Database
+asyncpg==0.30.0
+psycopg==3.2.10
+
+# Caching
+redis==6.4.0
+aioredis==2.0.1
+
+# Background tasks
+celery==5.3.4
+
+# Configuration and utilities
+python-decouple==3.8
+python-multipart==0.0.20
+
+# Logging
+structlog==25.4.0
+python-json-logger==3.3.0
+
+# Security and middleware
+slowapi==0.1.9
+python-jose[cryptography]==3.5.0
+
+# Utilities
+python-dotenv==1.0.0
+    
+# Testing
+pytest==8.4.2
+pytest-asyncio==1.2.0
+httpx==0.28.1
+
+# Development and utilities
+black==25.9.0
+flake8==7.3.0
+
+# For data processing during development
+pandas==2.1.4
+requests==2.31.0
