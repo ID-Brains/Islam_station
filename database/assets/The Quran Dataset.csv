@@ -1,4 +1,4 @@
-surah_no,surah_name_en,surah_name_ar,surah_name_roman,ayah_no_surah,ayah_no_quran,ayah_ar,ayah_en,ruko_no,juz_no,manzil_no,hizb_quarter,total_ayah_surah,total_ayah_quran,place_of_revelation,sajah_ayah,sajdah_no,no_of_word_ayah,list_of_words
+surah_no,surah_name_en,surah_name_ar,surah_name_roman,ayah_no_surah,ayah_no_quran,ayah_ar,ayah_en,ruko_no,juz_no,manzil_no,hizb_quarter,total_ayah_surah,total_ayah_quran,place_of_revelation,sajdah_ayah,sajdah_no,no_of_word_ayah,list_of_words
 1,The Opener,الفاتحة,Al-Fatihah,1,1,بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ,"In the Name of Allah—the Most Compassionate, Most Merciful.",1,1,1,1,7,6236,Meccan,FALSE,NA,4,"[بِسْمِ,ٱللَّهِ,ٱلرَّحْمَٰنِ,ٱلرَّحِيمِ]"
 1,The Opener,الفاتحة,Al-Fatihah,2,2,ٱلْحَمْدُ لِلَّهِ رَبِّ ٱلْعَٰلَمِينَ,"All praise is for Allah—Lord of all worlds,",1,1,1,1,7,6236,Meccan,FALSE,NA,4,"[ٱلْحَمْدُ,لِلَّهِ,رَبِّ,ٱلْعَٰلَمِينَ]"
 1,The Opener,الفاتحة,Al-Fatihah,3,3,ٱلرَّحْمَٰنِ ٱلرَّحِيمِ,"the Most Compassionate, Most Merciful,",1,1,1,1,7,6236,Meccan,FALSE,NA,2,"[ٱلرَّحْمَٰنِ,ٱلرَّحِيمِ]"
