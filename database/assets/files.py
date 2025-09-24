@@ -1,6 +1,6 @@
 import pandas as pd
 
-df = pd.read_csv("The Quran Dataset.csv")
+df = pd.read_csv("output.csv")
 
 surahs = df[["surah_no", "surah_name_en", "surah_name_ar", "surah_name_roman", "total_ayah_surah", "place_of_revelation"]]
 ayahs = df[["ayah_no_surah", "ayah_no_quran", "ayah_ar", "ayah_en", "ruko_no", "juz_no", "manzil_no",

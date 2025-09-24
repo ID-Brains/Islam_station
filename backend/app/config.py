@@ -3,24 +3,21 @@ Configuration settings for The Islamic Guidance Station
 """
 
 from typing import List
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
     """Application settings using Pydantic"""
 
     # Database
-    DATABASE_URL: str = "postgresql+asyncpg://user:password@localhost/islam_station"
-    DATABASE_POOL_SIZE: int = 10
-    DATABASE_MAX_OVERFLOW: int = 20
+    DATABASE_URL: str = "postgresql://islam:202520@192.168.1.11/quran"
+    DATABASE_POOL_SIZE: int = 25
+    DATABASE_MAX_OVERFLOW: int = 30
 
-    # Redis
-    REDIS_URL: str = "redis://localhost:6379"
-    CACHE_TTL: int = 3600  # 1 hour
+    # # Redis
+    # REDIS_URL: str = "redis://localhost:6379"
+    # CACHE_TTL: int = 3600  # 1 hour
 
-    # External APIs
-    QURAN_API_KEY: str = ""  # If needed
-    ALADHAN_API_BASE: str = "https://api.aladhan.com/v1"
     NOMINATIM_API_BASE: str = "https://nominatim.openstreetmap.org"
 
     # Application

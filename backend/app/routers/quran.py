@@ -6,7 +6,7 @@ from fastapi import APIRouter, Query, HTTPException
 from typing import List, Dict, Any, Optional
 
 from ..database import execute_query, execute_query_single
-from ..queries.quran_queries import get_search_query, get_surah_query
+from ..queries.quran_queries import get_search_query, get_surah_query, get_verse_query
 
 router = APIRouter()
 
@@ -66,9 +66,9 @@ async def get_surah(
         return {
             "surah": {
                 "number": surah_number,
-                "name_arabic": surah_info.get("name_arabic"),
-                "name_english": surah_info.get("name_english"),
-                "verses_count": len(verses)
+                "name_arabic": surah_info.get("surah_name_ar"),
+                "name_english": surah_info.get("surah_name_en"),
+                "verses_count": surah_info.get("total_ayah_surah")
             },
             "verses": verses
         }
@@ -88,8 +88,20 @@ async def get_verse(
     Get specific verse by surah and verse number
     """
     try:
-        # TODO: Implement verse retrieval
-        raise HTTPException(status_code=501, detail="Verse endpoint not implemented yet")
+        # Validate surah number
+        if not 1 <= surah_number <= 114:
+            raise HTTPException(status_code=400, detail="Invalid surah number")
+
+        # Get optimized query from DB engineer
+        query = get_verse_query()
+
+        # Execute query
+        verse = await execute_query_single(query, surah_number, verse_number)
+
+        if not verse:
+            raise HTTPException(status_code=404, detail="Verse not found")
+
+        return {"verse": verse}
     except HTTPException:
         raise
     except Exception as e:
