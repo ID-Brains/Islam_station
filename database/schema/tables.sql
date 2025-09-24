@@ -1,3 +1,5 @@
+CREATE EXTENSION IF NOT EXISTS postgis;
+
 DROP TABLE IF EXISTS Ayahs CASCADE;
 DROP TABLE IF EXISTS Surahs CASCADE;
 DROP TABLE IF EXISTS Words CASCADE;
@@ -6,7 +8,7 @@ DROP TABLE IF EXISTS Mosques CASCADE;
 DROP TABLE IF EXISTS Categories CASCADE;
 DROP TABLE IF EXISTS Dhikr CASCADE;
 
-CREATE TABLE  Surahs (
+CREATE TABLE  surahs (
     "surah_id" SERIAL PRIMARY KEY,
     "surah_no" INT NOT NULL UNIQUE,     
     "surah_name_en" VARCHAR(255) NOT NULL UNIQUE,
@@ -16,7 +18,7 @@ CREATE TABLE  Surahs (
     "place_of_revelation" VARCHAR(50) NOT NULL 
 );
 
-CREATE TABLE Ayahs (
+CREATE TABLE ayahs (
     "ayah_id" BIGSERIAL PRIMARY KEY,      
     "surah_id" INT NOT NULL,                 
     "ayah_no_surah" INT NOT NULL,              
@@ -32,7 +34,7 @@ CREATE TABLE Ayahs (
     "total_ayah_quran" INT NOT NULL,           
     "no_of_word_ayah" INT NOT NULL,            
     "list_of_words" TEXT,                      
-    "ayah_ar_tsv" TSVECTOR, -- 🔥 مضاف هنا
+    "ayah_ar_tsv" TSVECTOR, 
 
     CONSTRAINT fk_surah
         FOREIGN KEY (surah_id)
@@ -41,7 +43,7 @@ CREATE TABLE Ayahs (
     CONSTRAINT unique_ayah_in_surah UNIQUE (surah_id, ayah_no_surah)
 );
 
-CREATE TABLE Words (
+CREATE TABLE words (
     "word_id" BIGSERIAL PRIMARY KEY,
     "ayah_id" BIGINT NOT NULL,               
     "word_order" INT NOT NULL,                 
@@ -56,7 +58,7 @@ CREATE TABLE Words (
     CONSTRAINT unique_word_in_ayah UNIQUE (ayah_id, word_order)
 );
 
-CREATE TABLE Divisions (
+CREATE TABLE divisions (
     "division_id" SERIAL PRIMARY KEY,
     "division_type" VARCHAR(50) NOT NULL,     
     "division_number" INT NOT NULL,
@@ -67,7 +69,7 @@ CREATE TABLE Divisions (
     CONSTRAINT unique_division_type_number UNIQUE (division_type, division_number)
 );
 
-CREATE TABLE Mosques (
+CREATE TABLE mosques (
     "mosque_id" SERIAL PRIMARY KEY,
     "name" VARCHAR(255) NOT NULL,
     "address" TEXT,
@@ -76,13 +78,13 @@ CREATE TABLE Mosques (
     location GEOGRAPHY(Point, 4326) NOT NULL
 );
 
-CREATE TABLE Categories (
+CREATE TABLE categories (    --دل ما نكرر اسم الفئة لكل ذكر في جدول Dhikr، نخزنها مرة واحدة فقط في جدول Categories ونربطها بالذكر عن طريق category_id.
     "category_id" SERIAL PRIMARY KEY,
     "name_ar" VARCHAR(255) NOT NULL UNIQUE,
     "name_en" VARCHAR(255) NOT NULL UNIQUE
 );
 
-CREATE TABLE Dhikr (
+CREATE TABLE dhikr (
     "dhikr_id" SERIAL PRIMARY KEY,
     "category_id" INT NOT NULL,
     "text_ar" TEXT NOT NULL,

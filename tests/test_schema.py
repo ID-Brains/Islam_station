@@ -145,14 +145,3 @@ def test_functions(db_engine):
 
     except Exception as e:
         pytest.fail(f"Failed to test custom functions: {str(e)}")
-
-def test_cleanup(db_engine):
-    """Clean up test data"""
-    try:
-        with db_engine.connect() as conn:
-            conn.execute(text("DROP SCHEMA public CASCADE"))
-            conn.execute(text("CREATE SCHEMA public"))
-            conn.commit()
-
-    except Exception as e:
-        pytest.fail(f"Failed to clean up: {str(e)}")
