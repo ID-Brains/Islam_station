@@ -6,7 +6,7 @@ from fastapi import APIRouter, Query, HTTPException
 from typing import List, Dict, Any, Optional
 
 from ..database import execute_query, execute_query_single
-from ..queries.quran_queries import get_search_query, get_surah_query, get_verse_query
+from ..queries.quran_queries import get_search_query, get_surah_query, get_verse_query, get_random_verse_query
 
 router = APIRouter()
 
@@ -106,3 +106,25 @@ async def get_verse(
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to fetch verse: {str(e)}")
+
+
+@router.get("/random")
+async def get_random_verse() -> Dict[str, Any]:
+    """
+    Get a random Quran verse
+    """
+    try:
+        # Get optimized query from DB engineer
+        query = get_random_verse_query()
+
+        # Execute query
+        verse = await execute_query_single(query)
+
+        if not verse:
+            raise HTTPException(status_code=404, detail="No verse found")
+
+        return {"verse": verse}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to fetch random verse: {str(e)}")

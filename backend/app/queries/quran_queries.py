@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Optional
 
 
-# Path to query files (provided by DB engineer)
+# Path to query files
 QUERIES_DIR = Path(__file__).parent.parent.parent.parent / "database" / "queries" / "quran"
 
 
