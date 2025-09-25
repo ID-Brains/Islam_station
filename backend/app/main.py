@@ -19,7 +19,7 @@ app = FastAPI(
 # CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.ALLOWED_ORIGINS,
+    # allow_origins=settings.ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -46,6 +46,7 @@ async def shutdown_event():
 async def root():
     """Root endpoint"""
     return {"message": "Welcome to The Islamic Guidance Station"}
+
 
 @app.get("/health")
 async def health_check():

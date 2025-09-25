@@ -9,6 +9,11 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     """Application settings using Pydantic"""
 
+    model_config = ConfigDict(
+        env_file=".env",
+        case_sensitive=True,
+    )
+
     # Database
     DATABASE_URL: str = "postgresql://islam:202520@192.168.1.11/quran"
     DATABASE_POOL_SIZE: int = 25
@@ -26,7 +31,7 @@ class Settings(BaseSettings):
     SECRET_KEY: str = "your-secret-key-here"
 
     # CORS
-    ALLOWED_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:4321"]
+    ALLOWED_ORIGINS: list[str] = ["http://localhost:3000", "http://localhost:4321"]
 
     # Rate Limiting
     RATE_LIMIT_REQUESTS: int = 100
@@ -34,10 +39,6 @@ class Settings(BaseSettings):
 
     # Logging
     LOG_LEVEL: str = "INFO"
-
-    class Config:
-        env_file = ".env"
-        case_sensitive = True
 
 
 settings = Settings()
