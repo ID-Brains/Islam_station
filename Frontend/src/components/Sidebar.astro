@@ -1,0 +1,91 @@
+<!-- drawer component -->
+<div
+   id="drawer-navigation"
+   class="fixed top-0 left-0 z-40 h-screen w-72 -translate-x-full overflow-y-auto bg-gradient-to-b from-primary/95 via-primary/90 to-neutral/90 p-5 text-primary-content shadow-2xl shadow-black/30 transition-transform backdrop-blur-xl"
+   tabindex="-1"
+   aria-labelledby="drawer-navigation-label"
+>
+   <div class="flex items-start justify-between">
+      <div>
+         <p class="text-xs uppercase tracking-[0.3em] text-primary-content/70">Navigation</p>
+         <h5 id="drawer-navigation-label" class="mt-1 text-lg font-semibold">Quick Access</h5>
+      </div>
+      <button
+         type="button"
+         data-drawer-hide="drawer-navigation"
+         aria-controls="drawer-navigation"
+         class="btn btn-circle btn-ghost bg-white/10 text-primary-content hover:bg-white/20"
+         aria-label="Close menu"
+      >
+         <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <path
+               fill-rule="evenodd"
+               d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+               clip-rule="evenodd"
+            ></path>
+         </svg>
+      </button>
+   </div>
+
+   <div class="mt-6 space-y-6">
+      <div class="rounded-2xl border border-white/10 bg-white/10 p-4 shadow-inner shadow-black/10">
+         <p class="text-xs uppercase tracking-[0.2em] text-primary-content/60">Next Prayer</p>
+         <div class="mt-3 flex items-end justify-between">
+            <div>
+               <p class="text-2xl font-semibold">Asr</p>
+               <p class="text-sm text-primary-content/70">3:42 PM • In 28 mins</p>
+            </div>
+            <span class="badge badge-secondary badge-lg">Soon</span>
+         </div>
+         <div class="mt-4 grid grid-cols-3 gap-3 text-center text-xs">
+            <div class="rounded-xl bg-white/10 p-2">
+               <p class="font-semibold">Fajr</p>
+               <p class="text-primary-content/70">05:08</p>
+            </div>
+            <div class="rounded-xl bg-white/10 p-2">
+               <p class="font-semibold">Dhuhr</p>
+               <p class="text-primary-content/70">12:24</p>
+            </div>
+            <div class="rounded-xl bg-white/10 p-2">
+               <p class="font-semibold">Maghrib</p>
+               <p class="text-primary-content/70">18:05</p>
+            </div>
+         </div>
+      </div>
+
+      <nav class="menu menu-lg rounded-2xl border border-white/10 bg-white/5 p-3 text-sm font-semibold">
+         <p class="px-4 pb-2 text-xs uppercase tracking-[0.2em] text-primary-content/60">Dashboard</p>
+         <li><a class="rounded-xl tracking-[0.2em]">Overview</a></li>
+         <li><a class="rounded-xl tracking-[0.2em]">Prayer Times</a></li>
+         <li><a class="rounded-xl tracking-[0.2em]">Quran Library</a></li>
+         <li><a class="rounded-xl tracking-[0.2em]">Qibla Finder</a></li>
+         <li><a class="rounded-xl tracking-[0.2em]">Adhan &amp; Alerts</a></li>
+         <li><a class="rounded-xl tracking-[0.2em]">Community</a></li>
+      </nav>
+
+      <div class="rounded-2xl border border-white/10 bg-white/10 p-4">
+         <p class="text-xs uppercase tracking-[0.2em] text-primary-content/60">Preferences</p>
+         <div class="mt-4 space-y-3">
+            <label class="flex items-center justify-between gap-3 text-sm">
+               <span>Adhan Notifications</span>
+               <input type="checkbox" class="toggle toggle-success" checked />
+            </label>
+            <label class="flex items-center justify-between gap-3 text-sm">
+               <span>Daily Verse</span>
+               <input type="checkbox" class="toggle toggle-secondary" checked />
+            </label>
+            <label class="flex items-center justify-between gap-3 text-sm">
+               <span>Hijri Calendar</span>
+               <input type="checkbox" class="toggle toggle-warning" />
+            </label>
+         </div>
+      </div>
+   </div>
+
+   <div class="mt-8 rounded-2xl border border-white/10 bg-white/10 p-4 text-sm">
+      <ul class="mt-3 space-y-2">
+         <li><a class="flex items-center justify-between rounded-xl px-3 py-2 hover:bg-white/10 tracking-[0.2em] cursor-pointer">Settings<span class="badge badge-outline">6</span></a></li>
+         <li><a class="flex items-center justify-between rounded-xl px-3 py-2 hover:bg-white/10 tracking-[0.2em] cursor-pointer">Support<span class="badge badge-outline">24/7</span></a></li>
+      </ul>
+   </div>
+</div>
