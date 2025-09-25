@@ -1,10 +1,9 @@
 import pandas as pd
 
-df = pd.read_csv("output.csv")
+df = pd.read_csv("/mnt/218516350360B13E/dev/Islam_station/database/assets/surahs.csv")
 
-surahs = df[["surah_no", "surah_name_en", "surah_name_ar", "surah_name_roman", "total_ayah_surah", "place_of_revelation"]]
-ayahs = df[["ayah_no_surah", "ayah_no_quran", "ayah_ar", "ayah_en", "ruko_no", "juz_no", "manzil_no",
-            "hizb_quarter", "sajdah_ayah", "sajdah_no", "total_ayah_quran", "no_of_word_ayah", "list_of_words" ]]
+# إزالة أي صفوف تكرارية بناءً على surah_no
+df = df.drop_duplicates(subset=['surah_no'])
 
-surahs.to_csv("surahs.csv", index=False)
-ayahs.to_csv("ayahs.csv", index=False)
+# حفظ الملف مصحح
+df.to_csv("/mnt/218516350360B13E/dev/Islam_station/database/assets/surahs_fixed.csv", index=False)
