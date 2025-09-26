@@ -3,8 +3,9 @@ Quran API Router for The Islamic Guidance Station
 """
 
 import httpx
+import datetime
 from fastapi import APIRouter, Query, HTTPException
-from adhan import Client
+from praytimes import PrayTimes
 
 router = APIRouter()
 
@@ -37,8 +38,18 @@ async def find_time_with_geolocation(
     """
     try:
         country = await get_country_from_coords(latitude, longitude)
-        client = Client(latitude, longitude)
-        prayer_times = client.get_day()
+
+        # Create PrayTimes object
+        pt = PrayTimes()
+
+        # Get current date
+        now = datetime.datetime.now()
+        year = now.year
+        month = now.month
+        day = now.day
+
+        # Calculate prayer times
+        prayer_times = pt.getTimes((year, month, day), (latitude, longitude), +3)  # UTC+3 for Saudi Arabia
 
         return {
             "location": {"latitude": latitude, "longitude": longitude, "country": country},

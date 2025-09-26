@@ -44,9 +44,9 @@ httpx==0.28.1
 black==25.9.0
 flake8==7.3.0
 
-# For data processing during development
-pandas==2.1.4
+# For data processing during development (removed - not used in code)
+# pandas==2.1.4
 requests==2.31.0
 
-# adhan
-adhan-py
+# adhan (Islamic prayer times calculation)
+praytimes

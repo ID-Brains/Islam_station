@@ -1,27 +1,33 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Navbar from '../components/Navbar.astro';
-import Sidebar from '../components/Sidebar.astro';
+import Navbar from '../components/UI/Navbar.astro';
+import Sidebar from '../components/UI/Sidebar.astro';
+import PrayerTable from '../components/prayer_Table.jsx';
+
+const latitude = 24.7136;
+const longitude = 46.6753;
 ---
-  
+
 <Layout>
     <Navbar />
     <Sidebar />
-
     <main class="relative isolate overflow-hidden">
-        <div class="absolute inset-x-0 top-0 -z-10 h-[32rem] bg-[radial-gradient(circle_at_top,_rgba(15,87,71,0.45),_transparent_55%)]"></div>
+        <div class="absolute inset-x-0 top-0 -z-10 h-[32rem] "></div>
 
         <!-- Hero Section -->
         <section class="mx-auto flex max-w-6xl flex-col gap-12 px-6 pb-16 pt-28 lg:flex-row lg:items-center lg:gap-20">
             <div class="flex-1 space-y-8">
-                <div class="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-secondary-content shadow-sm shadow-black/10">
-                    <span class="badge badge-secondary badge-sm">Live</span>
-                    <span>Asr prayer in 28 minutes</span>
-                </div>
+                <h1 class="text-balance text-4xl font-black leading-tight text-base-content md:text-5xl xl:text-6xl tracking-[0.2em]">Prayer times</h1>
 
-                <h1 class="text-balance text-4xl font-black leading-tight text-base-content md:text-5xl xl:text-6xl">
-                    Your serene Islamic companion for prayer, Quran, and community
-                </h1>
+                <a id="location" onclick="getLocation()" class="btn btn-primary btn-lg gap-2">
+                    Get Your location
+                </a>
+
+                <div class="card glass border border-white/15 dark:shadow-lg">
+                    <div class="card-body">
+                        <PrayerTable client:load latitude={latitude} longitude={longitude} onNextPrayerChange={() => {}} />
+                    </div>
+                </div>
 
                 <p class="max-w-2xl text-base leading-relaxed text-base-content/70 md:text-lg">
                     Track precise prayer times, experience soulful Adhan reminders, explore curated Quran journeys, and stay connected to your local ummah—all harmonized with the new Islamic theme.
@@ -62,49 +68,22 @@ import Sidebar from '../components/Sidebar.astro';
                 </div>
             </div>
 
-           <div class="flex-1">
-        <div class="relative mx-auto max-w-md">
-            <div class="absolute -inset-8 rounded-[2.5rem] bg-gradient-to-br from-primary/40 via-transparent to-secondary/40 blur-3xl"></div>
-            <div class="relative rounded-[2.5rem] border border-white/20 bg-base-100/80 p-6 shadow-2xl shadow-black/20 backdrop-blur-xl">
-                <div class="rounded-3xl bg-base-200/80 p-5 shadow-inner">
-                    <img src="/masjed.png" alt="Masjid" class="rounded-2xl" />
-                    <p id="quran-text" class="mt-2 text-sm text-base-content/70 font-arabic text-right" dir="rtl">
-                        جاري تحميل الآية...
-                    </p>
-                    <p id="ayah-text" class="mt-2 text-sm text-base-content/70 font-arabic text-right" dir="rtl">
-                        جاري تحميل اسم الآية  ...
-                    </p>
+            <div class="flex-1">
+                <div class="relative mx-auto max-w-md">
+                    <div class="absolute -inset-8 rounded-[2.5rem] bg-gradient-to-br from-primary/40 via-transparent to-secondary/40 blur-3xl"></div>
+                    <div class="relative rounded-[2.5rem] border border-white/20 bg-base-100/80 p-6 dark:shadow-2xl dark:shadow-black/20 backdrop-blur-xl">
+                        <div class="rounded-3xl bg-base-200/80 p-5 shadow-inner">
+                            <img src="/masjed.png" alt="Masjid" class="rounded-2xl" />
+                            <p id="quran-text" class="mt-2 text-sm text-base-content/70 font-arabic text-right" dir="rtl">
+                                جاري تحميل الآية...
+                            </p>
+                            <p id="ayah-text" class="mt-2 text-sm text-base-content/70 font-arabic text-right" dir="rtl">
+                                جاري تحميل اسم الآية...
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <script>
-        const options = { method: 'GET', headers: { accept: 'application/json' } };
-
-        fetch('https://api-staging.quranhub.com/v1/ayah/random', options)
-            .then(res => res.json())
-            .then(data => {
-                console.log('API Response:', data);
-                
-                const quranText = document.getElementById('quran-text');
-                const ayahText = document.getElementById('ayah-text');
-
-                if (quranText && ayahText && data.data && data.data.text) {
-                    quranText.textContent = data.data.text;
-                    ayahText.textContent = `سورة ${data.data.surah.name} · آية ${data.data.numberInSurah}`;
-                } else {
-                    console.log('No ayah found in response');
-                }
-            })
-            .catch(err => {
-                console.error('خطأ في تحميل الآية:', err);
-                const quranText = document.getElementById('quran-text');
-                if (quranText) {
-                    quranText.textContent = 'سورة البقرة · آية 255 (آية الكرسي)';
-                }
-            });
-    </script>
         </section>
 
         <!-- Prayer insights ribbon -->
@@ -170,7 +149,7 @@ import Sidebar from '../components/Sidebar.astro';
             </div>
 
             <div class="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-                <article class="card glass border border-white/15 shadow-lg">
+                <article class="card glass border border-white/15 dark:shadow-lg">
                     <div class="card-body">
                         <div class="flex items-center justify-between">
                             <div class="rounded-2xl bg-primary/20 p-3 text-primary">
@@ -190,7 +169,7 @@ import Sidebar from '../components/Sidebar.astro';
                     </div>
                 </article>
 
-                <article class="card glass border border-white/15 shadow-lg">
+                <article class="card glass border border-white/15 dark:shadow-lg">
                     <div class="card-body">
                         <div class="flex items-center justify-between">
                             <div class="rounded-2xl bg-success/20 p-3 text-success">
@@ -210,7 +189,7 @@ import Sidebar from '../components/Sidebar.astro';
                     </div>
                 </article>
 
-                <article class="card glass border border-white/15 shadow-lg">
+                <article class="card glass border border-white/15 dark:shadow-lg">
                     <div class="card-body">
                         <div class="flex items-center justify-between">
                             <div class="rounded-2xl bg-purple-500/20 p-3 text-purple-500">
@@ -229,7 +208,7 @@ import Sidebar from '../components/Sidebar.astro';
                     </div>
                 </article>
 
-                <article class="card glass border border-white/15 shadow-lg">
+                <article class="card glass border border-white/15 dark:shadow-lg">
                     <div class="card-body">
                         <div class="flex items-center justify-between">
                             <div class="rounded-2xl bg-error/20 p-3 text-error">
@@ -249,7 +228,7 @@ import Sidebar from '../components/Sidebar.astro';
                     </div>
                 </article>
 
-                <article class="card glass border border-white/15 shadow-lg">
+                <article class="card glass border border-white/15 dark:shadow-lg">
                     <div class="card-body">
                         <div class="flex items-center justify-between">
                             <div class="rounded-2xl bg-warning/20 p-3 text-warning">
@@ -269,7 +248,7 @@ import Sidebar from '../components/Sidebar.astro';
                     </div>
                 </article>
 
-                <article class="card glass border border-white/15 shadow-lg">
+                <article class="card glass border border-white/15 dark:shadow-lg">
                     <div class="card-body">
                         <div class="flex items-center justify-between">
                             <div class="rounded-2xl bg-info/20 p-3 text-info">
@@ -292,3 +271,6 @@ import Sidebar from '../components/Sidebar.astro';
         </section>
     </main>
 </Layout>
+
+<script src="/apis/Random_ayah.js" is:inline></script>
+<script src="/apis/Get_location.js" is:inline></script>
