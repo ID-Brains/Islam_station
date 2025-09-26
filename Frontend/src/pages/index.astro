@@ -4,6 +4,8 @@ import Navbar from '../components/UI/Navbar.astro';
 import Sidebar from '../components/UI/Sidebar.astro';
 import PrayerTable from '../components/prayer_Table.jsx';
 
+const latitude = 24.7136;
+const longitude = 46.6753;
 ---
 
 <Layout>
@@ -15,19 +17,19 @@ import PrayerTable from '../components/prayer_Table.jsx';
         <!-- Hero Section -->
         <section class="mx-auto flex max-w-6xl flex-col gap-12 px-6 pb-16 pt-28 lg:flex-row lg:items-center lg:gap-20">
             <div class="flex-1 space-y-8">
-               
                 <h1 class="text-balance text-4xl font-black leading-tight text-base-content md:text-5xl xl:text-6xl tracking-[0.2em]">Prayer times</h1>
-                 <a id="location"  class="btn btn-primary btn-lg gap-2">
-                        Get Your location
-                    </a>
+
+                <a id="location" onclick="getLocation()" class="btn btn-primary btn-lg gap-2">
+                    Get Your location
+                </a>
 
                 <div class="card glass border border-white/15 dark:shadow-lg">
                     <div class="card-body">
-                        <PrayerTable client:load latitude={24.7136} longitude={46.6753} />
+                        <PrayerTable client:load latitude={latitude} longitude={longitude} onNextPrayerChange={() => {}} />
                     </div>
                 </div>
 
-                <p class="max-w-2xl text-base leading-relaxed text-base-content/70 md:text-lg ">
+                <p class="max-w-2xl text-base leading-relaxed text-base-content/70 md:text-lg">
                     Track precise prayer times, experience soulful Adhan reminders, explore curated Quran journeys, and stay connected to your local ummah—all harmonized with the new Islamic theme.
                 </p>
 
@@ -66,22 +68,22 @@ import PrayerTable from '../components/prayer_Table.jsx';
                 </div>
             </div>
 
-           <div class="flex-1">
-        <div class="relative mx-auto max-w-md">
-            <div class="absolute -inset-8 rounded-[2.5rem] bg-gradient-to-br from-primary/40 via-transparent to-secondary/40 blur-3xl"></div>
-            <div class="relative rounded-[2.5rem] border border-white/20 bg-base-100/80 p-6 dark:shadow-2xl dark:shadow-black/20 backdrop-blur-xl">
-                <div class="rounded-3xl bg-base-200/80 p-5 shadow-inner">
-                    <img src="/masjed.png" alt="Masjid" class="rounded-2xl " />
-                    <p id="quran-text" class="mt-2 text-sm text-base-content/70 font-arabic text-right" dir="rtl">
-                        جاري تحميل الآية...
-                    </p>
-                    <p id="ayah-text" class="mt-2 text-sm text-base-content/70 font-arabic text-right" dir="rtl">
-                        جاري تحميل اسم الآية  ...
-                    </p>
+            <div class="flex-1">
+                <div class="relative mx-auto max-w-md">
+                    <div class="absolute -inset-8 rounded-[2.5rem] bg-gradient-to-br from-primary/40 via-transparent to-secondary/40 blur-3xl"></div>
+                    <div class="relative rounded-[2.5rem] border border-white/20 bg-base-100/80 p-6 dark:shadow-2xl dark:shadow-black/20 backdrop-blur-xl">
+                        <div class="rounded-3xl bg-base-200/80 p-5 shadow-inner">
+                            <img src="/masjed.png" alt="Masjid" class="rounded-2xl" />
+                            <p id="quran-text" class="mt-2 text-sm text-base-content/70 font-arabic text-right" dir="rtl">
+                                جاري تحميل الآية...
+                            </p>
+                            <p id="ayah-text" class="mt-2 text-sm text-base-content/70 font-arabic text-right" dir="rtl">
+                                جاري تحميل اسم الآية...
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
         </section>
 
         <!-- Prayer insights ribbon -->
@@ -270,5 +272,5 @@ import PrayerTable from '../components/prayer_Table.jsx';
     </main>
 </Layout>
 
-<script src="./apis/Random_ayah.js"></script>
-<script src="./apis/Get_location.js"></script>
+<script src="/apis/Random_ayah.js" is:inline></script>
+<script src="/apis/Get_location.js" is:inline></script>
