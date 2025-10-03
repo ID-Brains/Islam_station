@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 
 const EnhancedPrayerTable = ({
   latitude = 24.7136,
@@ -14,8 +14,8 @@ const EnhancedPrayerTable = ({
   const [error, setError] = useState('');
   const [lastUpdated, setLastUpdated] = useState(null);
 
-  // Prayer calculation methods configurations
-  const calculationMethods = {
+  // Prayer calculation methods configurations (memoized to avoid infinite fetch loop)
+  const calculationMethods = useMemo(() => ({
     MuslimWorldLeague: { fajr: 18, isha: 17 },
     Egyptian: { fajr: 19.5, isha: 17.5 },
     UmmAlQura: { fajr: 18.5, isha: '90 min after maghrib' },
@@ -26,7 +26,7 @@ const EnhancedPrayerTable = ({
     Singapore: { fajr: 20, isha: 18 },
     NorthAmerica: { fajr: 15, isha: 15 },
     Turkey: { fajr: 18, isha: 17 }
-  };
+  }), []);
 
   // Calculate prayer times using simplified method
   const calculatePrayerTimes = useCallback((lat, lng, method, date = new Date()) => {
@@ -65,17 +65,17 @@ const EnhancedPrayerTable = ({
   }, [calculationMethods, prayerAdjustments]);
 
   // Helper function to calculate prayer time
-  const calculateTime = (baseHour, baseMinute, dayOfYear) => {
+  const calculateTime = useCallback((baseHour, baseMinute, dayOfYear) => {
     // Simplified calculation - in production use proper astronomical calculations
     const seasonalAdjustment = Math.sin((dayOfYear / 365) * 2 * Math.PI) * 0.5; // ±30 minutes
     const hour = Math.floor(baseHour + seasonalAdjustment);
     const minute = Math.floor(baseMinute + (seasonalAdjustment * 60) % 60);
 
     return formatTime(hour, minute);
-  };
+  }, []);
 
   // Helper function to adjust time by minutes
-  const adjustTime = (time, adjustment) => {
+  const adjustTime = useCallback((time, adjustment) => {
     const [hours, minutes] = time.split(':').map(Number);
     const totalMinutes = hours * 60 + minutes + adjustment;
 
@@ -86,14 +86,14 @@ const EnhancedPrayerTable = ({
     if (adjustedHours < 0) adjustedHours += 24;
 
     return formatTime(adjustedHours, adjustedMinutes);
-  };
+  }, []);
 
   // Helper function to format time
-  const formatTime = (hours, minutes) => {
+  const formatTime = useCallback((hours, minutes) => {
     const h = hours.toString().padStart(2, '0');
     const m = minutes.toString().padStart(2, '0');
     return `${h}:${m}`;
-  };
+  }, []);
 
   // Fetch prayer times
   const fetchPrayerTimes = useCallback(async () => {
@@ -188,7 +188,10 @@ const EnhancedPrayerTable = ({
   // Fetch prayer times when location or method changes
   useEffect(() => {
     fetchPrayerTimes();
-  }, [fetchPrayerTimes]);
+    // We intentionally depend on stable primitives here (lat/lng/method/adjustments snapshot)
+    // to avoid re-running due to changing function identities.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.lat, location.lng, calculationMethod, JSON.stringify(prayerAdjustments)]);
 
   // Calculate next prayer every minute
   useEffect(() => {

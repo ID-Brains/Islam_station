@@ -191,21 +191,31 @@ const PrayerSettings = ({ onLocationChange, onMethodChange }) => {
                   {currentLocation.lat.toFixed(6)}, {currentLocation.lng.toFixed(6)}
                 </p>
               </div>
-              <button
-                onClick={getCurrentLocation}
-                disabled={isGettingLocation}
-                className="btn btn-primary btn-sm"
-              >
-                {isGettingLocation ? (
-                  <span className="loading loading-spinner loading-sm"></span>
-                ) : (
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                )}
-                Get Location
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={getCurrentLocation}
+                  disabled={isGettingLocation}
+                  className="btn btn-primary btn-sm"
+                  aria-label="Get current location"
+                >
+                  {isGettingLocation ? (
+                    <span className="loading loading-spinner loading-sm"></span>
+                  ) : (
+                    'Get'
+                  )}
+                </button>
+
+                <button
+                  onClick={() => {
+                    // copy coords to clipboard for convenience
+                    navigator.clipboard?.writeText(`${currentLocation.lat.toFixed(6)}, ${currentLocation.lng.toFixed(6)}`);
+                  }}
+                  className="btn btn-ghost btn-sm"
+                  title="Copy coordinates"
+                >
+                  Copy
+                </button>
+              </div>
             </div>
           </div>
 
@@ -257,12 +267,21 @@ const PrayerSettings = ({ onLocationChange, onMethodChange }) => {
                   />
                 </div>
               </div>
-              <button
-                onClick={handleManualLocationChange}
-                className="btn btn-secondary btn-sm"
-              >
-                Update Location
-              </button>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={handleManualLocationChange}
+                  className="btn btn-secondary btn-sm"
+                >
+                  Update Location
+                </button>
+                <button
+                  onClick={() => setManualLocation({ lat: '', lng: '' })}
+                  className="btn btn-ghost btn-sm"
+                >
+                  Clear
+                </button>
+                <p className="text-xs text-base-content/60 ml-auto">Enter coordinates and press Update</p>
+              </div>
             </div>
           )}
 
@@ -282,23 +301,22 @@ const PrayerSettings = ({ onLocationChange, onMethodChange }) => {
       <div className="mb-8">
         <h3 className="text-lg font-semibold text-base-content mb-4">Calculation Method</h3>
 
-        <div className="space-y-2">
-          {prayerMethods.map((method) => (
-            <label key={method.id} className="cursor-pointer">
-              <input
-                type="radio"
-                name="method"
-                value={method.id}
-                checked={selectedMethod === method.id}
-                onChange={() => handleMethodChange(method.id)}
-                className="radio radio-primary radio-sm mr-3"
-              />
-              <div className="inline-block">
-                <span className="font-medium">{method.name}</span>
-                <p className="text-sm text-base-content/60">{method.description}</p>
-              </div>
-            </label>
-          ))}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <select
+            className="select select-bordered"
+            value={selectedMethod}
+            onChange={(e) => handleMethodChange(e.target.value)}
+            aria-label="Select prayer calculation method"
+          >
+            {prayerMethods.map(m => (
+              <option key={m.id} value={m.id}>{m.name}</option>
+            ))}
+          </select>
+
+          <div className="p-3 bg-base-100 rounded-xl">
+            <p className="font-medium">{prayerMethods.find(p => p.id === selectedMethod)?.name}</p>
+            <p className="text-sm text-base-content/60">{prayerMethods.find(p => p.id === selectedMethod)?.description}</p>
+          </div>
         </div>
       </div>
 
@@ -311,29 +329,48 @@ const PrayerSettings = ({ onLocationChange, onMethodChange }) => {
             Adjust prayer times by minutes (positive for later, negative for earlier)
           </p>
 
-          {Object.entries(adjustments).map(([prayer, adjustment]) => (
-            <div key={prayer} className="flex items-center justify-between">
-              <span className="capitalize font-medium">{prayer}</span>
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => handleAdjustmentChange(prayer, adjustment - 1)}
-                  className="btn btn-outline btn-xs btn-circle"
-                >
-                  -
-                </button>
-                <span className="w-8 text-center font-mono text-sm">
-                  {adjustment > 0 ? '+' : ''}{adjustment}
-                </span>
-                <button
-                  onClick={() => handleAdjustmentChange(prayer, adjustment + 1)}
-                  className="btn btn-outline btn-xs btn-circle"
-                >
-                  +
-                </button>
-                <span className="text-xs text-base-content/60">minutes</span>
+          <div className="grid grid-cols-2 gap-3">
+            {Object.entries(adjustments).map(([prayer, adjustment]) => (
+              <div key={prayer} className="flex items-center justify-between p-2">
+                <div>
+                  <span className="capitalize font-medium">{prayer}</span>
+                  <p className="text-xs text-base-content/60">minutes offset</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => handleAdjustmentChange(prayer, adjustment - 1)}
+                    className="btn btn-outline btn-xs"
+                    aria-label={`Decrease ${prayer}`}
+                  >
+                    -
+                  </button>
+                  <input
+                    type="number"
+                    className="input input-sm input-bordered w-16 text-center"
+                    value={adjustment}
+                    onChange={(e) => handleAdjustmentChange(prayer, parseInt(e.target.value) || 0)}
+                  />
+                  <button
+                    onClick={() => handleAdjustmentChange(prayer, adjustment + 1)}
+                    className="btn btn-outline btn-xs"
+                    aria-label={`Increase ${prayer}`}
+                  >
+                    +
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
+
+          <div className="flex items-center gap-3 mt-3">
+            <button
+              onClick={() => setAdjustments({ fajr: 0, dhuhr: 0, asr: 0, maghrib: 0, isha: 0 })}
+              className="btn btn-ghost btn-sm"
+            >
+              Reset adjustments
+            </button>
+            <p className="text-xs text-base-content/60 ml-auto">Use the inputs to fine-tune times</p>
+          </div>
         </div>
       </div>
 
@@ -344,17 +381,30 @@ const PrayerSettings = ({ onLocationChange, onMethodChange }) => {
         <div className="space-y-3">
           <label className="flex items-center justify-between cursor-pointer">
             <span className="text-sm">Show Hanafi Asr time</span>
-            <input type="checkbox" className="toggle toggle-sm toggle-secondary" />
+            <input
+              type="checkbox"
+              className="toggle toggle-sm toggle-secondary"
+              onChange={() => { /* controlled toggle placeholder */ }}
+            />
           </label>
 
           <label className="flex items-center justify-between cursor-pointer">
             <span className="text-sm">Show midnight time</span>
-            <input type="checkbox" className="toggle toggle-sm toggle-secondary" />
+            <input
+              type="checkbox"
+              className="toggle toggle-sm toggle-secondary"
+              onChange={() => { /* controlled toggle placeholder */ }}
+            />
           </label>
 
           <label className="flex items-center justify-between cursor-pointer">
             <span className="text-sm">Use 12-hour format</span>
-            <input type="checkbox" className="toggle toggle-sm toggle-secondary" defaultChecked />
+            <input
+              type="checkbox"
+              className="toggle toggle-sm toggle-secondary"
+              defaultChecked
+              onChange={() => { /* controlled toggle placeholder */ }}
+            />
           </label>
         </div>
       </div>
