@@ -29,11 +29,21 @@
       <div class="navbar-center hidden lg:flex">
         <div class="rounded-full bg-white/10 px-4 py-2">
           <ul class="menu menu-horizontal items-center gap-2 text-sm font-medium text-primary-content/90">
-            <li><a class="rounded-full px-3 py-1 hover:bg-white/20">Prayer Times</a></li>
+            <li>
+              <details>
+                <summary class="rounded-full px-3 py-1 hover:bg-white/20">Prayer Times</summary>
+                <ul class="menu menu-sm mt-2 gap-1 rounded-2xl bg-base-100/95 p-3 shadow-lg">
+                  <li><a href="/prayer/settings" class="rounded-lg px-3 py-1.5">Prayer Settings</a></li>
+                  <li><a href="/prayer/times" class="rounded-lg px-3 py-1.5">Today's Times</a></li>
+                  <li><a href="/prayer/qibla" class="rounded-lg px-3 py-1.5">Qibla Direction</a></li>
+                </ul>
+              </details>
+            </li>
             <li>
               <details>
                 <summary class="rounded-full px-3 py-1 hover:bg-white/20">Quran</summary>
                 <ul class="menu menu-sm mt-2 gap-1 rounded-2xl bg-base-100/95 p-3 shadow-lg">
+                  <li><a href="/quran/search" class="rounded-lg px-3 py-1.5">Search Quran</a></li>
                   <li><a class="rounded-lg px-3 py-1.5">Verse of the Day</a></li>
                   <li><a class="rounded-lg px-3 py-1.5">Random Surah</a></li>
                 </ul>

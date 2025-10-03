@@ -34,13 +34,22 @@ app.include_router(quran.router, prefix="/api/quran", tags=["Quran"])
 @app.on_event("startup")
 async def startup_event():
     """Initialize database pool and load schema on startup"""
-    await create_database_pool()
+    try:
+        await create_database_pool()
+        print("✅ Database pool initialized successfully")
+    except Exception as e:
+        print(f"⚠️  Warning: Failed to connect to database: {e}")
+        print("⚠️  Server will start but database operations will fail")
     # TODO: Load schema from database engineer
 
 @app.on_event("shutdown")
 async def shutdown_event():
     """Close database connections on shutdown"""
-    await close_database_pool()
+    try:
+        await close_database_pool()
+        print("✅ Database pool closed successfully")
+    except Exception as e:
+        print(f"⚠️  Warning: Error closing database pool: {e}")
 
 @app.get("/")
 async def root():

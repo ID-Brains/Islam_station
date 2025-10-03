@@ -1,0 +1,94 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PrayerSettings from '../../components/PrayerSettings.jsx';
+import EnhancedPrayerTable from '../../components/EnhancedPrayerTable.jsx';
+---
+
+<Layout>
+  <div class="min-h-screen bg-gradient-to-br from-primary/5 via-base-100 to-secondary/5">
+    <div class="container mx-auto px-4 py-8">
+      <!-- Page Header -->
+      <div class="text-center mb-8">
+        <h1 class="text-4xl font-bold text-base-content mb-4">
+          Prayer Settings
+        </h1>
+        <p class="text-lg text-base-content/80 max-w-2xl mx-auto">
+          Configure your location, prayer calculation method, and notification preferences
+          for accurate prayer times.
+        </p>
+      </div>
+
+      <div class="grid lg:grid-cols-3 gap-8">
+        <!-- Settings Column -->
+        <div class="lg:col-span-1">
+          <PrayerSettings client:load />
+        </div>
+
+        <!-- Prayer Times Column -->
+        <div class="lg:col-span-2">
+          <div class="bg-base-200 rounded-2xl p-6 shadow-xl">
+            <h2 class="text-2xl font-bold text-base-content mb-6 flex items-center gap-2">
+              <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              Prayer Times
+            </h2>
+
+            <EnhancedPrayerTable
+              latitude={24.7136}
+              longitude={46.6753}
+              calculationMethod="MuslimWorldLeague"
+              client:load
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Additional Features -->
+      <div class="mt-12 grid md:grid-cols-3 gap-6">
+        <!-- Qibla Direction -->
+        <div class="bg-base-200 rounded-2xl p-6 text-center">
+          <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+            </svg>
+          </div>
+          <h3 class="text-lg font-semibold text-base-content mb-2">Qibla Direction</h3>
+          <p class="text-base-content/70 mb-4">Find the direction of the Kaaba</p>
+          <a href="/prayer/qibla" class="text-primary hover:text-primary/80 font-medium">
+            Find Qibla →
+          </a>
+        </div>
+
+        <!-- Prayer Notifications -->
+        <div class="bg-base-200 rounded-2xl p-6 text-center">
+          <div class="w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-6 h-6 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+            </svg>
+          </div>
+          <h3 class="text-lg font-semibold text-base-content mb-2">Notifications</h3>
+          <p class="text-base-content/70 mb-4">Set up prayer time alerts</p>
+          <a href="/prayer/notifications" class="text-secondary hover:text-secondary/80 font-medium">
+            Configure Alerts →
+          </a>
+        </div>
+
+        <!-- Prayer History -->
+        <div class="bg-base-200 rounded-2xl p-6 text-center">
+          <div class="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+            </svg>
+          </div>
+          <h3 class="text-lg font-semibold text-base-content mb-2">Prayer History</h3>
+          <p class="text-base-content/70 mb-4">Track your prayer habits</p>
+          <a href="/prayer/history" class="text-accent hover:text-accent/80 font-medium">
+            View History →
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>
+

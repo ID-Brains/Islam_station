@@ -1,0 +1,57 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import QuranSearch from '../../components/QuranSearch.jsx';
+---
+
+<Layout>
+  <div class="min-h-screen bg-gradient-to-br from-primary/5 via-base-100 to-secondary/5">
+    <div class="container mx-auto px-4 py-8">
+      <div class="text-center mb-8">
+        <h1 class="text-4xl font-bold text-base-content mb-4">
+          Quran Search
+        </h1>
+        <p class="text-lg text-base-content/80 max-w-2xl mx-auto">
+          Explore the divine wisdom of the Holy Quran with our advanced search tool.
+          Search in Arabic, English, or both languages.
+        </p>
+      </div>
+
+      <QuranSearch client:load />
+
+      <div class="mt-12 grid md:grid-cols-3 gap-6">
+        <div class="bg-base-200 rounded-2xl p-6 text-center">
+          <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div class="w-6 h-6 bg-primary rounded-full"></div>
+          </div>
+          <h3 class="text-lg font-semibold text-base-content mb-2">Daily Verse</h3>
+          <p class="text-base-content/70 mb-4">Receive a verse from the Quran daily</p>
+          <a href="/quran/verse-of-day" class="text-primary hover:text-primary/80 font-medium">
+            View Today's Verse
+          </a>
+        </div>
+
+        <div class="bg-base-200 rounded-2xl p-6 text-center">
+          <div class="w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div class="w-6 h-6 bg-secondary rounded-full"></div>
+          </div>
+          <h3 class="text-lg font-semibold text-base-content mb-2">Browse Surahs</h3>
+          <p class="text-base-content/70 mb-4">Read all 114 chapters of the Quran</p>
+          <a href="/quran/surahs" class="text-secondary hover:text-secondary/80 font-medium">
+            Browse All Surahs
+          </a>
+        </div>
+
+        <div class="bg-base-200 rounded-2xl p-6 text-center">
+          <div class="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div class="w-6 h-6 bg-accent rounded-full"></div>
+          </div>
+          <h3 class="text-lg font-semibold text-base-content mb-2">Your Bookmarks</h3>
+          <p class="text-base-content/70 mb-4">Save your favorite verses and passages</p>
+          <a href="/quran/bookmarks" class="text-accent hover:text-accent/80 font-medium">
+            View Bookmarks
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>
