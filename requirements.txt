@@ -31,6 +31,7 @@ python-json-logger==3.3.0
 # Security and middleware
 slowapi==0.1.9
 python-jose[cryptography]==3.5.0
+passlib[bcrypt]==1.7.4
 
 # Utilities
 python-dotenv==1.0.0

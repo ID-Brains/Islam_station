@@ -7,8 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from .config import settings
 from .database import create_database_pool, close_database_pool
-from .routers import quran
-# from .routers import prayer, mosque, dhikr  # TODO: Implement these routers
+from .routers import quran, prayer, mosque, dhikr
 
 app = FastAPI(
     title="The Islamic Guidance Station",
@@ -27,9 +26,10 @@ app.add_middleware(
 
 # Include routers
 app.include_router(quran.router, prefix="/api/quran", tags=["Quran"])
-# app.include_router(prayer.router, prefix="/api/prayer", tags=["Prayer"])  # TODO: Implement prayer router
-# app.include_router(mosque.router, prefix="/api/mosque", tags=["Mosque"])  # TODO: Implement mosque router
-# app.include_router(dhikr.router, prefix="/api/dhikr", tags=["Dhikr"])  # TODO: Implement dhikr router
+app.include_router(prayer.router, prefix="/api/prayer", tags=["Prayer"])
+app.include_router(mosque.router, prefix="/api/mosque", tags=["Mosque"])
+app.include_router(dhikr.router, prefix="/api/dhikr", tags=["Dhikr"])
+
 
 @app.on_event("startup")
 async def startup_event():
@@ -37,10 +37,42 @@ async def startup_event():
     try:
         await create_database_pool()
         print("✅ Database pool initialized successfully")
+
+        # Load database schema if needed
+        try:
+            from pathlib import Path
+            schema_dir = Path(__file__).parent.parent.parent / "database" / "schema"
+
+            # Check if tables exist, if not load schema
+            from .database import execute_query_single
+            result = await execute_query_single(
+                "SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'surahs')"
+            )
+
+            if result and not result.get('exists'):
+                print("📊 Loading database schema...")
+                schema_files = ['tables.sql', 'init.sql', 'indexes.sql', 'functions.sql']
+
+                for schema_file in schema_files:
+                    schema_path = schema_dir / schema_file
+                    if schema_path.exists():
+                        with open(schema_path, 'r', encoding='utf-8') as f:
+                            schema_sql = f.read()
+                            from .database import load_schema
+                            await load_schema(schema_sql)
+                        print(f"   ✓ Loaded {schema_file}")
+
+                print("✅ Database schema loaded successfully")
+            else:
+                print("✅ Database schema already exists")
+
+        except Exception as schema_error:
+            print(f"⚠️  Warning: Schema loading skipped: {schema_error}")
+
     except Exception as e:
         print(f"⚠️  Warning: Failed to connect to database: {e}")
         print("⚠️  Server will start but database operations will fail")
-    # TODO: Load schema from database engineer
+
 
 @app.on_event("shutdown")
 async def shutdown_event():
@@ -50,6 +82,7 @@ async def shutdown_event():
         print("✅ Database pool closed successfully")
     except Exception as e:
         print(f"⚠️  Warning: Error closing database pool: {e}")
+
 
 @app.get("/")
 async def root():

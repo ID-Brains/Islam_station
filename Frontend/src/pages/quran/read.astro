@@ -1,32 +1,35 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-import QuranReader from '../../components/QuranReader.jsx';
+import Layout from "../../layouts/Layout.astro";
+import QuranReader from "../../components/QuranReader.jsx";
 
-const surah = Astro.url.searchParams.get('surah') || '1';
-const verse = Astro.url.searchParams.get('verse') || '1';
+const surah = Astro.url.searchParams.get("surah") || "1";
+const verse = Astro.url.searchParams.get("verse") || "1";
+---
 
 ---
 
 <Layout>
-  <div class="min-h-screen bg-gradient-to-br from-primary/5 via-base-100 to-secondary/5">
-    <div class="container mx-auto px-4 py-8">
-      <div class="text-center mb-8">
-        <h1 class="text-4xl font-bold text-base-content mb-4">
-          Quran Reader
-        </h1>
-        <p class="text-lg text-base-content/80 max-w-2xl mx-auto">
-          Read the Holy Quran with Arabic text, translations, and explanations.
-          Navigate through verses with ease and customize your reading experience.
-        </p>
-      </div>
+    <div class="min-h-screen bg-gradient-to-br from-primary/5 via-base-100 to-secondary/5">
+        <div class="container mx-auto px-4 py-8">
+            <div class="text-center mb-8">
+                <h1 class="text-4xl font-bold text-base-content mb-4">Quran Reader</h1>
+                <p class="text-lg text-base-content/80 max-w-2xl mx-auto">
+                    Read the Holy Quran with Arabic text, translations, and explanations. Navigate
+                    through verses with ease and customize your reading experience.
+                </p>
+            </div>
 
-      <QuranReader initialSurah={parseInt(surah)} initialVerse={parseInt(verse)} client:load />
+            <QuranReader
+                initialSurah={parseInt(surah)}
+                initialVerse={parseInt(verse)}
+                client:load
+            />
 
-      <div class="mt-12 text-center">
-        <a href="/quran/search" class="text-primary hover:text-primary/80 font-medium">
-          ← Back to Quran Search
-        </a>
-      </div>
+            <div class="mt-12 text-center">
+                <a href="/quran/search" class="text-primary hover:text-primary/80 font-medium">
+                    ← Back to Quran Search
+                </a>
+            </div>
+        </div>
     </div>
-  </div>
 </Layout>
