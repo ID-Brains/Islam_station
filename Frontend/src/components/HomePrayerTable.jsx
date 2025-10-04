@@ -4,7 +4,7 @@ import EnhancedPrayerTable from './EnhancedPrayerTable.jsx';
 
 const HomePrayerTable = () => {
   const [location, setLocation] = useState({ lat: 24.7136, lng: 46.6753 });
-  const [calculationMethod, setCalculationMethod] = useState('MuslimWorldLeague');
+  const [calculationMethod, setCalculationMethod] = useState('Egyptian');
   const [isLocationDetected, setIsLocationDetected] = useState(false);
   const [locationStatus, setLocationStatus] = useState('detecting');
 

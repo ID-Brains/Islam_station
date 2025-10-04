@@ -3,7 +3,7 @@ import { useEffect, useState, useCallback, useMemo } from 'react';
 const EnhancedPrayerTable = ({
   latitude = 24.7136,
   longitude = 46.6753,
-  calculationMethod = 'MuslimWorldLeague',
+  calculationMethod = 'Egyptian',
   prayerAdjustments = {},
   onNextPrayerChange
 }) => {
@@ -36,7 +36,7 @@ const EnhancedPrayerTable = ({
   // Calculate prayer times using simplified method
   const calculatePrayerTimes = useCallback((lat, lng, method, date = new Date()) => {
     try {
-      const methodConfig = calculationMethods[method] || calculationMethods.MuslimWorldLeague;
+      const methodConfig = calculationMethods[method] || calculationMethods.Egyptian;
 
       // Simplified calculation for demo
       // In production, use a proper prayer calculation library
@@ -93,12 +93,20 @@ const EnhancedPrayerTable = ({
     return formatTime(adjustedHours, adjustedMinutes);
   }, []);
 
-  // Helper function to format time
+  // Helper function to format time in 12-hour format
   const formatTime = useCallback((hours, minutes) => {
-    const h = hours.toString().padStart(2, '0');
+    const period = hours >= 12 ? 'PM' : 'AM';
+    const hour12 = hours % 12 || 12; // Convert 0 to 12 for midnight
     const m = minutes.toString().padStart(2, '0');
-    return `${h}:${m}`;
+    return `${hour12}:${m} ${period}`;
   }, []);
+
+  // Helper function to convert 24-hour time string to 12-hour format
+  const convertTo12Hour = useCallback((time24) => {
+    if (!time24 || !time24.includes(':')) return time24;
+    const [hours, minutes] = time24.split(':').map(Number);
+    return formatTime(hours, minutes);
+  }, [formatTime]);
 
   // Fetch prayer times
   const fetchPrayerTimes = useCallback(async () => {
@@ -116,13 +124,13 @@ const EnhancedPrayerTable = ({
         const prayerTimes = data.prayer_times;
 
         const prayerList = [
-          { name: 'Imsak', time: prayerTimes.imsak || calculateTime(5, 20) },
-          { name: 'Fajr', time: prayerTimes.fajr || calculateTime(5, 30) },
-          { name: 'Sunrise', time: prayerTimes.sunrise || calculateTime(6, 45) },
-          { name: 'Dhuhr', time: prayerTimes.dhuhr || calculateTime(12, 15) },
-          { name: 'Asr', time: prayerTimes.asr || calculateTime(15, 45) },
-          { name: 'Maghrib', time: prayerTimes.maghrib || calculateTime(18, 20) },
-          { name: 'Isha', time: prayerTimes.isha || calculateTime(19, 45) }
+          { name: 'Imsak', time: prayerTimes.imsak ? convertTo12Hour(prayerTimes.imsak) : calculateTime(5, 20) },
+          { name: 'Fajr', time: prayerTimes.fajr ? convertTo12Hour(prayerTimes.fajr) : calculateTime(5, 30) },
+          { name: 'Sunrise', time: prayerTimes.sunrise ? convertTo12Hour(prayerTimes.sunrise) : calculateTime(6, 45) },
+          { name: 'Dhuhr', time: prayerTimes.dhuhr ? convertTo12Hour(prayerTimes.dhuhr) : calculateTime(12, 15) },
+          { name: 'Asr', time: prayerTimes.asr ? convertTo12Hour(prayerTimes.asr) : calculateTime(15, 45) },
+          { name: 'Maghrib', time: prayerTimes.maghrib ? convertTo12Hour(prayerTimes.maghrib) : calculateTime(18, 20) },
+          { name: 'Isha', time: prayerTimes.isha ? convertTo12Hour(prayerTimes.isha) : calculateTime(19, 45) }
         ];
 
         setPrayers(prayerList);
@@ -163,8 +171,22 @@ const EnhancedPrayerTable = ({
     const currentMinutes = now.getHours() * 60 + now.getMinutes();
 
     const prayerMinutes = prayers.map(prayer => {
-      const [hours, minutes] = prayer.time.split(':').map(Number);
-      return parseInt(hours) * 60 + parseInt(minutes);
+      // Parse 12-hour format time (e.g., "5:30 AM" or "6:45 PM")
+      const timeMatch = prayer.time.match(/(\d+):(\d+)\s*(AM|PM)/i);
+      if (!timeMatch) return 0;
+      
+      let hours = parseInt(timeMatch[1]);
+      const minutes = parseInt(timeMatch[2]);
+      const period = timeMatch[3].toUpperCase();
+      
+      // Convert to 24-hour format for calculation
+      if (period === 'PM' && hours !== 12) {
+        hours += 12;
+      } else if (period === 'AM' && hours === 12) {
+        hours = 0;
+      }
+      
+      return hours * 60 + minutes;
     });
 
     let nextIndex = prayerMinutes.findIndex(minutes => minutes > currentMinutes);
@@ -329,7 +351,21 @@ const PrayerCountdown = ({ prayerTime }) => {
   useEffect(() => {
     const calculateCountdown = () => {
       const now = new Date();
-      const [hours, minutes] = prayerTime.split(':').map(Number);
+      
+      // Parse 12-hour format time (e.g., "5:30 AM" or "6:45 PM")
+      const timeMatch = prayerTime.match(/(\d+):(\d+)\s*(AM|PM)/i);
+      if (!timeMatch) return;
+      
+      let hours = parseInt(timeMatch[1]);
+      const minutes = parseInt(timeMatch[2]);
+      const period = timeMatch[3].toUpperCase();
+      
+      // Convert to 24-hour format for calculation
+      if (period === 'PM' && hours !== 12) {
+        hours += 12;
+      } else if (period === 'AM' && hours === 12) {
+        hours = 0;
+      }
 
       let prayerDate = new Date();
       prayerDate.setHours(hours, minutes, 0, 0);
