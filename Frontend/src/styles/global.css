@@ -1,5 +1,10 @@
 @import "tailwindcss";
 @plugin "daisyui";
+
+/* Arabic Font - Amiri */
+.font-arabic {
+  font-family: 'Amiri', serif;
+}
 @plugin "daisyui/theme" {
   name: "mytheme";
   default: true; /* set as default */
