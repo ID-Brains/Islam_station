@@ -1,7 +1,7 @@
 // PrayerSettings.jsx - React component for prayer calculation methods and settings
 import React, { useState, useEffect } from 'react';
 
-const PrayerSettings = ({ onLocationChange, onMethodChange, onAdjustmentsChange }) => {
+const PrayerSettings = ({ onLocationChange, onMethodChange, onAdjustmentsChange, initialLocation }) => {
   const [currentLocation, setCurrentLocation] = useState({ lat: 24.7136, lng: 46.6753 });
   const [selectedMethod, setSelectedMethod] = useState('Egyptian');
   const [isGettingLocation, setIsGettingLocation] = useState(false);
@@ -15,6 +15,42 @@ const PrayerSettings = ({ onLocationChange, onMethodChange, onAdjustmentsChange 
     maghrib: 0,
     isha: 0
   });
+  const [notificationsEnabled, setNotificationsEnabled] = useState(() => {
+    try {
+      return localStorage.getItem('systemNotifications') === 'true';
+    } catch (e) {
+      return false;
+    }
+  });
+
+  const handleNotificationsToggle = async () => {
+    const newVal = !notificationsEnabled;
+
+    // If turning off, just persist the change
+    if (!newVal) {
+      setNotificationsEnabled(false);
+      try { localStorage.setItem('systemNotifications', 'false'); } catch (e) {}
+      try { window.dispatchEvent(new CustomEvent('systemNotificationsChanged', { detail: { enabled: false } })); } catch (e) {}
+      return;
+    }
+
+    // If turning on, request permission on user gesture and only persist if granted
+    if ('Notification' in window) {
+      try {
+        const p = await Notification.requestPermission();
+        const granted = p === 'granted';
+        setNotificationsEnabled(granted);
+        try { localStorage.setItem('systemNotifications', granted ? 'true' : 'false'); } catch (e) {}
+        try { window.dispatchEvent(new CustomEvent('systemNotificationsChanged', { detail: { enabled: granted } })); } catch (e) {}
+      } catch (e) {
+        // ignore
+      }
+    } else {
+      // Not supported
+      setNotificationsEnabled(false);
+      try { localStorage.setItem('systemNotifications', 'false'); } catch (e) {}
+    }
+  };
 
   // Prayer calculation methods
   const prayerMethods = [
@@ -82,6 +118,10 @@ const PrayerSettings = ({ onLocationChange, onMethodChange, onAdjustmentsChange 
         if (onLocationChange) {
           onLocationChange(latitude, longitude);
         }
+        // Dispatch a global event so other components (e.g., HomePrayerTable) can react immediately
+        try {
+          window.dispatchEvent(new CustomEvent('locationUpdated', { detail: { lat: latitude, lng: longitude } }));
+        } catch (e) {}
       },
       (error) => {
         setIsGettingLocation(false);
@@ -125,6 +165,9 @@ const PrayerSettings = ({ onLocationChange, onMethodChange, onAdjustmentsChange 
     if (onLocationChange) {
       onLocationChange(lat, lng);
     }
+    try {
+      window.dispatchEvent(new CustomEvent('locationUpdated', { detail: { lat, lng } }));
+    } catch (e) {}
   };
 
   // Handle method change
@@ -165,7 +208,11 @@ const PrayerSettings = ({ onLocationChange, onMethodChange, onAdjustmentsChange 
 
   useEffect(() => {
     // Initialize with default location
-    if (onLocationChange) {
+    // If a parent provided an initialLocation, use it to seed the UI
+    if (initialLocation && initialLocation.lat && initialLocation.lng) {
+      setCurrentLocation({ lat: initialLocation.lat, lng: initialLocation.lng });
+      if (onLocationChange) onLocationChange(initialLocation.lat, initialLocation.lng);
+    } else if (onLocationChange) {
       onLocationChange(currentLocation.lat, currentLocation.lng);
     }
     if (onMethodChange) {
@@ -412,7 +459,100 @@ const PrayerSettings = ({ onLocationChange, onMethodChange, onAdjustmentsChange 
               onChange={() => { /* controlled toggle placeholder */ }}
             />
           </label>
+
+          <label className="flex items-center justify-between cursor-pointer">
+            <span className="text-sm">Enable system notifications</span>
+            <input
+              type="checkbox"
+              className="toggle toggle-sm toggle-secondary"
+              checked={notificationsEnabled}
+              onChange={handleNotificationsToggle}
+            />
+          </label>
+          <div className="text-xs text-base-content/60 mt-1">
+            {typeof window !== 'undefined' && 'Notification' in window ? (
+              <div className="flex items-center gap-3">
+                <span>Permission: <strong className="ml-1">{Notification.permission}</strong></span>
+                {Notification.permission !== 'granted' && (
+                  <button
+                    onClick={async () => {
+                      try {
+                        const p = await Notification.requestPermission();
+                        const granted = p === 'granted';
+                        setNotificationsEnabled(granted);
+                        try { localStorage.setItem('systemNotifications', granted ? 'true' : 'false'); } catch (e) {}
+                        try { window.dispatchEvent(new CustomEvent('systemNotificationsChanged', { detail: { enabled: granted } })); } catch (e) {}
+                      } catch (e) {}
+                    }}
+                    className="btn btn-link btn-xs"
+                  >
+                    Request permission
+                  </button>
+                )}
+              </div>
+            ) : (
+              <div>Notifications are not supported in this browser.</div>
+            )}
+          </div>
+          <div className="mt-2">
+            <button
+              onClick={() => {
+                try {
+                  if ('Notification' in window && Notification.permission === 'granted') {
+                    new Notification('Test Notification', { body: 'This is a test', icon: '/pwa-192x192.svg' }).onclick = () => window.focus();
+                  } else if ('Notification' in window) {
+                    Notification.requestPermission().then(p => {
+                      if (p === 'granted') {
+                        new Notification('Test Notification', { body: 'This is a test', icon: '/pwa-192x192.svg' }).onclick = () => window.focus();
+                        localStorage.setItem('systemNotifications', 'true');
+                        window.dispatchEvent(new CustomEvent('systemNotificationsChanged', { detail: { enabled: true } }));
+                      }
+                    });
+                  }
+                } catch (e) { console.error('Test notification failed', e); }
+              }}
+              className="btn btn-xs btn-outline mt-2"
+            >
+              Send test notification
+            </button>
+          </div>
         </div>
+      </div>
+
+      {/* Notifications Help for Mobile/Denied */}
+      <div className="mt-8">
+        {typeof window !== 'undefined' && (
+          (() => {
+            const insecure = typeof window !== 'undefined' && window.isSecureContext === false;
+            const unsupported = typeof window !== 'undefined' && !('Notification' in window);
+            const denied = typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'denied';
+            if (unsupported) {
+              return (
+                <div className="alert alert-warning">
+                  <span>Your browser does not support system notifications. On iOS Safari, Web Notifications are not available. The app will use in-app alerts instead.</span>
+                </div>
+              );
+            }
+            if (insecure) {
+              return (
+                <div className="alert alert-info">
+                  <span>Notifications require a secure origin (HTTPS) or localhost. On mobile, use an HTTPS URL (e.g., via a tunnel like ngrok) to enable notifications.</span>
+                </div>
+              );
+            }
+            if (denied) {
+              return (
+                <div className="alert alert-error">
+                  <div>
+                    <div className="font-semibold">Notifications are blocked</div>
+                    <div className="text-sm opacity-80">Open your browser's site settings for this page and set Notifications to Allow, then come back here and press "Request permission" again.</div>
+                  </div>
+                </div>
+              );
+            }
+            return null;
+          })()
+        )}
       </div>
     </div>
   );

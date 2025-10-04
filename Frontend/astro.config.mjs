@@ -23,19 +23,29 @@ export default defineConfig({
           theme_color: "#0ea5a4",
           icons: [
             {
-              src: "/pwa-192x192.png",
-              sizes: "192x192",
-              type: "image/png"
+              src: "/pwa-192x192.svg",
+              sizes: "any",
+              type: "image/svg+xml"
             },
             {
-              src: "/pwa-512x512.png",
-              sizes: "512x512",
-              type: "image/png"
+              src: "/pwa-512x512.svg",
+              sizes: "any",
+              type: "image/svg+xml"
             }
           ]
         },
+        includeAssets: [
+          'index.html',
+          'manifest.webmanifest',
+          'pwa-192x192.svg',
+          'pwa-512x512.svg',
+          'masjed.png'
+        ],
         workbox: {
           // default precaching; tune runtimeCaching for API routes if needed
+          additionalManifestEntries: [
+            { url: 'index.html', revision: null }
+          ]
         },
         // Make explicit filename so we can register it easily
         filename: 'sw.js'

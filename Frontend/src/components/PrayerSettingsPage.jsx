@@ -18,13 +18,12 @@ const PrayerSettingsPage = () => {
         const parsed = JSON.parse(storedLocation);
         setLocation({ lat: parsed.lat, lng: parsed.lng });
         setIsLocationDetected(true);
-        return;
       } catch (e) {
         console.error('Error parsing stored location:', e);
       }
     }
-
-    // If no stored location, try to get current location
+    // Always try to get current location (update on refresh). If permission denied
+    // or an error occurs, we'll keep the stored/default location.
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -98,6 +97,7 @@ const PrayerSettingsPage = () => {
           onLocationChange={handleLocationChange}
           onMethodChange={handleMethodChange}
           onAdjustmentsChange={handleAdjustmentsChange}
+          initialLocation={location}
         />
       </div>
 
