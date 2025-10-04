@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     )
 
     # Database
-    DATABASE_URL: str = "postgresql://islam:202520@192.168.1.11/quran"
+    DATABASE_URL: str = "postgresql://postgres.fqfwfaeuhwulthpuhawf:2521986222521986@aws-1-eu-west-1.pooler.supabase.com:6543/postgres?sslmode=require"
     DATABASE_POOL_SIZE: int = 25
     DATABASE_MAX_OVERFLOW: int = 30
 
