@@ -2,13 +2,7 @@
 Dependencies module for middleware and request dependencies
 """
 
-from .auth import get_current_user, verify_token, create_access_token
-from .rate_limit import limiter, rate_limit_dependency
+# Note: auth and rate_limit modules were removed as they were not being used
+# Add back when needed with actual implementations
 
-__all__ = [
-    "get_current_user",
-    "verify_token",
-    "create_access_token",
-    "limiter",
-    "rate_limit_dependency",
-]
+__all__ = []
