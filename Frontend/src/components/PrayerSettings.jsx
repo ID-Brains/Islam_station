@@ -1,7 +1,7 @@
 // PrayerSettings.jsx - React component for prayer calculation methods and settings
 import React, { useState, useEffect } from 'react';
 
-const PrayerSettings = ({ onLocationChange, onMethodChange }) => {
+const PrayerSettings = ({ onLocationChange, onMethodChange, onAdjustmentsChange }) => {
   const [currentLocation, setCurrentLocation] = useState({ lat: 24.7136, lng: 46.6753 });
   const [selectedMethod, setSelectedMethod] = useState('MuslimWorldLeague');
   const [isGettingLocation, setIsGettingLocation] = useState(false);
@@ -139,10 +139,16 @@ const PrayerSettings = ({ onLocationChange, onMethodChange }) => {
 
   // Handle adjustment changes
   const handleAdjustmentChange = (prayer, value) => {
-    setAdjustments(prev => ({
-      ...prev,
+    const newAdjustments = {
+      ...adjustments,
       [prayer]: parseInt(value) || 0
-    }));
+    };
+    setAdjustments(newAdjustments);
+    
+    // Notify parent component
+    if (onAdjustmentsChange) {
+      onAdjustmentsChange(newAdjustments);
+    }
   };
 
   // Toggle manual location

@@ -14,6 +14,11 @@ const EnhancedPrayerTable = ({
   const [error, setError] = useState('');
   const [lastUpdated, setLastUpdated] = useState(null);
 
+  // Update location when props change
+  useEffect(() => {
+    setLocation({ lat: latitude, lng: longitude });
+  }, [latitude, longitude]);
+
   // Prayer calculation methods configurations (memoized to avoid infinite fetch loop)
   const calculationMethods = useMemo(() => ({
     MuslimWorldLeague: { fajr: 18, isha: 17 },

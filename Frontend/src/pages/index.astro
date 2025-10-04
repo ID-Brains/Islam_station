@@ -2,7 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/UI/Navbar.astro';
 import Sidebar from '../components/UI/Sidebar.astro';
-import EnhancedPrayerTable from '../components/EnhancedPrayerTable.jsx';
+import HomePrayerTable from '../components/HomePrayerTable.jsx';
 ---
 
 <Layout>
@@ -35,12 +35,7 @@ import EnhancedPrayerTable from '../components/EnhancedPrayerTable.jsx';
 
                 <div class="card glass border border-white/15 dark:shadow-lg">
                     <div class="card-body">
-                        <EnhancedPrayerTable
-                            client:load
-                            latitude={24.7136}
-                            longitude={46.6753}
-                            onNextPrayerChange={() => {}}
-                        />
+                        <HomePrayerTable client:load />
                     </div>
                 </div>
 

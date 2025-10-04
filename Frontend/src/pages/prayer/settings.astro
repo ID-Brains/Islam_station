@@ -1,7 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import PrayerSettings from '../../components/PrayerSettings.jsx';
-import EnhancedPrayerTable from '../../components/EnhancedPrayerTable.jsx';
+import PrayerSettingsPage from '../../components/PrayerSettingsPage.jsx';
 ---
 
 <Layout>
@@ -18,31 +17,7 @@ import EnhancedPrayerTable from '../../components/EnhancedPrayerTable.jsx';
         </p>
       </div>
 
-      <div class="grid lg:grid-cols-3 gap-8">
-        <!-- Settings Column -->
-        <div class="lg:col-span-1">
-          <PrayerSettings client:load />
-        </div>
-
-        <!-- Prayer Times Column -->
-        <div class="lg:col-span-2">
-          <div class="bg-base-200 rounded-2xl p-6 shadow-xl">
-            <h2 class="text-2xl font-bold text-base-content mb-6 flex items-center gap-2">
-              <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-              </svg>
-              Prayer Times
-            </h2>
-
-            <EnhancedPrayerTable
-              latitude={24.7136}
-              longitude={46.6753}
-              calculationMethod="MuslimWorldLeague"
-              client:load
-            />
-          </div>
-        </div>
-      </div>
+      <PrayerSettingsPage client:load />
 
       <!-- Additional Features -->
       <div class="mt-12 grid md:grid-cols-3 gap-6">
