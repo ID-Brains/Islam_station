@@ -1,5 +1,10 @@
 @import "tailwindcss";
 @plugin "daisyui";
+
+/* Arabic Font - Amiri */
+.font-arabic {
+  font-family: 'Amiri', serif;
+}
 @plugin "daisyui/theme" {
   name: "mytheme";
   default: true; /* set as default */
@@ -101,3 +106,19 @@
 		--depth: 1;
 		--noise: 0;
 	}
+
+/* Custom Animations */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.6s ease-out forwards;
+}

@@ -214,7 +214,7 @@ const QuranReader = ({ initialSurah = 1, initialVerse = 1 }) => {
             <p
               className={`${fontSize} font-arabic leading-relaxed text-base-content text-right mb-4`}
               dir="rtl"
-              style={{ fontFamily: 'Uthman, KFGQPC, Noto Naskh Arabic, serif' }}
+              style={{ fontFamily: 'Amiri, serif' }}
             >
               <span className="text-primary/60">﴿{currentVerseData.verse_number}﴾</span>
               {' ' + currentVerseData.text}

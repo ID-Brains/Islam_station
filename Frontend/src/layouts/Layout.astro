@@ -11,7 +11,13 @@ import '../styles/global.css'
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
 		<link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 		<title>Islam Station</title>
+		<link rel="manifest" href="/manifest.webmanifest" />
+		<meta name="theme-color" content="#0ea5a4" />
+		<link rel="apple-touch-icon" href="/pwa-192x192.svg">
 	</head>
 	<body>
 		<slot />
@@ -21,6 +27,15 @@ import '../styles/global.css'
 		import { initTheme } from '../scripts/theme.js';
 		initTheme();
 	</script>
+	<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js')
+        .then((reg) => console.log('Service worker registered.', reg))
+        .catch((err) => console.warn('Service worker registration failed:', err));
+    });
+  }
+</script>
 </html>
 
 <style>
@@ -29,5 +44,8 @@ import '../styles/global.css'
 		margin: 0;
 		width: 100%;
 		height: 100%;
+	}
+	.font-arabic {
+		font-family: 'Amiri', serif;
 	}
 </style>

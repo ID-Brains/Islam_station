@@ -2,8 +2,10 @@
 import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/UI/Navbar.astro';
 import Sidebar from '../components/UI/Sidebar.astro';
-import EnhancedPrayerTable from '../components/EnhancedPrayerTable.jsx';
+import HomePrayerTable from '../components/HomePrayerTable.jsx';
 ---
+
+<!-- font-arabic -->
 
 <Layout>
     <Navbar />
@@ -35,12 +37,7 @@ import EnhancedPrayerTable from '../components/EnhancedPrayerTable.jsx';
 
                 <div class="card glass border border-white/15 dark:shadow-lg">
                     <div class="card-body">
-                        <EnhancedPrayerTable
-                            client:load
-                            latitude={24.7136}
-                            longitude={46.6753}
-                            onNextPrayerChange={() => {}}
-                        />
+                        <HomePrayerTable client:load />
                     </div>
                 </div>
 
@@ -83,18 +80,20 @@ import EnhancedPrayerTable from '../components/EnhancedPrayerTable.jsx';
                 </div>
             </div>
 
-            <div class="flex-1">
-                <div class="relative mx-auto max-w-md">
+            <div class="flex-1 flex items-stretch">
+                <div class="relative w-full">
                     <div class="absolute -inset-8 rounded-[2.5rem] bg-gradient-to-br from-primary/40 via-transparent to-secondary/40 blur-3xl"></div>
-                    <div class="relative rounded-[2.5rem] border border-white/20 bg-base-100/80 p-6 dark:shadow-2xl dark:shadow-black/20 backdrop-blur-xl">
-                        <div class="rounded-3xl bg-base-200/80 p-5 shadow-inner">
-                            <img src="/masjed.png" alt="Masjid" class="rounded-2xl" />
-                            <p id="quran-text" class="mt-2 text-sm text-base-content/70 font-arabic text-right" dir="rtl">
-                                جاري تحميل الآية...
-                            </p>
-                            <p id="ayah-text" class="mt-2 text-sm text-base-content/70 font-arabic text-right" dir="rtl">
-                                جاري تحميل اسم الآية...
-                            </p>
+                    <div class="relative h-full rounded-[2.5rem] border border-white/20 bg-base-100/80 p-6 dark:shadow-2xl dark:shadow-black/20 backdrop-blur-xl flex flex-col">
+                        <div class="flex-1 rounded-3xl bg-base-200/80 p-5 shadow-inner flex flex-col justify-between">
+                            <img src="/masjed.png" alt="Masjid" class="rounded-2xl w-full object-cover mb-4" />
+                            <div class="space-y-3 mt-auto">
+                                <p id="quran-text" class="text-base md:text-lg text-base-content/80 font-arabic text-right leading-loose" dir="rtl">
+                                    جاري تحميل الآية...
+                                </p>
+                                <p id="ayah-text" class="text-xs md:text-sm text-base-content/60 font-arabic text-right" dir="rtl">
+                                    جاري تحميل اسم الآية...
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -287,5 +286,5 @@ import EnhancedPrayerTable from '../components/EnhancedPrayerTable.jsx';
     </main>
 </Layout>
 
-<script src="/apis/Random_ayah.js" is:inline></script>
-<script src="/apis/Get_location.js" is:inline></script>
+<script src="/scripts/Random_ayah.js" is:inline></script>
+<script src="/scripts/Get_location.js" is:inline></script>

@@ -21,11 +21,13 @@
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "tailwindcss": "^4.1.13"
-  }
-  ,
+  },
   "overrides": {
     "sourcemap-codec": "npm:@jridgewell/sourcemap-codec@^1.5.0",
     "source-map": "npm:@jridgewell/source-map@^0.3.11",
     "glob": "^9.3.0"
+  },
+  "devDependencies": {
+    "vite-plugin-pwa": "^1.0.3"
   }
 }
