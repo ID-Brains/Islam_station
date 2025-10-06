@@ -22,18 +22,18 @@ jobs:
     runs-on : ubuntu-latest
     steps:
     - name : check
-      uses: actions/checkout@v5.0.0
+      uses: actions/checkout@v4
       with: 
         fetch_depth: 0  #fetch all history to be better
 
     - name : setup Node.js environment
-      uses: actions/setup-node@v5.0.0
+      uses: actions/setup-node@v4
       with:
         node-version: "22"
         cache: "npm" # we could say it will be faster 
 
     - name : setup the pages
-      uses: actions/configure-pages@v5.0.0
+      uses: actions/configure-pages@v1
 
 
     - name : install depend.
@@ -51,7 +51,7 @@ jobs:
     - name: build the artifact
       uses: actions/upload-artifact@v4.6.2
       with:
-        path: ./dist
+        path: ./Frontend/dist
 
   deploy:
     needs: build
@@ -62,7 +62,7 @@ jobs:
     steps:
     - name: deploy to pages
       id: deployment
-      uses: actions/deploy-pages@v4.0.5
+      uses: actions/deploy-pages@v4
 
 
   
