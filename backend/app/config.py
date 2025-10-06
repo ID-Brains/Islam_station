@@ -4,6 +4,7 @@ Configuration settings for The Islamic Guidance Station
 
 from typing import List
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from typing import Optional
 
 
 class Settings(BaseSettings):
@@ -28,7 +29,7 @@ class Settings(BaseSettings):
     # Application
     APP_NAME: str = "The Islamic Guidance Station"
     DEBUG: bool = False
-    SECRET_KEY: str = "your-secret-key-here"
+    SECRET_KEY: str  # Required from environment, no default for security
 
     # CORS
     ALLOWED_ORIGINS: list[str] = ["http://localhost:3000", "http://localhost:4321", "http://127.0.0.1:4321"]
@@ -39,6 +40,16 @@ class Settings(BaseSettings):
 
     # Logging
     LOG_LEVEL: str = "INFO"
+
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        # Validate critical security settings
+        if not self.SECRET_KEY or self.SECRET_KEY == "your-secret-key-here":
+            raise ValueError("SECRET_KEY must be set in environment variables and cannot be the default placeholder")
+        
+        if not self.DATABASE_URL:
+            raise ValueError("DATABASE_URL must be set in environment variables")
 
 
 settings = Settings()

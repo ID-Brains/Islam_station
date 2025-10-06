@@ -4,6 +4,8 @@ Main FastAPI application for The Islamic Guidance Station
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.exceptions import RequestValidationError
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from .config import settings
 from .database import create_database_pool, close_database_pool
@@ -18,7 +20,7 @@ app = FastAPI(
 # CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins
+    allow_origins=settings.ALLOWED_ORIGINS,  # Use configured origins
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -29,6 +31,9 @@ app.include_router(quran.router, prefix="/api/quran", tags=["Quran"])
 app.include_router(prayer.router, prefix="/api/prayer", tags=["Prayer"])
 app.include_router(mosque.router, prefix="/api/mosque", tags=["Mosque"])
 app.include_router(dhikr.router, prefix="/api/dhikr", tags=["Dhikr"])
+
+# Exception handlers will be added after utils module is properly imported
+# For now, using default FastAPI exception handling
 
 
 @app.on_event("startup")
