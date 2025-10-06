@@ -1,0 +1,72 @@
+name : try to pages
+
+on:
+  push :
+    branches: [ "main" ]
+  pull_request:
+    branches : [ "main" ]
+
+  workflow_dispatch:
+# for manually  triggres
+
+# all the permissions for github pages
+permissions:
+  contents : read
+  pages: write
+  id-token: write
+
+
+
+jobs:
+  build:
+    runs-on : ubuntu-latest
+    steps:
+    - name : check
+      uses: actions/checkout@v5.0.0
+      with: 
+        fetch_depth: 0  #fetch all history to be better
+
+    - name : setup node
+      uses: actions/node@5.0.0
+      with:
+        node-version: "22"
+        cache: "npm" # we could say it will be faster 
+
+    - name : setup the pages
+      uses: actions/configure-pages@v5.0.0
+
+
+    - name : install depend.
+      run: |
+        npm ci   
+        echo "Dependencies was successfully installed "
+
+    - name : build the astro
+      run: |
+        npm run build 
+        echo "done"
+
+    - name: build the artifact
+      uses: actions/upload-artifact@v4.6.2
+      with:
+        path: ./dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{steps.deployment.outputs.page_url}}
+    steps:
+    - name: deploy to pages
+      id: deployment
+      uses: actions/deploy-pages@v4.0.5
+
+
+  
+
+
+
+
+
+
