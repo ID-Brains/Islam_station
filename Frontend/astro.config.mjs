@@ -12,9 +12,9 @@ export default defineConfig({
             tailwindcss(),
             // Vite PWA plugin
             VitePWA({
-                registerType: "autoUpdate", // keep SW updated
+                registerType: "autoUpdate",
                 devOptions: {
-                    enabled: false, // switch to true only for local SW during dev if needed
+                    enabled: true, //warning : set to false in production
                 },
                 manifest: {
                     name: "Islam Station",

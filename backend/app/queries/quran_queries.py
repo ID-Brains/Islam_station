@@ -29,6 +29,16 @@ def get_search_query() -> str:
     return _load_query("full_text_search.sql")
 
 
+def get_advanced_search_query() -> str:
+    """
+    Get advanced search query with filtering capabilities
+
+    Expected parameters: query_text, limit, offset, search_type, language_filter, surah_filter
+    Returns: filtered verse results with ranking
+    """
+    return _load_query("advanced_search.sql")
+
+
 def get_surah_query() -> str:
     """
     Get query to fetch complete Surah with all verses

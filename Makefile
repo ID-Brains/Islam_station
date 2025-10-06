@@ -30,7 +30,7 @@ install-backend:
 	cd backend && pip install -r requirements.txt
 
 install-frontend:
-	npm install
+	cd Frontend && npm install
 
 # Development
 dev:
@@ -41,13 +41,13 @@ dev-backend:
 	cd backend && uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 
 dev-frontend:
-	npm run dev
+	cd Frontend && npm run dev
 
 # Building
 build: build-frontend
 
 build-frontend:
-	npm run build
+	cd Frontend && npm run build
 
 # Testing
 test: test-backend test-frontend
@@ -61,15 +61,15 @@ test-frontend:
 # Code quality
 lint:
 	cd backend && flake8 app/ tests/
-	npm run lint
+	cd Frontend && npm run lint
 
 format:
 	cd backend && black app/ tests/ && isort app/ tests/
-	npm run format
+	cd Frontend && npm run format
 
 # Cleanup
 clean:
-	rm -rf frontend/dist/
+	rm -rf Frontend/dist/
 	rm -rf backend/__pycache__/
 	rm -rf backend/**/*.pyc
 	find . -type d -name __pycache__ -exec rm -rf {} +
