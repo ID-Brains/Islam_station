@@ -26,8 +26,8 @@ jobs:
       with: 
         fetch_depth: 0  #fetch all history to be better
 
-    - name : setup node
-      uses: actions/setup-node@5.0.0
+    - name : setup Node.js environment
+      uses: actions/setup-node@v5.0.0
       with:
         node-version: "22"
         cache: "npm" # we could say it will be faster 
