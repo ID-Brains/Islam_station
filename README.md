@@ -149,10 +149,10 @@ Islam_station/
 ### Development Setup
 
 1. Clone the repository
-2. Set up Python environment: `pip install -r requirements.txt`
+2. Set up Python environment: `uv sync`
 3. Set up Node.js environment: `npm install`
 4. Start database: `docker-compose up -d db redis`
-5. Run backend: `uvicorn backend.app.main:app --reload`
+5. Run backend: `uv run uvicorn backend.app.main:app --reload`
 6. Run frontend: `npm run dev`
 7. Access at http://localhost:4321
 

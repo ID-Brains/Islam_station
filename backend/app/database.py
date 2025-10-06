@@ -22,6 +22,7 @@ async def create_database_pool() -> None:
             max_size=settings.DATABASE_POOL_SIZE,
             max_queries=50000,
             max_inactive_connection_lifetime=300.0,
+            statement_cache_size=0,
         )
 
 

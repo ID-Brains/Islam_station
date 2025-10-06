@@ -1,0 +1,37 @@
+[project]
+name = "islam-station"
+version = "0.1.0"
+description = "Islamic Guidance Station"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi==0.117.1",
+    "uvicorn[standard]==0.36.0",
+    "gunicorn==23.0.0",
+    "pydantic",
+    "pydantic-settings",
+    "httpx==0.28.1",
+    "aiohttp==3.12.15",
+    "asyncpg==0.30.0",
+    "psycopg==3.2.10",
+    "redis==6.4.0",
+    "aioredis==2.0.1",
+    "celery==5.3.4",
+    "python-decouple==3.8",
+    "python-multipart==0.0.20",
+    "structlog==25.4.0",
+    "python-json-logger==3.3.0",
+    "slowapi==0.1.9",
+    "python-jose[cryptography]==3.5.0",
+    "passlib[bcrypt]==1.7.4",
+    "python-dotenv==1.0.0",
+    "requests==2.31.0",
+    "praytimes",
+]
+
+[dependency-groups]
+dev = [
+    "pytest==8.4.2",
+    "pytest-asyncio==1.2.0",
+    "black==25.9.0",
+    "flake8==7.3.0",
+]

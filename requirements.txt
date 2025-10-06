@@ -2,8 +2,8 @@
 fastapi==0.117.1
 uvicorn[standard]==0.36.0
 gunicorn==23.0.0
-pydantic==2.5.0
-pydantic-settings==2.1.0
+pydantic
+pydantic-settings
 
 # HTTP clients for external APIs
 httpx==0.28.1
@@ -45,7 +45,6 @@ httpx==0.28.1
 black==25.9.0
 flake8==7.3.0
 
-# For data processing during development (removed - not used in code)
 # pandas==2.1.4
 requests==2.31.0
 

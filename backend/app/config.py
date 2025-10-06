@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     )
 
     # Database
-    DATABASE_URL: str = "postgresql://postgres.fqfwfaeuhwulthpuhawf:2521986222521986@aws-1-eu-west-1.pooler.supabase.com:6543/postgres?sslmode=require"
+    DATABASE_URL: str
     DATABASE_POOL_SIZE: int = 25
     DATABASE_MAX_OVERFLOW: int = 30
 
@@ -31,7 +31,7 @@ class Settings(BaseSettings):
     SECRET_KEY: str = "your-secret-key-here"
 
     # CORS
-    ALLOWED_ORIGINS: list[str] = ["http://localhost:3000", "http://localhost:4321"]
+    ALLOWED_ORIGINS: list[str] = ["http://localhost:3000", "http://localhost:4321", "http://127.0.0.1:4321"]
 
     # Rate Limiting
     RATE_LIMIT_REQUESTS: int = 100
