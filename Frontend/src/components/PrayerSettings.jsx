@@ -22,6 +22,7 @@ const PrayerSettings = ({ onLocationChange, onMethodChange, onAdjustmentsChange,
       return false;
     }
   });
+  const [notificationsSupported, setNotificationsSupported] = useState(false);
 
   const handleNotificationsToggle = async () => {
     const newVal = !notificationsEnabled;
@@ -218,6 +219,11 @@ const PrayerSettings = ({ onLocationChange, onMethodChange, onAdjustmentsChange,
     if (onMethodChange) {
       onMethodChange(selectedMethod);
     }
+  }, []);
+
+  useEffect(() => {
+    // Check if notifications are supported after mount to avoid hydration mismatch
+    setNotificationsSupported(typeof window !== 'undefined' && 'Notification' in window);
   }, []);
 
   return (
@@ -470,7 +476,7 @@ const PrayerSettings = ({ onLocationChange, onMethodChange, onAdjustmentsChange,
             />
           </label>
           <div className="text-xs text-base-content/60 mt-1">
-            {typeof window !== 'undefined' && 'Notification' in window ? (
+            {notificationsSupported ? (
               <div className="flex items-center gap-3">
                 <span>Permission: <strong className="ml-1">{Notification.permission}</strong></span>
                 {Notification.permission !== 'granted' && (
