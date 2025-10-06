@@ -4,8 +4,6 @@ Main FastAPI application for The Islamic Guidance Station
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.exceptions import RequestValidationError
-from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from .config import settings
 from .database import create_database_pool, close_database_pool
@@ -46,24 +44,32 @@ async def startup_event():
         # Load database schema if needed
         try:
             from pathlib import Path
+
             schema_dir = Path(__file__).parent.parent.parent / "database" / "schema"
 
             # Check if tables exist, if not load schema
             from .database import execute_query_single
+
             result = await execute_query_single(
                 "SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'surahs')"
             )
 
-            if result and not result.get('exists'):
+            if result and not result.get("exists"):
                 print("📊 Loading database schema...")
-                schema_files = ['tables.sql', 'init.sql', 'indexes.sql', 'functions.sql']
+                schema_files = [
+                    "tables.sql",
+                    "init.sql",
+                    "indexes.sql",
+                    "functions.sql",
+                ]
 
                 for schema_file in schema_files:
                     schema_path = schema_dir / schema_file
                     if schema_path.exists():
-                        with open(schema_path, 'r', encoding='utf-8') as f:
+                        with open(schema_path, "r", encoding="utf-8") as f:
                             schema_sql = f.read()
                             from .database import load_schema
+
                             await load_schema(schema_sql)
                         print(f"   ✓ Loaded {schema_file}")
 

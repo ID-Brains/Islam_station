@@ -9,10 +9,8 @@ Dependencies:
     - tqdm: For progress bars
 """
 
-
 import asyncio
 import logging
-import asyncpg
 from dataclasses import dataclass
 import argparse
 import os
@@ -47,6 +45,8 @@ class QuranSurah:
 
 class QuranPopulator:
     """Main class for Quran data population"""
+
+
 async def main():
     """Main entry point"""
     parser = argparse.ArgumentParser(description="Populate Quran database")
@@ -58,10 +58,11 @@ async def main():
     )
     parser.add_argument("--force", action="store_true", help="Overwrite existing data")
 
-    args = parser.parse_args()
+    parser.parse_args()
 
     # Get configuration from environment
-    db_url = os.getenv("DATABASE_URL", "postgresql://user:pass@localhost/islam_station")
+    os.getenv("DATABASE_URL", "postgresql://user:pass@localhost/islam_station")
+
 
 if __name__ == "__main__":
     asyncio.run(main())

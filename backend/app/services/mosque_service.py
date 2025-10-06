@@ -29,7 +29,7 @@ class MosqueService:
         Returns:
             List of nearby mosques with distance
         """
-        sql = '''
+        sql = """
             SELECT "mosque_id", "name", "address", "city", "country",
                    ST_Y(location::geometry) as latitude,
                    ST_X(location::geometry) as longitude,
@@ -42,17 +42,17 @@ class MosqueService:
             )
             ORDER BY distance_meters ASC
             LIMIT $4
-        '''
+        """
 
         mosques = await execute_query(sql, latitude, longitude, radius_meters, limit)
 
         # Enrich with calculated bearing
         for mosque in mosques:
             bearing = MosqueService._calculate_bearing(
-                latitude, longitude, mosque['latitude'], mosque['longitude']
+                latitude, longitude, mosque["latitude"], mosque["longitude"]
             )
-            mosque['bearing'] = bearing
-            mosque['distance_km'] = round(mosque['distance_meters'] / 1000, 2)
+            mosque["bearing"] = bearing
+            mosque["distance_km"] = round(mosque["distance_meters"] / 1000, 2)
 
         return mosques
 
@@ -80,13 +80,13 @@ class MosqueService:
         search_pattern = f"%{name}%"
         params = [search_pattern]
 
-        sql = '''
+        sql = """
             SELECT "mosque_id", "name", "address", "city", "country",
                    ST_Y(location::geometry) as latitude,
                    ST_X(location::geometry) as longitude
             FROM "mosques"
             WHERE "name" ILIKE $1
-        '''
+        """
 
         # Add filters
         if city:
@@ -98,12 +98,17 @@ class MosqueService:
             params.append(country)
 
         # Count total
-        count_sql = sql.replace('SELECT "mosque_id", "name", "address", "city", "country", ST_Y(location::geometry) as latitude, ST_X(location::geometry) as longitude', 'SELECT COUNT(*) as total')
+        count_sql = sql.replace(
+            'SELECT "mosque_id", "name", "address", "city", "country", ST_Y(location::geometry) as latitude, ST_X(location::geometry) as longitude',
+            "SELECT COUNT(*) as total",
+        )
         count_result = await execute_query_single(count_sql, *params)
-        total = count_result.get('total', 0) if count_result else 0
+        total = count_result.get("total", 0) if count_result else 0
 
         # Add pagination
-        sql += f' ORDER BY "name" ASC LIMIT ${len(params) + 1} OFFSET ${len(params) + 2}'
+        sql += (
+            f' ORDER BY "name" ASC LIMIT ${len(params) + 1} OFFSET ${len(params) + 2}'
+        )
         params.extend([limit, offset])
 
         mosques = await execute_query(sql, *params)
@@ -135,14 +140,14 @@ class MosqueService:
         Returns:
             List of mosques in the area
         """
-        sql = '''
+        sql = """
             SELECT "mosque_id", "name", "address", "city", "country",
                    ST_Y(location::geometry) as latitude,
                    ST_X(location::geometry) as longitude
             FROM "mosques"
             WHERE location && ST_MakeEnvelope($1, $2, $3, $4, 4326)
             ORDER BY "name" ASC
-        '''
+        """
 
         return await execute_query(sql, min_lng, min_lat, max_lng, max_lat)
 
@@ -157,14 +162,14 @@ class MosqueService:
         Returns:
             List of mosques in the city
         """
-        sql = '''
+        sql = """
             SELECT "mosque_id", "name", "address", "city", "country",
                    ST_Y(location::geometry) as latitude,
                    ST_X(location::geometry) as longitude
             FROM "mosques"
             WHERE LOWER("city") = LOWER($1)
             ORDER BY "name" ASC
-        '''
+        """
 
         return await execute_query(sql, city)
 
@@ -179,14 +184,14 @@ class MosqueService:
         Returns:
             List of mosques in the country
         """
-        sql = '''
+        sql = """
             SELECT "mosque_id", "name", "address", "city", "country",
                    ST_Y(location::geometry) as latitude,
                    ST_X(location::geometry) as longitude
             FROM "mosques"
             WHERE LOWER("country") = LOWER($1)
             ORDER BY "city" ASC, "name" ASC
-        '''
+        """
 
         return await execute_query(sql, country)
 
@@ -201,13 +206,13 @@ class MosqueService:
         Returns:
             Mosque details or None if not found
         """
-        sql = '''
+        sql = """
             SELECT "mosque_id", "name", "address", "city", "country",
                    ST_Y(location::geometry) as latitude,
                    ST_X(location::geometry) as longitude
             FROM "mosques"
             WHERE "mosque_id" = $1
-        '''
+        """
 
         return await execute_query_single(sql, mosque_id)
 
@@ -219,14 +224,14 @@ class MosqueService:
         Returns:
             List of cities with mosque counts
         """
-        sql = '''
+        sql = """
             SELECT DISTINCT "city", "country", COUNT(*) as mosque_count
             FROM "mosques"
             WHERE "city" IS NOT NULL AND "city" != ''
             GROUP BY "city", "country"
             ORDER BY mosque_count DESC, "city" ASC
             LIMIT 100
-        '''
+        """
 
         return await execute_query(sql)
 
@@ -238,13 +243,13 @@ class MosqueService:
         Returns:
             List of countries with mosque counts
         """
-        sql = '''
+        sql = """
             SELECT DISTINCT "country", COUNT(*) as mosque_count
             FROM "mosques"
             WHERE "country" IS NOT NULL AND "country" != ''
             GROUP BY "country"
             ORDER BY mosque_count DESC, "country" ASC
-        '''
+        """
 
         return await execute_query(sql)
 
@@ -267,9 +272,9 @@ class MosqueService:
             return []
 
         # Create LineString from waypoints
-        coords = ','.join([f'{lng} {lat}' for lat, lng in waypoints])
+        ",".join([f"{lng} {lat}" for lat, lng in waypoints])
 
-        sql = f'''
+        sql = f"""
             WITH route AS (
                 SELECT ST_Buffer(
                     ST_MakeLine(ARRAY[
@@ -290,7 +295,7 @@ class MosqueService:
             FROM "mosques", route
             WHERE ST_DWithin(location::geography, route.buffer_zone, 0)
             ORDER BY distance_from_route ASC
-        '''
+        """
 
         return await execute_query(sql, buffer_meters)
 
@@ -316,7 +321,9 @@ class MosqueService:
         delta_lon = lon2_rad - lon1_rad
 
         y = math.sin(delta_lon) * math.cos(lat2_rad)
-        x = math.cos(lat1_rad) * math.sin(lat2_rad) - math.sin(lat1_rad) * math.cos(lat2_rad) * math.cos(delta_lon)
+        x = math.cos(lat1_rad) * math.sin(lat2_rad) - math.sin(lat1_rad) * math.cos(
+            lat2_rad
+        ) * math.cos(delta_lon)
 
         bearing = math.atan2(y, x)
         bearing = math.degrees(bearing)
@@ -325,7 +332,9 @@ class MosqueService:
         return round(bearing, 2)
 
     @staticmethod
-    def _calculate_distance(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
+    def _calculate_distance(
+        lat1: float, lon1: float, lat2: float, lon2: float
+    ) -> float:
         """
         Calculate distance between two points using Haversine formula
 
@@ -348,7 +357,10 @@ class MosqueService:
         dlat = lat2_rad - lat1_rad
         dlon = lon2_rad - lon1_rad
 
-        a = math.sin(dlat / 2) ** 2 + math.cos(lat1_rad) * math.cos(lat2_rad) * math.sin(dlon / 2) ** 2
+        a = (
+            math.sin(dlat / 2) ** 2
+            + math.cos(lat1_rad) * math.cos(lat2_rad) * math.sin(dlon / 2) ** 2
+        )
         c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
 
         return earth_radius * c
@@ -376,36 +388,36 @@ class MosqueService:
         Returns:
             Statistics about mosques in database
         """
-        sql = '''
+        sql = """
             SELECT
                 COUNT(*) as total_mosques,
                 COUNT(DISTINCT "city") as unique_cities,
                 COUNT(DISTINCT "country") as unique_countries
             FROM "mosques"
-        '''
+        """
 
         stats = await execute_query_single(sql)
 
         # Get top countries
-        top_countries_sql = '''
+        top_countries_sql = """
             SELECT "country", COUNT(*) as count
             FROM "mosques"
             WHERE "country" IS NOT NULL
             GROUP BY "country"
             ORDER BY count DESC
             LIMIT 10
-        '''
+        """
         top_countries = await execute_query(top_countries_sql)
 
         # Get top cities
-        top_cities_sql = '''
+        top_cities_sql = """
             SELECT "city", "country", COUNT(*) as count
             FROM "mosques"
             WHERE "city" IS NOT NULL
             GROUP BY "city", "country"
             ORDER BY count DESC
             LIMIT 10
-        '''
+        """
         top_cities = await execute_query(top_cities_sql)
 
         return {

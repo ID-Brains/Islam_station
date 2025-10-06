@@ -3,7 +3,7 @@ Mosque API Router for The Islamic Guidance Station
 """
 
 from fastapi import APIRouter, Query, HTTPException
-from typing import Any, Dict, List
+from typing import Any, Dict
 
 from ..database import execute_query, execute_query_single
 from ..queries.mosque_queries import (
@@ -18,9 +18,15 @@ router = APIRouter()
 
 @router.get("/nearby")
 async def get_nearby_mosques(
-    latitude: float = Query(..., description="Latitude of your location", ge=-90, le=90),
-    longitude: float = Query(..., description="Longitude of your location", ge=-180, le=180),
-    radius: int = Query(default=5000, description="Search radius in meters", ge=100, le=50000),
+    latitude: float = Query(
+        ..., description="Latitude of your location", ge=-90, le=90
+    ),
+    longitude: float = Query(
+        ..., description="Longitude of your location", ge=-180, le=180
+    ),
+    radius: int = Query(
+        default=5000, description="Search radius in meters", ge=100, le=50000
+    ),
 ) -> Dict[str, Any]:
     """
     Find mosques near your location using geospatial search
@@ -51,8 +57,7 @@ async def get_nearby_mosques(
         }
     except Exception as e:
         raise HTTPException(
-            status_code=500,
-            detail=f"Failed to search nearby mosques: {str(e)}"
+            status_code=500, detail=f"Failed to search nearby mosques: {str(e)}"
         )
 
 
@@ -100,7 +105,9 @@ async def search_mosques(
 
         # Add ordering and pagination
         param_count = len(params)
-        query += f' ORDER BY "name" ASC LIMIT ${param_count + 1} OFFSET ${param_count + 2}'
+        query += (
+            f' ORDER BY "name" ASC LIMIT ${param_count + 1} OFFSET ${param_count + 2}'
+        )
         params.extend([limit, offset])
 
         # Execute query
@@ -118,10 +125,7 @@ async def search_mosques(
             "count": len(mosques),
         }
     except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail=f"Mosque search failed: {str(e)}"
-        )
+        raise HTTPException(status_code=500, detail=f"Mosque search failed: {str(e)}")
 
 
 @router.get("/{mosque_id}")
@@ -155,18 +159,19 @@ async def get_mosque_by_id(
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail=f"Failed to fetch mosque: {str(e)}"
-        )
+        raise HTTPException(status_code=500, detail=f"Failed to fetch mosque: {str(e)}")
 
 
 @router.get("/area/bbox")
 async def get_mosques_in_area(
     min_lat: float = Query(..., description="Minimum latitude (south)", ge=-90, le=90),
-    min_lng: float = Query(..., description="Minimum longitude (west)", ge=-180, le=180),
+    min_lng: float = Query(
+        ..., description="Minimum longitude (west)", ge=-180, le=180
+    ),
     max_lat: float = Query(..., description="Maximum latitude (north)", ge=-90, le=90),
-    max_lng: float = Query(..., description="Maximum longitude (east)", ge=-180, le=180),
+    max_lng: float = Query(
+        ..., description="Maximum longitude (east)", ge=-180, le=180
+    ),
 ) -> Dict[str, Any]:
     """
     Get all mosques within a bounding box (rectangular area)
@@ -184,13 +189,11 @@ async def get_mosques_in_area(
         # Validate bounding box
         if min_lat >= max_lat:
             raise HTTPException(
-                status_code=400,
-                detail="min_lat must be less than max_lat"
+                status_code=400, detail="min_lat must be less than max_lat"
             )
         if min_lng >= max_lng:
             raise HTTPException(
-                status_code=400,
-                detail="min_lng must be less than max_lng"
+                status_code=400, detail="min_lng must be less than max_lng"
             )
 
         # Get bounding box query
@@ -211,8 +214,7 @@ async def get_mosques_in_area(
         raise
     except Exception as e:
         raise HTTPException(
-            status_code=500,
-            detail=f"Failed to fetch mosques in area: {str(e)}"
+            status_code=500, detail=f"Failed to fetch mosques in area: {str(e)}"
         )
 
 
@@ -225,14 +227,14 @@ async def get_mosque_cities() -> Dict[str, Any]:
         List of unique cities
     """
     try:
-        query = '''
+        query = """
             SELECT DISTINCT "city", "country", COUNT(*) as mosque_count
             FROM "mosques"
             WHERE "city" IS NOT NULL AND "city" != ''
             GROUP BY "city", "country"
             ORDER BY mosque_count DESC, "city" ASC
             LIMIT 100
-        '''
+        """
 
         cities = await execute_query(query)
 
@@ -241,10 +243,7 @@ async def get_mosque_cities() -> Dict[str, Any]:
             "count": len(cities),
         }
     except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail=f"Failed to fetch cities: {str(e)}"
-        )
+        raise HTTPException(status_code=500, detail=f"Failed to fetch cities: {str(e)}")
 
 
 @router.get("/countries")
@@ -256,13 +255,13 @@ async def get_mosque_countries() -> Dict[str, Any]:
         List of unique countries
     """
     try:
-        query = '''
+        query = """
             SELECT DISTINCT "country", COUNT(*) as mosque_count
             FROM "mosques"
             WHERE "country" IS NOT NULL AND "country" != ''
             GROUP BY "country"
             ORDER BY mosque_count DESC, "country" ASC
-        '''
+        """
 
         countries = await execute_query(query)
 
@@ -272,6 +271,5 @@ async def get_mosque_countries() -> Dict[str, Any]:
         }
     except Exception as e:
         raise HTTPException(
-            status_code=500,
-            detail=f"Failed to fetch countries: {str(e)}"
+            status_code=500, detail=f"Failed to fetch countries: {str(e)}"
         )

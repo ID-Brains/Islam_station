@@ -5,4 +5,3 @@ prayer models and datatype
 2- remaning time for next prayer
 
 """
-

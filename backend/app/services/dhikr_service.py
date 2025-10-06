@@ -21,14 +21,14 @@ class DhikrService:
         Returns:
             Random dhikr from category
         """
-        sql = '''
+        sql = """
             SELECT "dhikr_id", "category_id", "text_ar", "text_en",
                    "benefits_ar", "benefits_en", "reference"
             FROM "dhikr"
             WHERE "category_id" = $1
             ORDER BY RANDOM()
             LIMIT 1
-        '''
+        """
 
         return await execute_query_single(sql, category_id)
 
@@ -58,22 +58,20 @@ class DhikrService:
         else:
             category_id = 4  # General adhkar
 
-        sql = '''
+        sql = """
             SELECT "dhikr_id", "category_id", "text_ar", "text_en",
                    "benefits_ar", "benefits_en", "reference"
             FROM "dhikr"
             WHERE "category_id" = $1
             ORDER BY "dhikr_id" ASC
             LIMIT 10
-        '''
+        """
 
         return await execute_query(sql, category_id)
 
     @staticmethod
     async def get_dhikr_by_category(
-        category_id: int,
-        limit: int = 20,
-        offset: int = 0
+        category_id: int, limit: int = 20, offset: int = 0
     ) -> Dict[str, Any]:
         """
         Get all dhikr from a specific category with pagination
@@ -87,23 +85,23 @@ class DhikrService:
             Dhikr list with metadata
         """
         # Get total count
-        count_sql = '''
+        count_sql = """
             SELECT COUNT(*) as total
             FROM "dhikr"
             WHERE "category_id" = $1
-        '''
+        """
         count_result = await execute_query_single(count_sql, category_id)
-        total = count_result.get('total', 0) if count_result else 0
+        total = count_result.get("total", 0) if count_result else 0
 
         # Get dhikr
-        sql = '''
+        sql = """
             SELECT "dhikr_id", "category_id", "text_ar", "text_en",
                    "benefits_ar", "benefits_en", "reference"
             FROM "dhikr"
             WHERE "category_id" = $1
             ORDER BY "dhikr_id" ASC
             LIMIT $2 OFFSET $3
-        '''
+        """
 
         dhikr_list = await execute_query(sql, category_id, limit, offset)
 
@@ -112,15 +110,12 @@ class DhikrService:
             "total": total,
             "limit": limit,
             "offset": offset,
-            "has_more": (offset + len(dhikr_list)) < total
+            "has_more": (offset + len(dhikr_list)) < total,
         }
 
     @staticmethod
     async def search_dhikr(
-        query: str,
-        language: str = "both",
-        limit: int = 20,
-        offset: int = 0
+        query: str, language: str = "both", limit: int = 20, offset: int = 0
     ) -> Dict[str, Any]:
         """
         Search dhikr by text content
@@ -138,45 +133,45 @@ class DhikrService:
 
         # Build query based on language
         if language == "arabic":
-            sql = '''
+            sql = """
                 SELECT "dhikr_id", "category_id", "text_ar", "text_en",
                        "benefits_ar", "benefits_en", "reference"
                 FROM "dhikr"
                 WHERE "text_ar" ILIKE $1 OR "benefits_ar" ILIKE $1
                 ORDER BY "dhikr_id" ASC
-            '''
+            """
             params = [search_pattern]
         elif language == "english":
-            sql = '''
+            sql = """
                 SELECT "dhikr_id", "category_id", "text_ar", "text_en",
                        "benefits_ar", "benefits_en", "reference"
                 FROM "dhikr"
                 WHERE "text_en" ILIKE $1 OR "benefits_en" ILIKE $1
                 ORDER BY "dhikr_id" ASC
-            '''
+            """
             params = [search_pattern]
         else:  # both
-            sql = '''
+            sql = """
                 SELECT "dhikr_id", "category_id", "text_ar", "text_en",
                        "benefits_ar", "benefits_en", "reference"
                 FROM "dhikr"
                 WHERE "text_ar" ILIKE $1 OR "text_en" ILIKE $1
                    OR "benefits_ar" ILIKE $1 OR "benefits_en" ILIKE $1
                 ORDER BY "dhikr_id" ASC
-            '''
+            """
             params = [search_pattern]
 
         # Get count
         count_sql = sql.replace(
             'SELECT "dhikr_id", "category_id", "text_ar", "text_en", "benefits_ar", "benefits_en", "reference"',
-            'SELECT COUNT(*) as total'
-        ).replace('ORDER BY "dhikr_id" ASC', '')
+            "SELECT COUNT(*) as total",
+        ).replace('ORDER BY "dhikr_id" ASC', "")
 
         count_result = await execute_query_single(count_sql, *params)
-        total = count_result.get('total', 0) if count_result else 0
+        total = count_result.get("total", 0) if count_result else 0
 
         # Add pagination
-        sql += f' LIMIT ${len(params) + 1} OFFSET ${len(params) + 2}'
+        sql += f" LIMIT ${len(params) + 1} OFFSET ${len(params) + 2}"
         params.extend([limit, offset])
 
         results = await execute_query(sql, *params)
@@ -188,7 +183,7 @@ class DhikrService:
             "offset": offset,
             "has_more": (offset + len(results)) < total,
             "query": query,
-            "language": language
+            "language": language,
         }
 
     @staticmethod
@@ -199,7 +194,7 @@ class DhikrService:
         Returns:
             List of dhikr with benefits
         """
-        sql = '''
+        sql = """
             SELECT d."dhikr_id", d."category_id", d."text_ar", d."text_en",
                    d."benefits_ar", d."benefits_en", d."reference",
                    c."name_ar" as category_name_ar, c."name_en" as category_name_en
@@ -208,7 +203,7 @@ class DhikrService:
             WHERE (d."benefits_ar" IS NOT NULL AND d."benefits_ar" != '')
                OR (d."benefits_en" IS NOT NULL AND d."benefits_en" != '')
             ORDER BY d."category_id" ASC, d."dhikr_id" ASC
-        '''
+        """
 
         return await execute_query(sql)
 
@@ -225,13 +220,13 @@ class DhikrService:
         """
         search_pattern = f"%{reference}%"
 
-        sql = '''
+        sql = """
             SELECT "dhikr_id", "category_id", "text_ar", "text_en",
                    "benefits_ar", "benefits_en", "reference"
             FROM "dhikr"
             WHERE "reference" ILIKE $1
             ORDER BY "dhikr_id" ASC
-        '''
+        """
 
         return await execute_query(sql, search_pattern)
 
@@ -243,14 +238,14 @@ class DhikrService:
         Returns:
             List of categories with dhikr counts
         """
-        sql = '''
+        sql = """
             SELECT c."category_id", c."name_ar", c."name_en",
                    COUNT(d."dhikr_id") as dhikr_count
             FROM "categories" c
             LEFT JOIN "dhikr" d ON c."category_id" = d."category_id"
             GROUP BY c."category_id", c."name_ar", c."name_en"
             ORDER BY c."category_id" ASC
-        '''
+        """
 
         return await execute_query(sql)
 
@@ -266,14 +261,14 @@ class DhikrService:
             List of morning adhkar
         """
         # Assuming category_id 1 is for morning adhkar
-        sql = '''
+        sql = """
             SELECT "dhikr_id", "category_id", "text_ar", "text_en",
                    "benefits_ar", "benefits_en", "reference"
             FROM "dhikr"
             WHERE "category_id" = 1
             ORDER BY "dhikr_id" ASC
             LIMIT $1
-        '''
+        """
 
         return await execute_query(sql, limit)
 
@@ -289,19 +284,21 @@ class DhikrService:
             List of evening adhkar
         """
         # Assuming category_id 2 is for evening adhkar
-        sql = '''
+        sql = """
             SELECT "dhikr_id", "category_id", "text_ar", "text_en",
                    "benefits_ar", "benefits_en", "reference"
             FROM "dhikr"
             WHERE "category_id" = 2
             ORDER BY "dhikr_id" ASC
             LIMIT $1
-        '''
+        """
 
         return await execute_query(sql, limit)
 
     @staticmethod
-    async def get_random_dhikr(category_id: Optional[int] = None) -> Optional[Dict[str, Any]]:
+    async def get_random_dhikr(
+        category_id: Optional[int] = None,
+    ) -> Optional[Dict[str, Any]]:
         """
         Get a random dhikr, optionally from a specific category
 
@@ -312,23 +309,23 @@ class DhikrService:
             Random dhikr
         """
         if category_id:
-            sql = '''
+            sql = """
                 SELECT "dhikr_id", "category_id", "text_ar", "text_en",
                        "benefits_ar", "benefits_en", "reference"
                 FROM "dhikr"
                 WHERE "category_id" = $1
                 ORDER BY RANDOM()
                 LIMIT 1
-            '''
+            """
             return await execute_query_single(sql, category_id)
         else:
-            sql = '''
+            sql = """
                 SELECT "dhikr_id", "category_id", "text_ar", "text_en",
                        "benefits_ar", "benefits_en", "reference"
                 FROM "dhikr"
                 ORDER BY RANDOM()
                 LIMIT 1
-            '''
+            """
             return await execute_query_single(sql)
 
     @staticmethod
@@ -346,9 +343,9 @@ class DhikrService:
             return []
 
         # Create parameter placeholders
-        placeholders = ','.join([f'${i+1}' for i in range(len(dhikr_ids))])
+        placeholders = ",".join([f"${i+1}" for i in range(len(dhikr_ids))])
 
-        sql = f'''
+        sql = f"""
             SELECT d."dhikr_id", d."category_id", d."text_ar", d."text_en",
                    d."benefits_ar", d."benefits_en", d."reference",
                    c."name_ar" as category_name_ar, c."name_en" as category_name_en
@@ -356,7 +353,7 @@ class DhikrService:
             JOIN "categories" c ON d."category_id" = c."category_id"
             WHERE d."dhikr_id" IN ({placeholders})
             ORDER BY d."dhikr_id" ASC
-        '''
+        """
 
         return await execute_query(sql, *dhikr_ids)
 
@@ -368,31 +365,28 @@ class DhikrService:
         Returns:
             Statistics about dhikr in database
         """
-        sql = '''
+        sql = """
             SELECT
                 COUNT(*) as total_dhikr,
                 COUNT(DISTINCT "category_id") as total_categories,
                 COUNT(CASE WHEN "benefits_ar" IS NOT NULL THEN 1 END) as dhikr_with_benefits,
                 COUNT(CASE WHEN "reference" IS NOT NULL THEN 1 END) as dhikr_with_references
             FROM "dhikr"
-        '''
+        """
 
         stats = await execute_query_single(sql)
 
         # Get category breakdown
-        category_sql = '''
+        category_sql = """
             SELECT c."name_en", c."name_ar", COUNT(d."dhikr_id") as count
             FROM "categories" c
             LEFT JOIN "dhikr" d ON c."category_id" = d."category_id"
             GROUP BY c."category_id", c."name_en", c."name_ar"
             ORDER BY count DESC
-        '''
+        """
         category_breakdown = await execute_query(category_sql)
 
-        return {
-            "overview": stats,
-            "category_breakdown": category_breakdown
-        }
+        return {"overview": stats, "category_breakdown": category_breakdown}
 
     @staticmethod
     def get_dhikr_of_the_day_deterministic(date_obj: Optional[date] = None) -> int:
@@ -427,14 +421,14 @@ class DhikrService:
         """
         dhikr_id = DhikrService.get_dhikr_of_the_day_deterministic()
 
-        sql = '''
+        sql = """
             SELECT d."dhikr_id", d."category_id", d."text_ar", d."text_en",
                    d."benefits_ar", d."benefits_en", d."reference",
                    c."name_ar" as category_name_ar, c."name_en" as category_name_en
             FROM "dhikr" d
             JOIN "categories" c ON d."category_id" = c."category_id"
             WHERE d."dhikr_id" = $1
-        '''
+        """
 
         result = await execute_query_single(sql, dhikr_id)
 

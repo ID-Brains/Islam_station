@@ -4,9 +4,8 @@ Rate limiting dependencies for The Islamic Guidance Station
 
 from typing import Callable
 from fastapi import Request, HTTPException, status
-from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi import Limiter
 from slowapi.util import get_remote_address
-from slowapi.errors import RateLimitExceeded
 import time
 from collections import defaultdict
 from threading import Lock
@@ -17,7 +16,9 @@ from ..config import settings
 # Initialize slowapi limiter
 limiter = Limiter(
     key_func=get_remote_address,
-    default_limits=[f"{settings.RATE_LIMIT_REQUESTS}/{settings.RATE_LIMIT_WINDOW}seconds"],
+    default_limits=[
+        f"{settings.RATE_LIMIT_REQUESTS}/{settings.RATE_LIMIT_WINDOW}seconds"
+    ],
     storage_uri="memory://",  # Use memory storage (upgrade to Redis in production)
 )
 
@@ -32,10 +33,7 @@ class InMemoryRateLimiter:
         self.lock = Lock()
 
     def is_allowed(
-        self,
-        key: str,
-        max_requests: int = 100,
-        window_seconds: int = 60
+        self, key: str, max_requests: int = 100, window_seconds: int = 60
     ) -> bool:
         """
         Check if request is allowed based on rate limit
@@ -54,8 +52,7 @@ class InMemoryRateLimiter:
         with self.lock:
             # Clean old requests
             self.requests[key] = [
-                req_time for req_time in self.requests[key]
-                if req_time > cutoff_time
+                req_time for req_time in self.requests[key] if req_time > cutoff_time
             ]
 
             # Check if limit exceeded
@@ -67,10 +64,7 @@ class InMemoryRateLimiter:
             return True
 
     def get_remaining(
-        self,
-        key: str,
-        max_requests: int = 100,
-        window_seconds: int = 60
+        self, key: str, max_requests: int = 100, window_seconds: int = 60
     ) -> dict:
         """
         Get remaining requests and reset time
@@ -89,19 +83,20 @@ class InMemoryRateLimiter:
         with self.lock:
             # Clean old requests
             self.requests[key] = [
-                req_time for req_time in self.requests[key]
-                if req_time > cutoff_time
+                req_time for req_time in self.requests[key] if req_time > cutoff_time
             ]
 
             remaining = max_requests - len(self.requests[key])
-            oldest_request = min(self.requests[key]) if self.requests[key] else current_time
+            oldest_request = (
+                min(self.requests[key]) if self.requests[key] else current_time
+            )
             reset_time = oldest_request + window_seconds
 
             return {
                 "remaining": max(0, remaining),
                 "reset": int(reset_time),
                 "limit": max_requests,
-                "used": len(self.requests[key])
+                "used": len(self.requests[key]),
             }
 
     def reset(self, key: str):
@@ -139,6 +134,7 @@ async def rate_limit_dependency(
     if auth_header and auth_header.startswith("Bearer "):
         try:
             from .auth import verify_token
+
             token = auth_header.split(" ")[1]
             payload = verify_token(token)
             identifier = f"user:{payload.get('sub')}"
@@ -156,14 +152,14 @@ async def rate_limit_dependency(
                 "limit": rate_info["limit"],
                 "remaining": rate_info["remaining"],
                 "reset": rate_info["reset"],
-                "retry_after": rate_info["reset"] - int(time.time())
+                "retry_after": rate_info["reset"] - int(time.time()),
             },
             headers={
                 "X-RateLimit-Limit": str(rate_info["limit"]),
                 "X-RateLimit-Remaining": str(rate_info["remaining"]),
                 "X-RateLimit-Reset": str(rate_info["reset"]),
-                "Retry-After": str(max(0, rate_info["reset"] - int(time.time())))
-            }
+                "Retry-After": str(max(0, rate_info["reset"] - int(time.time()))),
+            },
         )
 
     # Add rate limit headers to response
@@ -182,6 +178,7 @@ def create_rate_limiter(max_requests: int, window_seconds: int) -> Callable:
     Returns:
         Rate limiter dependency function
     """
+
     async def custom_rate_limit(request: Request):
         await rate_limit_dependency(request, max_requests, window_seconds)
 
@@ -189,9 +186,15 @@ def create_rate_limiter(max_requests: int, window_seconds: int) -> Callable:
 
 
 # Preset rate limiters for different use cases
-strict_rate_limit = create_rate_limiter(max_requests=10, window_seconds=60)  # 10 req/min
-moderate_rate_limit = create_rate_limiter(max_requests=60, window_seconds=60)  # 60 req/min
-relaxed_rate_limit = create_rate_limiter(max_requests=200, window_seconds=60)  # 200 req/min
+strict_rate_limit = create_rate_limiter(
+    max_requests=10, window_seconds=60
+)  # 10 req/min
+moderate_rate_limit = create_rate_limiter(
+    max_requests=60, window_seconds=60
+)  # 60 req/min
+relaxed_rate_limit = create_rate_limiter(
+    max_requests=200, window_seconds=60
+)  # 200 req/min
 
 
 class RateLimitMiddleware:
@@ -211,6 +214,7 @@ class RateLimitMiddleware:
             if message["type"] == "http.response.start":
                 # Get request to access state
                 from starlette.requests import Request
+
                 request = Request(scope, receive)
 
                 # Add rate limit headers if available
@@ -219,7 +223,9 @@ class RateLimitMiddleware:
                     headers = dict(message.get("headers", []))
 
                     headers[b"x-ratelimit-limit"] = str(rate_info["limit"]).encode()
-                    headers[b"x-ratelimit-remaining"] = str(rate_info["remaining"]).encode()
+                    headers[b"x-ratelimit-remaining"] = str(
+                        rate_info["remaining"]
+                    ).encode()
                     headers[b"x-ratelimit-reset"] = str(rate_info["reset"]).encode()
 
                     message["headers"] = list(headers.items())
@@ -241,9 +247,7 @@ def get_rate_limit_status(identifier: str) -> dict:
         Dictionary with rate limit status
     """
     return rate_limiter.get_remaining(
-        identifier,
-        settings.RATE_LIMIT_REQUESTS,
-        settings.RATE_LIMIT_WINDOW
+        identifier, settings.RATE_LIMIT_REQUESTS, settings.RATE_LIMIT_WINDOW
     )
 
 

@@ -6,7 +6,9 @@ from pathlib import Path
 
 
 # Path to query files
-QUERIES_DIR = Path(__file__).parent.parent.parent.parent / "database" / "queries" / "quran"
+QUERIES_DIR = (
+    Path(__file__).parent.parent.parent.parent / "database" / "queries" / "quran"
+)
 
 
 def _load_query(filename: str) -> str:

@@ -6,7 +6,9 @@ from pathlib import Path
 
 
 # Path to query files
-QUERIES_DIR = Path(__file__).parent.parent.parent.parent / "database" / "queries" / "mosque"
+QUERIES_DIR = (
+    Path(__file__).parent.parent.parent.parent / "database" / "queries" / "mosque"
+)
 
 
 def _load_query(filename: str) -> str:
@@ -36,13 +38,13 @@ def get_mosque_by_id_query() -> str:
     Expected parameters: mosque_id
     Returns: single mosque with all details
     """
-    return '''
+    return """
         SELECT "mosque_id", "name", "address", "city", "country",
                ST_Y(location::geometry) as latitude,
                ST_X(location::geometry) as longitude
         FROM "mosques"
         WHERE "mosque_id" = $1
-    '''
+    """
 
 
 def search_mosques_by_name_query() -> str:
@@ -52,13 +54,13 @@ def search_mosques_by_name_query() -> str:
     Expected parameters: search_pattern (with % wildcards)
     Returns: mosques matching the search term
     """
-    return '''
+    return """
         SELECT "mosque_id", "name", "address", "city", "country",
                ST_Y(location::geometry) as latitude,
                ST_X(location::geometry) as longitude
         FROM "mosques"
         WHERE "name" ILIKE $1
-    '''
+    """
 
 
 def get_mosques_in_bbox_query() -> str:
@@ -68,14 +70,14 @@ def get_mosques_in_bbox_query() -> str:
     Expected parameters: min_lng, min_lat, max_lng, max_lat
     Returns: all mosques within the rectangular area
     """
-    return '''
+    return """
         SELECT "mosque_id", "name", "address", "city", "country",
                ST_Y(location::geometry) as latitude,
                ST_X(location::geometry) as longitude
         FROM "mosques"
         WHERE location && ST_MakeEnvelope($1, $2, $3, $4, 4326)
         ORDER BY "name" ASC
-    '''
+    """
 
 
 def get_mosques_by_city_query() -> str:
@@ -85,14 +87,14 @@ def get_mosques_by_city_query() -> str:
     Expected parameters: city_name
     Returns: mosques in the specified city
     """
-    return '''
+    return """
         SELECT "mosque_id", "name", "address", "city", "country",
                ST_Y(location::geometry) as latitude,
                ST_X(location::geometry) as longitude
         FROM "mosques"
         WHERE LOWER("city") = LOWER($1)
         ORDER BY "name" ASC
-    '''
+    """
 
 
 def get_mosques_by_country_query() -> str:
@@ -102,11 +104,11 @@ def get_mosques_by_country_query() -> str:
     Expected parameters: country_name
     Returns: mosques in the specified country
     """
-    return '''
+    return """
         SELECT "mosque_id", "name", "address", "city", "country",
                ST_Y(location::geometry) as latitude,
                ST_X(location::geometry) as longitude
         FROM "mosques"
         WHERE LOWER("country") = LOWER($1)
         ORDER BY "city" ASC, "name" ASC
-    '''
+    """

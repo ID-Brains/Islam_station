@@ -15,7 +15,9 @@ router = APIRouter()
 @router.get("/times")
 async def get_prayer_times(
     latitude: float = Query(..., description="Latitude of the location", ge=-90, le=90),
-    longitude: float = Query(..., description="Longitude of the location", ge=-180, le=180),
+    longitude: float = Query(
+        ..., description="Longitude of the location", ge=-180, le=180
+    ),
     date_str: Optional[str] = Query(None, description="Date in YYYY-MM-DD format"),
     method: str = Query(default="MuslimWorldLeague", description="Calculation method"),
 ) -> Dict[str, Any]:
@@ -38,8 +40,7 @@ async def get_prayer_times(
                 date_obj = datetime.strptime(date_str, "%Y-%m-%d").date()
             except ValueError:
                 raise HTTPException(
-                    status_code=400,
-                    detail="Invalid date format. Use YYYY-MM-DD"
+                    status_code=400, detail="Invalid date format. Use YYYY-MM-DD"
                 )
         else:
             date_obj = date.today()
@@ -48,7 +49,7 @@ async def get_prayer_times(
         if method not in PrayerService.CALCULATION_METHODS:
             raise HTTPException(
                 status_code=400,
-                detail=f"Invalid calculation method. Available: {list(PrayerService.CALCULATION_METHODS.keys())}"
+                detail=f"Invalid calculation method. Available: {list(PrayerService.CALCULATION_METHODS.keys())}",
             )
 
         # Calculate prayer times
@@ -60,7 +61,7 @@ async def get_prayer_times(
         )
 
         # Get next prayer info
-        next_prayer = PrayerService.get_next_prayer(prayer_times['times'])
+        next_prayer = PrayerService.get_next_prayer(prayer_times["times"])
 
         return {
             **prayer_times,
@@ -71,8 +72,7 @@ async def get_prayer_times(
         raise
     except Exception as e:
         raise HTTPException(
-            status_code=500,
-            detail=f"Failed to calculate prayer times: {str(e)}"
+            status_code=500, detail=f"Failed to calculate prayer times: {str(e)}"
         )
 
 
@@ -100,9 +100,7 @@ async def find_time_with_geolocation(
         # Try API first, fallback to local calculation
         try:
             prayer_times = await PrayerService.get_prayer_times_from_api(
-                latitude=latitude,
-                longitude=longitude,
-                method=method
+                latitude=latitude, longitude=longitude, method=method
             )
         except Exception:
             # Fallback to local calculation
@@ -114,24 +112,23 @@ async def find_time_with_geolocation(
             )
 
         # Get next prayer
-        next_prayer = PrayerService.get_next_prayer(prayer_times['times'])
+        next_prayer = PrayerService.get_next_prayer(prayer_times["times"])
 
         return {
             "location": {
                 "latitude": latitude,
                 "longitude": longitude,
-                "country": country
+                "country": country,
             },
-            "prayer_times": prayer_times['times'],
+            "prayer_times": prayer_times["times"],
             "next_prayer": next_prayer,
             "method": method,
-            "date": prayer_times.get('date', date.today().isoformat()),
+            "date": prayer_times.get("date", date.today().isoformat()),
         }
 
     except Exception as e:
         raise HTTPException(
-            status_code=500,
-            detail=f"Failed to get prayer times: {str(e)}"
+            status_code=500, detail=f"Failed to get prayer times: {str(e)}"
         )
 
 
@@ -162,26 +159,24 @@ async def get_next_prayer(
         )
 
         # Get next prayer
-        next_prayer = PrayerService.get_next_prayer(prayer_times['times'])
+        next_prayer = PrayerService.get_next_prayer(prayer_times["times"])
 
         if not next_prayer:
             raise HTTPException(
-                status_code=404,
-                detail="Could not determine next prayer"
+                status_code=404, detail="Could not determine next prayer"
             )
 
         return {
             "next_prayer": next_prayer,
             "location": {"latitude": latitude, "longitude": longitude},
-            "all_times": prayer_times['times'],
+            "all_times": prayer_times["times"],
         }
 
     except HTTPException:
         raise
     except Exception as e:
         raise HTTPException(
-            status_code=500,
-            detail=f"Failed to get next prayer: {str(e)}"
+            status_code=500, detail=f"Failed to get next prayer: {str(e)}"
         )
 
 
@@ -226,7 +221,7 @@ async def get_monthly_prayer_times(
     except Exception as e:
         raise HTTPException(
             status_code=500,
-            detail=f"Failed to calculate monthly prayer times: {str(e)}"
+            detail=f"Failed to calculate monthly prayer times: {str(e)}",
         )
 
 
@@ -255,8 +250,7 @@ async def get_qibla_direction(
 
     except Exception as e:
         raise HTTPException(
-            status_code=500,
-            detail=f"Failed to calculate Qibla direction: {str(e)}"
+            status_code=500, detail=f"Failed to calculate Qibla direction: {str(e)}"
         )
 
 
@@ -270,14 +264,16 @@ async def get_calculation_methods() -> Dict[str, Any]:
     """
     methods = []
     for key, value in PrayerService.CALCULATION_METHODS.items():
-        methods.append({
-            "code": key,
-            "name": value["name"],
-            "fajr_angle": value.get("fajr_angle"),
-            "isha_angle": value.get("isha_angle"),
-            "isha_interval": value.get("isha_interval"),
-            "maghrib_angle": value.get("maghrib_angle"),
-        })
+        methods.append(
+            {
+                "code": key,
+                "name": value["name"],
+                "fajr_angle": value.get("fajr_angle"),
+                "isha_angle": value.get("isha_angle"),
+                "isha_interval": value.get("isha_interval"),
+                "maghrib_angle": value.get("maghrib_angle"),
+            }
+        )
 
     return {
         "methods": methods,
@@ -299,13 +295,9 @@ async def get_country_from_coords(latitude: float, longitude: float) -> str:
     try:
         async with httpx.AsyncClient(timeout=5.0) as client:
             response = await client.get(
-                f"https://nominatim.openstreetmap.org/reverse",
-                params={
-                    "lat": latitude,
-                    "lon": longitude,
-                    "format": "json"
-                },
-                headers={"User-Agent": "IslamStation/1.0"}
+                "https://nominatim.openstreetmap.org/reverse",
+                params={"lat": latitude, "lon": longitude, "format": "json"},
+                headers={"User-Agent": "IslamStation/1.0"},
             )
             response.raise_for_status()
             data = response.json()

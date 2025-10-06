@@ -107,7 +107,7 @@ def verify_token(token: str) -> dict:
 
 
 async def get_current_user(
-    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security)
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
 ) -> Optional[dict]:
     """
     Get current user from JWT token (dependency)
@@ -135,7 +135,7 @@ async def get_current_user(
 
 
 async def get_current_user_required(
-    current_user: Optional[dict] = Depends(get_current_user)
+    current_user: Optional[dict] = Depends(get_current_user),
 ) -> dict:
     """
     Get current user (required - raises exception if not authenticated)
@@ -203,7 +203,7 @@ def verify_refresh_token(token: str) -> dict:
 
 # API Key authentication (for external integrations)
 async def verify_api_key(
-    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security)
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
 ) -> bool:
     """
     Verify API key for external integrations

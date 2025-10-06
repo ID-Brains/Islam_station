@@ -20,7 +20,7 @@ from .error_handler import (
 __all__ = [
     "IslamicStationException",
     "ValidationError",
-    "NotFoundError", 
+    "NotFoundError",
     "DatabaseError",
     "ExternalServiceError",
     "create_error_response",

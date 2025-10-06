@@ -15,7 +15,7 @@ class QuranService:
         limit: int = 20,
         offset: int = 0,
         surah_filter: Optional[int] = None,
-        language: str = "both"
+        language: str = "both",
     ) -> Dict[str, Any]:
         """
         Search Quran verses with advanced filtering
@@ -32,7 +32,7 @@ class QuranService:
         """
         # Build dynamic query based on language
         if language == "arabic":
-            sql = '''
+            sql = """
                 SELECT
                     s."surah_no",
                     s."surah_name_ar",
@@ -45,9 +45,9 @@ class QuranService:
                 FROM "ayahs" a
                 JOIN "surahs" s ON a."surah_id" = s."surah_id"
                 WHERE a."ayah_ar_tsv" @@ websearch_to_tsquery('arabic', $1)
-            '''
+            """
         elif language == "english":
-            sql = '''
+            sql = """
                 SELECT
                     s."surah_no",
                     s."surah_name_ar",
@@ -60,10 +60,10 @@ class QuranService:
                 FROM "ayahs" a
                 JOIN "surahs" s ON a."surah_id" = s."surah_id"
                 WHERE a."ayah_en" ILIKE $1
-            '''
+            """
             query = f"%{query}%"
         else:  # both
-            sql = '''
+            sql = """
                 SELECT
                     s."surah_no",
                     s."surah_name_ar",
@@ -80,7 +80,7 @@ class QuranService:
                 JOIN "surahs" s ON a."surah_id" = s."surah_id"
                 WHERE a."ayah_ar_tsv" @@ websearch_to_tsquery('arabic', $1)
                    OR a."ayah_en" ILIKE $2
-            '''
+            """
 
         # Add surah filter if specified
         params = [query]
@@ -98,27 +98,27 @@ class QuranService:
         results = await execute_query(sql, *params)
 
         # Get total count for pagination
-        count_sql = '''
+        count_sql = """
             SELECT COUNT(*) as total
             FROM "ayahs" a
             JOIN "surahs" s ON a."surah_id" = s."surah_id"
             WHERE a."ayah_ar_tsv" @@ websearch_to_tsquery('arabic', $1)
                OR a."ayah_en" ILIKE $2
-        '''
+        """
         count_params = [query if language != "english" else f"%{query}%", f"%{query}%"]
         if surah_filter:
             count_sql += f' AND s."surah_no" = ${len(count_params) + 1}'
             count_params.append(surah_filter)
 
         count_result = await execute_query_single(count_sql, *count_params)
-        total = count_result.get('total', 0) if count_result else 0
+        total = count_result.get("total", 0) if count_result else 0
 
         return {
             "results": results,
             "total": total,
             "limit": limit,
             "offset": offset,
-            "has_more": (offset + len(results)) < total
+            "has_more": (offset + len(results)) < total,
         }
 
     @staticmethod
@@ -132,17 +132,19 @@ class QuranService:
         Returns:
             Surah metadata or None if not found
         """
-        sql = '''
+        sql = """
             SELECT "surah_id", "surah_no", "surah_name_ar", "surah_name_en",
                    "surah_name_roman", "place_of_revelation", "total_ayah_surah"
             FROM "surahs"
             WHERE "surah_no" = $1
-        '''
+        """
 
         return await execute_query_single(sql, surah_number)
 
     @staticmethod
-    async def get_verse_context(surah_number: int, verse_number: int, context_size: int = 2) -> Dict[str, Any]:
+    async def get_verse_context(
+        surah_number: int, verse_number: int, context_size: int = 2
+    ) -> Dict[str, Any]:
         """
         Get a verse with surrounding context verses
 
@@ -154,7 +156,7 @@ class QuranService:
         Returns:
             Target verse with context
         """
-        sql = '''
+        sql = """
             SELECT
                 s."surah_no",
                 s."surah_name_ar",
@@ -172,17 +174,17 @@ class QuranService:
             WHERE s."surah_no" = $1
               AND a."ayah_no_surah" BETWEEN $2 - $3 AND $2 + $3
             ORDER BY a."ayah_no_surah" ASC
-        '''
+        """
 
         verses = await execute_query(sql, surah_number, verse_number, context_size)
 
-        target_verse = next((v for v in verses if v['verse_type'] == 'target'), None)
-        context_verses = [v for v in verses if v['verse_type'] == 'context']
+        target_verse = next((v for v in verses if v["verse_type"] == "target"), None)
+        context_verses = [v for v in verses if v["verse_type"] == "context"]
 
         return {
             "target_verse": target_verse,
             "context_verses": context_verses,
-            "context_size": context_size
+            "context_size": context_size,
         }
 
     @staticmethod
@@ -196,7 +198,7 @@ class QuranService:
         Returns:
             Juz information with start/end verses
         """
-        sql = '''
+        sql = """
             SELECT
                 MIN(a."ayah_no_quran") as start_ayah,
                 MAX(a."ayah_no_quran") as end_ayah,
@@ -204,26 +206,22 @@ class QuranService:
                 COUNT(DISTINCT a."surah_id") as surah_count
             FROM "ayahs" a
             WHERE a."juz_no" = $1
-        '''
+        """
 
         juz_info = await execute_query_single(sql, juz_number)
 
         # Get surahs in this juz
-        surahs_sql = '''
+        surahs_sql = """
             SELECT DISTINCT s."surah_no", s."surah_name_ar", s."surah_name_en"
             FROM "ayahs" a
             JOIN "surahs" s ON a."surah_id" = s."surah_id"
             WHERE a."juz_no" = $1
             ORDER BY s."surah_no" ASC
-        '''
+        """
 
         surahs = await execute_query(surahs_sql, juz_number)
 
-        return {
-            "juz_number": juz_number,
-            "info": juz_info,
-            "surahs": surahs
-        }
+        return {"juz_number": juz_number, "info": juz_info, "surahs": surahs}
 
     @staticmethod
     async def get_daily_verse() -> Optional[Dict[str, Any]]:
@@ -239,7 +237,7 @@ class QuranService:
 
         # Use day of year to deterministically select a verse
         # Total ayahs = 6236, so we can cycle through them
-        sql = '''
+        sql = """
             SELECT
                 s."surah_no",
                 s."surah_name_ar",
@@ -251,7 +249,7 @@ class QuranService:
             FROM "ayahs" a
             JOIN "surahs" s ON a."surah_id" = s."surah_id"
             WHERE a."ayah_no_quran" = (($1 - 1) % 6236) + 1
-        '''
+        """
 
         return await execute_query_single(sql, day_of_year)
 
@@ -263,7 +261,7 @@ class QuranService:
         Returns:
             List of sajdah verses
         """
-        sql = '''
+        sql = """
             SELECT
                 s."surah_no",
                 s."surah_name_ar",
@@ -276,7 +274,7 @@ class QuranService:
             JOIN "surahs" s ON a."surah_id" = s."surah_id"
             WHERE a."sajdah_ayah" = TRUE
             ORDER BY a."sajdah_no" ASC
-        '''
+        """
 
         return await execute_query(sql)
 
@@ -288,7 +286,7 @@ class QuranService:
         Returns:
             List of surahs with statistics
         """
-        sql = '''
+        sql = """
             SELECT
                 s."surah_no",
                 s."surah_name_ar",
@@ -302,6 +300,6 @@ class QuranService:
             GROUP BY s."surah_id", s."surah_no", s."surah_name_ar",
                      s."surah_name_en", s."place_of_revelation", s."total_ayah_surah"
             ORDER BY s."surah_no" ASC
-        '''
+        """
 
         return await execute_query(sql)

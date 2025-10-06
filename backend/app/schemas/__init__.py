@@ -18,7 +18,7 @@ from .validation import (
 
 __all__ = [
     "QuranSearchRequest",
-    "SurahRequest", 
+    "SurahRequest",
     "VerseRequest",
     "VerseRangeRequest",
     "MosqueSearchRequest",

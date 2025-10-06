@@ -6,7 +6,9 @@ from pathlib import Path
 
 
 # Path to query files
-QUERIES_DIR = Path(__file__).parent.parent.parent.parent / "database" / "queries" / "dhikr"
+QUERIES_DIR = (
+    Path(__file__).parent.parent.parent.parent / "database" / "queries" / "dhikr"
+)
 
 
 def _load_query(filename: str) -> str:
@@ -46,12 +48,12 @@ def get_dhikr_by_id_query() -> str:
     Expected parameters: dhikr_id
     Returns: single dhikr with all details
     """
-    return '''
+    return """
         SELECT "dhikr_id", "category_id", "text_ar", "text_en",
                "benefits_ar", "benefits_en", "reference"
         FROM "dhikr"
         WHERE "dhikr_id" = $1
-    '''
+    """
 
 
 def get_random_dhikr_query() -> str:
@@ -61,14 +63,14 @@ def get_random_dhikr_query() -> str:
     Expected parameters: category_id
     Returns: random dhikr
     """
-    return '''
+    return """
         SELECT "dhikr_id", "category_id", "text_ar", "text_en",
                "benefits_ar", "benefits_en", "reference"
         FROM "dhikr"
         WHERE "category_id" = $1
         ORDER BY RANDOM()
         LIMIT 1
-    '''
+    """
 
 
 def get_all_dhikr_query() -> str:
@@ -77,14 +79,14 @@ def get_all_dhikr_query() -> str:
 
     Returns: all dhikr ordered by category and ID
     """
-    return '''
+    return """
         SELECT d."dhikr_id", d."category_id", d."text_ar", d."text_en",
                d."benefits_ar", d."benefits_en", d."reference",
                c."name_ar" as category_name_ar, c."name_en" as category_name_en
         FROM "dhikr" d
         JOIN "categories" c ON d."category_id" = c."category_id"
         ORDER BY d."category_id" ASC, d."dhikr_id" ASC
-    '''
+    """
 
 
 def get_dhikr_with_benefits_query() -> str:
@@ -93,14 +95,14 @@ def get_dhikr_with_benefits_query() -> str:
 
     Returns: dhikr with non-null benefits
     """
-    return '''
+    return """
         SELECT "dhikr_id", "category_id", "text_ar", "text_en",
                "benefits_ar", "benefits_en", "reference"
         FROM "dhikr"
         WHERE ("benefits_ar" IS NOT NULL AND "benefits_ar" != '')
            OR ("benefits_en" IS NOT NULL AND "benefits_en" != '')
         ORDER BY "dhikr_id" ASC
-    '''
+    """
 
 
 def get_dhikr_by_reference_query() -> str:
@@ -110,13 +112,13 @@ def get_dhikr_by_reference_query() -> str:
     Expected parameters: reference_pattern (with % wildcards)
     Returns: dhikr matching the reference
     """
-    return '''
+    return """
         SELECT "dhikr_id", "category_id", "text_ar", "text_en",
                "benefits_ar", "benefits_en", "reference"
         FROM "dhikr"
         WHERE "reference" ILIKE $1
         ORDER BY "dhikr_id" ASC
-    '''
+    """
 
 
 def search_dhikr_arabic_query() -> str:
@@ -126,13 +128,13 @@ def search_dhikr_arabic_query() -> str:
     Expected parameters: search_pattern (with % wildcards)
     Returns: matching dhikr
     """
-    return '''
+    return """
         SELECT "dhikr_id", "category_id", "text_ar", "text_en",
                "benefits_ar", "benefits_en", "reference"
         FROM "dhikr"
         WHERE "text_ar" ILIKE $1 OR "benefits_ar" ILIKE $1
         ORDER BY "dhikr_id" ASC
-    '''
+    """
 
 
 def search_dhikr_english_query() -> str:
@@ -142,10 +144,10 @@ def search_dhikr_english_query() -> str:
     Expected parameters: search_pattern (with % wildcards)
     Returns: matching dhikr
     """
-    return '''
+    return """
         SELECT "dhikr_id", "category_id", "text_ar", "text_en",
                "benefits_ar", "benefits_en", "reference"
         FROM "dhikr"
         WHERE "text_en" ILIKE $1 OR "benefits_en" ILIKE $1
         ORDER BY "dhikr_id" ASC
-    '''
+    """

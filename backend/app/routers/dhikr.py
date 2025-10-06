@@ -3,7 +3,7 @@ Dhikr & Dua API Router for The Islamic Guidance Station
 """
 
 from fastapi import APIRouter, Query, HTTPException
-from typing import Any, Dict, List
+from typing import Any, Dict
 
 from ..database import execute_query, execute_query_single
 from ..queries.dhikr_queries import (
@@ -18,7 +18,9 @@ router = APIRouter()
 
 @router.get("/daily")
 async def get_daily_dhikr(
-    category_id: int = Query(default=1, description="Category ID for daily dhikr", ge=1),
+    category_id: int = Query(
+        default=1, description="Category ID for daily dhikr", ge=1
+    ),
 ) -> Dict[str, Any]:
     """
     Get a random dhikr/dua for daily spiritual practice
@@ -38,8 +40,7 @@ async def get_daily_dhikr(
 
         if not dhikr:
             raise HTTPException(
-                status_code=404,
-                detail=f"No dhikr found for category {category_id}"
+                status_code=404, detail=f"No dhikr found for category {category_id}"
             )
 
         return {
@@ -50,8 +51,7 @@ async def get_daily_dhikr(
         raise
     except Exception as e:
         raise HTTPException(
-            status_code=500,
-            detail=f"Failed to fetch daily dhikr: {str(e)}"
+            status_code=500, detail=f"Failed to fetch daily dhikr: {str(e)}"
         )
 
 
@@ -81,7 +81,7 @@ async def get_dhikr_by_category(
         query = get_dhikr_by_category_query()
 
         # Add pagination
-        query += f' LIMIT ${2} OFFSET ${3}'
+        query += f" LIMIT ${2} OFFSET ${3}"
 
         # Execute query
         dhikr_list = await execute_query(query, category_id, limit, offset)
@@ -97,8 +97,7 @@ async def get_dhikr_by_category(
         raise
     except Exception as e:
         raise HTTPException(
-            status_code=500,
-            detail=f"Failed to fetch dhikr by category: {str(e)}"
+            status_code=500, detail=f"Failed to fetch dhikr by category: {str(e)}"
         )
 
 
@@ -124,13 +123,13 @@ async def get_random_dhikr(
             dhikr = await execute_query_single(query, category_id)
         else:
             # Get random from all categories
-            query = '''
+            query = """
                 SELECT "dhikr_id", "category_id", "text_ar", "text_en",
                        "benefits_ar", "benefits_en", "reference"
                 FROM "dhikr"
                 ORDER BY RANDOM()
                 LIMIT 1
-            '''
+            """
             dhikr = await execute_query_single(query)
 
         if not dhikr:
@@ -143,8 +142,7 @@ async def get_random_dhikr(
         raise
     except Exception as e:
         raise HTTPException(
-            status_code=500,
-            detail=f"Failed to fetch random dhikr: {str(e)}"
+            status_code=500, detail=f"Failed to fetch random dhikr: {str(e)}"
         )
 
 
@@ -179,10 +177,7 @@ async def get_dhikr_by_id(
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail=f"Failed to fetch dhikr: {str(e)}"
-        )
+        raise HTTPException(status_code=500, detail=f"Failed to fetch dhikr: {str(e)}")
 
 
 @router.get("/categories")
@@ -194,14 +189,14 @@ async def get_dhikr_categories() -> Dict[str, Any]:
         List of categories with counts
     """
     try:
-        query = '''
+        query = """
             SELECT c."category_id", c."name_ar", c."name_en",
                    COUNT(d."dhikr_id") as dhikr_count
             FROM "categories" c
             LEFT JOIN "dhikr" d ON c."category_id" = d."category_id"
             GROUP BY c."category_id", c."name_ar", c."name_en"
             ORDER BY c."category_id" ASC
-        '''
+        """
 
         categories = await execute_query(query)
 
@@ -211,15 +206,16 @@ async def get_dhikr_categories() -> Dict[str, Any]:
         }
     except Exception as e:
         raise HTTPException(
-            status_code=500,
-            detail=f"Failed to fetch categories: {str(e)}"
+            status_code=500, detail=f"Failed to fetch categories: {str(e)}"
         )
 
 
 @router.get("/search")
 async def search_dhikr(
     q: str = Query(..., description="Search query in Arabic or English", min_length=2),
-    language: str = Query(default="both", description="Search language: 'arabic', 'english', or 'both'"),
+    language: str = Query(
+        default="both", description="Search language: 'arabic', 'english', or 'both'"
+    ),
     limit: int = Query(default=20, description="Maximum number of results", le=100),
     offset: int = Query(default=0, description="Offset for pagination", ge=0),
 ) -> Dict[str, Any]:
@@ -240,25 +236,25 @@ async def search_dhikr(
 
         # Build query based on language
         if language == "arabic":
-            query = '''
+            query = """
                 SELECT "dhikr_id", "category_id", "text_ar", "text_en",
                        "benefits_ar", "benefits_en", "reference"
                 FROM "dhikr"
                 WHERE "text_ar" ILIKE $1 OR "benefits_ar" ILIKE $1
                 ORDER BY "dhikr_id" ASC
                 LIMIT $2 OFFSET $3
-            '''
+            """
         elif language == "english":
-            query = '''
+            query = """
                 SELECT "dhikr_id", "category_id", "text_ar", "text_en",
                        "benefits_ar", "benefits_en", "reference"
                 FROM "dhikr"
                 WHERE "text_en" ILIKE $1 OR "benefits_en" ILIKE $1
                 ORDER BY "dhikr_id" ASC
                 LIMIT $2 OFFSET $3
-            '''
+            """
         else:  # both
-            query = '''
+            query = """
                 SELECT "dhikr_id", "category_id", "text_ar", "text_en",
                        "benefits_ar", "benefits_en", "reference"
                 FROM "dhikr"
@@ -266,7 +262,7 @@ async def search_dhikr(
                    OR "benefits_ar" ILIKE $1 OR "benefits_en" ILIKE $1
                 ORDER BY "dhikr_id" ASC
                 LIMIT $2 OFFSET $3
-            '''
+            """
 
         # Execute search
         results = await execute_query(query, search_pattern, limit, offset)
@@ -280,10 +276,7 @@ async def search_dhikr(
             "count": len(results),
         }
     except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail=f"Dhikr search failed: {str(e)}"
-        )
+        raise HTTPException(status_code=500, detail=f"Dhikr search failed: {str(e)}")
 
 
 @router.get("/morning")
@@ -301,14 +294,14 @@ async def get_morning_dhikr(
     """
     try:
         # Assuming category_id 1 is for morning adhkar
-        query = '''
+        query = """
             SELECT "dhikr_id", "category_id", "text_ar", "text_en",
                    "benefits_ar", "benefits_en", "reference"
             FROM "dhikr"
             WHERE "category_id" = $1
             ORDER BY "dhikr_id" ASC
             LIMIT $2
-        '''
+        """
 
         morning_dhikr = await execute_query(query, 1, limit)
 
@@ -319,8 +312,7 @@ async def get_morning_dhikr(
         }
     except Exception as e:
         raise HTTPException(
-            status_code=500,
-            detail=f"Failed to fetch morning dhikr: {str(e)}"
+            status_code=500, detail=f"Failed to fetch morning dhikr: {str(e)}"
         )
 
 
@@ -339,14 +331,14 @@ async def get_evening_dhikr(
     """
     try:
         # Assuming category_id 2 is for evening adhkar
-        query = '''
+        query = """
             SELECT "dhikr_id", "category_id", "text_ar", "text_en",
                    "benefits_ar", "benefits_en", "reference"
             FROM "dhikr"
             WHERE "category_id" = $2
             ORDER BY "dhikr_id" ASC
             LIMIT $1
-        '''
+        """
 
         evening_dhikr = await execute_query(query, limit, 2)
 
@@ -357,6 +349,5 @@ async def get_evening_dhikr(
         }
     except Exception as e:
         raise HTTPException(
-            status_code=500,
-            detail=f"Failed to fetch evening dhikr: {str(e)}"
+            status_code=500, detail=f"Failed to fetch evening dhikr: {str(e)}"
         )

@@ -3,11 +3,9 @@ Prayer Service - Business logic for prayer times calculations
 """
 
 from typing import Dict, Any, Optional, List
-from datetime import datetime, date, timedelta
+from datetime import datetime, date
 import math
 import httpx
-
-from ..config import settings
 
 
 class PrayerService:
@@ -115,31 +113,59 @@ class PrayerService:
         # Fajr
         fajr_angle = method_params.get("fajr_angle", 18.0)
         times["fajr"] = PrayerService._calculate_time(
-            latitude, sun_declination, 90 + fajr_angle, equation_of_time, longitude, timezone_offset
+            latitude,
+            sun_declination,
+            90 + fajr_angle,
+            equation_of_time,
+            longitude,
+            timezone_offset,
         )
 
         # Sunrise
         times["sunrise"] = PrayerService._calculate_time(
-            latitude, sun_declination, 90.833, equation_of_time, longitude, timezone_offset
+            latitude,
+            sun_declination,
+            90.833,
+            equation_of_time,
+            longitude,
+            timezone_offset,
         )
 
         # Dhuhr (solar noon)
-        times["dhuhr"] = 12 + timezone_offset - (longitude / 15.0) - (equation_of_time / 60.0)
+        times["dhuhr"] = (
+            12 + timezone_offset - (longitude / 15.0) - (equation_of_time / 60.0)
+        )
 
         # Asr (Shafi'i method: shadow = object length + noon shadow)
         times["asr"] = PrayerService._calculate_asr(
-            latitude, sun_declination, equation_of_time, longitude, timezone_offset, factor=1
+            latitude,
+            sun_declination,
+            equation_of_time,
+            longitude,
+            timezone_offset,
+            factor=1,
         )
 
         # Maghrib
         if "maghrib_angle" in method_params:
             maghrib_angle = method_params["maghrib_angle"]
             times["maghrib"] = PrayerService._calculate_time(
-                latitude, sun_declination, 90 + maghrib_angle, equation_of_time, longitude, timezone_offset
+                latitude,
+                sun_declination,
+                90 + maghrib_angle,
+                equation_of_time,
+                longitude,
+                timezone_offset,
             )
         else:
             times["maghrib"] = PrayerService._calculate_time(
-                latitude, sun_declination, 90.833, equation_of_time, longitude, timezone_offset, reverse=True
+                latitude,
+                sun_declination,
+                90.833,
+                equation_of_time,
+                longitude,
+                timezone_offset,
+                reverse=True,
             )
 
         # Isha
@@ -150,7 +176,13 @@ class PrayerService:
         else:
             isha_angle = method_params.get("isha_angle", 17.0)
             times["isha"] = PrayerService._calculate_time(
-                latitude, sun_declination, 90 + isha_angle, equation_of_time, longitude, timezone_offset, reverse=True
+                latitude,
+                sun_declination,
+                90 + isha_angle,
+                equation_of_time,
+                longitude,
+                timezone_offset,
+                reverse=True,
             )
 
         # Imsak (10 minutes before Fajr by default)
@@ -203,10 +235,16 @@ class PrayerService:
         d = julian_date - 2451545.0
         g = 357.529 + 0.98560028 * d
         q = 280.459 + 0.98564736 * d
-        L = q + 1.915 * math.sin(math.radians(g)) + 0.020 * math.sin(math.radians(2 * g))
+        L = (
+            q
+            + 1.915 * math.sin(math.radians(g))
+            + 0.020 * math.sin(math.radians(2 * g))
+        )
 
         e = 23.439 - 0.00000036 * d
-        declination = math.degrees(math.asin(math.sin(math.radians(e)) * math.sin(math.radians(L))))
+        declination = math.degrees(
+            math.asin(math.sin(math.radians(e)) * math.sin(math.radians(L)))
+        )
 
         return declination
 
@@ -216,10 +254,23 @@ class PrayerService:
         d = julian_date - 2451545.0
         g = 357.529 + 0.98560028 * d
         q = 280.459 + 0.98564736 * d
-        L = q + 1.915 * math.sin(math.radians(g)) + 0.020 * math.sin(math.radians(2 * g))
+        L = (
+            q
+            + 1.915 * math.sin(math.radians(g))
+            + 0.020 * math.sin(math.radians(2 * g))
+        )
 
-        R = 1.00014 - 0.01671 * math.cos(math.radians(g)) - 0.00014 * math.cos(math.radians(2 * g))
-        RA = math.degrees(math.atan2(math.cos(math.radians(23.439)) * math.sin(math.radians(L)), math.cos(math.radians(L))))
+        (
+            1.00014
+            - 0.01671 * math.cos(math.radians(g))
+            - 0.00014 * math.cos(math.radians(2 * g))
+        )
+        RA = math.degrees(
+            math.atan2(
+                math.cos(math.radians(23.439)) * math.sin(math.radians(L)),
+                math.cos(math.radians(L)),
+            )
+        )
 
         EqT = q - RA
         EqT = EqT - 360 * math.floor(EqT / 360)
@@ -257,10 +308,20 @@ class PrayerService:
             hour_angle = math.degrees(math.acos(cos_h)) / 15.0
 
             if reverse:
-                noon = 12 + timezone_offset - (longitude / 15.0) - (equation_of_time / 60.0)
+                noon = (
+                    12
+                    + timezone_offset
+                    - (longitude / 15.0)
+                    - (equation_of_time / 60.0)
+                )
                 return noon + hour_angle
             else:
-                noon = 12 + timezone_offset - (longitude / 15.0) - (equation_of_time / 60.0)
+                noon = (
+                    12
+                    + timezone_offset
+                    - (longitude / 15.0)
+                    - (equation_of_time / 60.0)
+                )
                 return noon - hour_angle
 
         except (ValueError, ZeroDivisionError):
@@ -286,7 +347,13 @@ class PrayerService:
         try:
             angle = math.degrees(math.atan(1.0 / shadow_ratio))
             return PrayerService._calculate_time(
-                latitude, declination, 90 - angle, equation_of_time, longitude, timezone_offset, reverse=True
+                latitude,
+                declination,
+                90 - angle,
+                equation_of_time,
+                longitude,
+                timezone_offset,
+                reverse=True,
             )
         except (ValueError, ZeroDivisionError):
             return 15.0  # Default afternoon time
@@ -304,7 +371,10 @@ class PrayerService:
 
     @staticmethod
     async def get_prayer_times_from_api(
-        latitude: float, longitude: float, date_obj: Optional[date] = None, method: str = "MuslimWorldLeague"
+        latitude: float,
+        longitude: float,
+        date_obj: Optional[date] = None,
+        method: str = "MuslimWorldLeague",
     ) -> Dict[str, Any]:
         """
         Fetch prayer times from external Al Adhan API
@@ -362,9 +432,11 @@ class PrayerService:
                 else:
                     raise Exception("API returned non-200 code")
 
-        except Exception as e:
+        except Exception:
             # Fallback to local calculation
-            return PrayerService.calculate_prayer_times(latitude, longitude, date_obj, method)
+            return PrayerService.calculate_prayer_times(
+                latitude, longitude, date_obj, method
+            )
 
     @staticmethod
     def get_next_prayer(prayer_times: Dict[str, str]) -> Optional[Dict[str, Any]]:
@@ -447,7 +519,9 @@ class PrayerService:
 
         for day in range(1, days_in_month + 1):
             date_obj = date(year, month, day)
-            daily_times = PrayerService.calculate_prayer_times(latitude, longitude, date_obj, method)
+            daily_times = PrayerService.calculate_prayer_times(
+                latitude, longitude, date_obj, method
+            )
             monthly_times.append(daily_times)
 
         return monthly_times
@@ -476,7 +550,9 @@ class PrayerService:
         delta_lon = lon2 - lon1
 
         y = math.sin(delta_lon) * math.cos(lat2)
-        x = math.cos(lat1) * math.sin(lat2) - math.sin(lat1) * math.cos(lat2) * math.cos(delta_lon)
+        x = math.cos(lat1) * math.sin(lat2) - math.sin(lat1) * math.cos(
+            lat2
+        ) * math.cos(delta_lon)
 
         bearing = math.atan2(y, x)
         bearing = math.degrees(bearing)
