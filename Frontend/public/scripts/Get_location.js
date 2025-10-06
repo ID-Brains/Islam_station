@@ -37,16 +37,31 @@ function getLocation() {
     );
 
     // Configuration with improved defaults
+    // Try with lower accuracy first for better compatibility
     const options = {
-        enableHighAccuracy: true,
-        timeout: 10000, // 10 seconds
-        maximumAge: 0, // Always get fresh location
+        enableHighAccuracy: false, // Start with low accuracy for better success rate
+        timeout: 15000, // 15 seconds
+        maximumAge: 300000, // Accept 5-minute old location
     };
 
-    // Request location
+    // Request location with fallback
     navigator.geolocation.getCurrentPosition(
         (position) => handleSuccess(position, button),
-        (error) => handleError(error, button),
+        (error) => {
+            // Try again with even more permissive settings
+            console.warn("First geolocation attempt failed, trying with relaxed settings...");
+            const fallbackOptions = {
+                enableHighAccuracy: false,
+                timeout: 30000,
+                maximumAge: 600000, // Accept 10-minute old location
+            };
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => handleSuccess(position, button),
+                (fallbackError) => handleError(fallbackError, button),
+                fallbackOptions,
+            );
+        },
         options,
     );
 }
@@ -131,27 +146,39 @@ function handleSuccess(position, button) {
 function handleError(error, button) {
     let errorMessage = "Error";
     let detailedMessage = "";
+    let userAction = "";
 
     if (error.code === 1 || error.code === "PERMISSION_DENIED") {
         errorMessage = "Permission Denied";
-        detailedMessage = "Please enable location access in your browser settings";
+        detailedMessage = "Location access was denied";
+        userAction = "Please enable location in your browser settings and refresh the page";
     } else if (error.code === 2 || error.code === "POSITION_UNAVAILABLE") {
         errorMessage = "Location Unavailable";
-        detailedMessage = "Could not determine your location";
+        detailedMessage =
+            "Could not determine your location. This may be due to network issues or GPS unavailability";
+        userAction = "Try again later or enter your location manually";
     } else if (error.code === 3 || error.code === "TIMEOUT") {
         errorMessage = "Request Timed Out";
         detailedMessage = "Location request took too long";
+        userAction = "Check your internet connection and try again";
     } else if (error.code === "INVALID_COORDINATES") {
         errorMessage = "Invalid Location";
         detailedMessage = "Received invalid coordinates";
+        userAction = "Please try again";
     } else {
         errorMessage = "Unknown Error";
         detailedMessage = error.message || "An unknown error occurred";
+        userAction = "Please try again or enter location manually";
     }
 
-    console.error("Geolocation error:", detailedMessage);
+    console.warn("Geolocation error:", detailedMessage, "-", userAction);
 
-    // Update button to show error
+    // Show user-friendly notification if available
+    if (typeof window !== "undefined" && window.showNotification) {
+        window.showNotification("error", detailedMessage + ". " + userAction);
+    }
+
+    // Update button to show error with tooltip
     updateButton(
         button,
         "error",
@@ -161,18 +188,22 @@ function handleError(error, button) {
     </svg>`,
     );
 
+    // Add tooltip with user action
+    button.setAttribute("title", userAction);
+
     // Reset button after a delay
     setTimeout(() => {
         updateButton(
             button,
             "default",
-            "Get Your Location",
+            "Try Again",
             `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
       </svg>`,
         );
-    }, 3000);
+        button.removeAttribute("title");
+    }, 5000);
 }
 
 /**
