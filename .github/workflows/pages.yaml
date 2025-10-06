@@ -37,11 +37,13 @@ jobs:
 
 
     - name : install depend.
+      working-directory: ./Frontend
       run: |
         npm ci   
         echo "Dependencies was successfully installed "
 
     - name : build the astro
+      working-directory: ./Frontend
       run: |
         npm run build 
         echo "done"
@@ -56,7 +58,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{steps.deployment.outputs.page_url}}
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
     - name: deploy to pages
       id: deployment
