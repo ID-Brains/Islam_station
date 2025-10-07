@@ -1,7 +1,8 @@
-// Surah List API Endpoint
-// Returns list of all 114 surahs with basic information
+// Shared Surah List Data
+// Contains all 114 surahs with basic information
 
-const surahList = [
+export const surahs = [
+  { id: "all", name: "All Surahs", name_ar: "جميع السور" },
   { id: 1, name: "Al-Fatihah", name_ar: "الفاتحة", english_meaning: "The Opener", revelation_type: "Meccan", verses_count: 7, juz_number: 1 },
   { id: 2, name: "Al-Baqarah", name_ar: "البقرة", english_meaning: "The Cow", revelation_type: "Medinan", verses_count: 286, juz_number: 1 },
   { id: 3, name: "Aal-E-Imran", name_ar: "آل عمران", english_meaning: "Family of Imran", revelation_type: "Medinan", verses_count: 200, juz_number: 3 },
@@ -117,77 +118,3 @@ const surahList = [
   { id: 113, name: "Al-Falaq", name_ar: "الفلق", english_meaning: "The Dawn", revelation_type: "Meccan", verses_count: 5, juz_number: 30 },
   { id: 114, name: "An-Nas", name_ar: "الناس", english_meaning: "The Mankind", revelation_type: "Meccan", verses_count: 6, juz_number: 30 }
 ];
-
-export async function GET({ url }) {
-  try {
-    const params = url.searchParams;
-    const search = params.get('search');
-    const revelationType = params.get('revelation_type');
-    const limit = parseInt(params.get('limit')) || 114;
-    const offset = parseInt(params.get('offset')) || 0;
-
-    let filteredSurahs = [...surahList];
-
-    // Apply search filter
-    if (search) {
-      const searchTerm = search.toLowerCase();
-      filteredSurahs = filteredSurahs.filter(surah =>
-        surah.name.toLowerCase().includes(searchTerm) ||
-        surah.name_ar.includes(searchTerm) ||
-        surah.english_meaning.toLowerCase().includes(searchTerm) ||
-        surah.id.toString() === searchTerm
-      );
-    }
-
-    // Apply revelation type filter
-    if (revelationType) {
-      filteredSurahs = filteredSurahs.filter(surah =>
-        surah.revelation_type.toLowerCase() === revelationType.toLowerCase()
-      );
-    }
-
-    // Apply pagination
-    const totalResults = filteredSurahs.length;
-    filteredSurahs = filteredSurahs.slice(offset, offset + limit);
-
-    return new Response(JSON.stringify({
-      totalResults,
-      offset,
-      limit,
-      surahs: filteredSurahs,
-      hasMore: offset + limit < totalResults
-    }), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-        'Cache-Control': 'public, max-age=86400' // Cache for 24 hours
-      }
-    });
-
-  } catch (error) {
-    console.error('Surah list API error:', error);
-
-    return new Response(JSON.stringify({
-      error: 'Internal server error',
-      surahs: []
-    }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      }
-    });
-  }
-}
-
-export async function OPTIONS() {
-  return new Response(null, {
-    status: 200,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type'
-    }
-  });
-}

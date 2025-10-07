@@ -104,7 +104,7 @@ const mockQuranData = [
   }
 ];
 
-export async function get({ url }) {
+export async function GET({ url }) {
   try {
     // Get a timestamp for the day to serve consistent "daily" verses
     const now = new Date();
@@ -156,7 +156,7 @@ export async function get({ url }) {
   }
 }
 
-export async function options() {
+export async function OPTIONS() {
   return new Response(null, {
     status: 200,
     headers: {

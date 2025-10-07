@@ -1,7 +1,7 @@
 // Quran Search API Endpoint
 // Handles advanced Quran search with multiple languages and search types
 
-export async function get({ url }) {
+export async function GET({ url }) {
     try {
         const params = url.searchParams;
         const query = params.get("q");
@@ -184,7 +184,7 @@ export async function get({ url }) {
     }
 }
 
-export async function options() {
+export async function OPTIONS() {
     return new Response(null, {
         status: 200,
         headers: {

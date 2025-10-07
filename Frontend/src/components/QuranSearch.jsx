@@ -1,5 +1,6 @@
 // QuranSearch.jsx - Advanced Quran search component with RTL support
 import React, { useState, useEffect } from "react";
+import { surahs } from "../data/surahs.js";
 
 const SearchResultCard = ({ result }) => (
     <div className="bg-base-100 rounded-xl p-6 border border-white/10 hover:border-primary/30 transition-all duration-300">
