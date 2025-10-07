@@ -1,15 +1,59 @@
 dhikr_id,category_id,text_ar,text_en,benefits_ar,benefits_en,reference
-1,1,سبحان الله,SubhanAllah,تحقيق الطمأنينة,Brings tranquility,Quran 33:41
-2,1,الحمد لله,Alhamdulillah,شكر الله على النعم,Gratitude to Allah,Sahih Muslim 2723
-3,2,أستغفر الله,Astaghfirullah,تكفير الذنوب,Forgiveness of sins,Sahih Bukhari 6307
-4,3,الله أكبر,Allahu Akbar,رفع مكانة العبد,Elevates status of servant,Sahih Muslim 2721
-5,1,لا إله إلا الله,La ilaha illallah,توحيد الله,Affirmation of monotheism,Sahih Bukhari 798
-6,2,سبحان الله وبحمده,SubhanAllahi wa bihamdihi,غفران الذنوب,Forgiveness of sins,Sahih Muslim 2699
-7,1,سبحان الله العظيم,SubhanAllahi al-Azeem,زيادة الحسنات,Increases good deeds,Sahih Muslim 2725
-8,3,اللهم صل على محمد,Allahumma salli ala Muhammad,رفع درجات النبي,Raises the Prophet’s rank,Sahih Muslim 406
-9,2,رضيت بالله ربا,Raditu billahi rabban,الرضا بالقضاء والقدر,Contentment with destiny,Sahih Bukhari 7400
-10,1,رضيت وبالاسلام دينا,Raditu billahi deenan,الثبات على الدين,Steadfastness in faith,Sahih Muslim 148
-11,3,اللهم إني أعوذ بك من الكفر والفقر,Allahumma inni a'udhu bika min al-kufri wal-faqr,النجاة من الفقر والكفر,Protection from disbelief and poverty,Sahih Muslim 2688
-12,1,اللهم إني أسألك الجنة,Allahumma inni as’aluka al-jannah,طلب الجنة,Asking for Paradise,Sahih Muslim 2724
-13,2,اللهم اجعلني من التوابين,Allahumma aj‘alni min at-tawwabeen,الاستغفار والعودة لله,Being among those who repent,Sahih Muslim 2716
-14,1,اللهم اجعلني من المتطهرين,Allahumma aj‘alni min al-mutatahhireen,الطهارة والصفاء,Purity and cleanliness,Sahih Muslim 2720
+1,1,"اللّهُـمَّ أَنْتَ رَبِّـي لا إلهَ إلاّ أَنْتَ...","O Allah, You are my Lord, none has the right to be worshiped except You...","من قاله موقنًا به في الصباح أو المساء فمات دخل الجنة.","Whoever says it with conviction in the morning or evening and dies, enters Paradise.","صحيح البخاري 6306"
+2,1,"أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ...","We have entered a new morning and with it all dominion belongs to Allah...","ذكر عظيم يُقال في الصباح والمساء.","A great remembrance for renewing faith each morning and evening.","سنن أبي داود 5071"
+3,1,"اللّهُمَّ ما أَصْبَحَ بي من نِعْمَةٍ...","O Allah, whatever blessing has come to me this morning...","شكر لله على نعمه في الصباح.","Gratitude for Allah’s blessings each morning.","صحيح مسلم 2729"
+4,1,"رَضِيتُ بِاللَّهِ رَبًّا...","I am pleased with Allah as my Lord...","من قالها ثلاثًا حُق له الرضا.","Whoever says it thrice attains contentment.","سنن أبي داود 5072"
+5,1,"اللّهُمَّ عافني في بدني...","O Allah, grant health to my body...","دعاء للحفظ من الأمراض.","Supplication for health and protection.","سنن الترمذي 3388"
+6,1,"اللّهُمَّ إني أصبحتُ أُشهدُك...","O Allah, I have entered the morning calling You to witness...","تجديد للعهد مع الله.","Renewal of faith covenant.","سنن أبي داود 5069"
+7,1,"اللّهُمَّ إني أعوذ بك من الكسل وسوء الكِبَر...","O Allah, I seek refuge in You from laziness and old age...","وقاية من الكسل والهم.","Protection from laziness and distress.","صحيح البخاري 6367"
+8,1,"اللّهُمَّ بك أصبحنا وبك أمسينا...","O Allah, by Your leave we have reached the morning and the evening...","توكّل على الله في كل حال.","Trusting Allah in all conditions.","صحيح مسلم 2710"
+9,1,"سُبْحَانَ اللَّهِ وَبِحَمْدِهِ","Glory is to Allah and praise is to Him.","يغفر الذنوب وإن كانت مثل زبد البحر.","Forgives sins even if as much as the foam of the sea.","صحيح مسلم 2691"
+10,1,"اللّهُ لا إِلَهَ إِلاَّ هُوَ الْحَيُّ الْقَيُّومُ...","Allah! None has the right to be worshiped but He, the Ever Living...","آية الكرسي تحفظك من الشيطان.","Ayat al-Kursi protects from Satan.","صحيح البخاري 2311"
+
+11,2,"اللَّهُمَّ بِاسْمِكَ أَحْيَا وَبِاسْمِكَ أَمُوتُ","O Allah, in Your name I live and in Your name I die.","ذكر النوم للحفظ.","Said before sleep for protection.","صحيح البخاري 6314"
+12,2,"الحَمْدُ للهِ الَّذي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا...","Praise be to Allah who gave us life after He caused us to die...","ذكر الاستيقاظ بنعمة الحياة.","Thanking Allah for life upon waking.","صحيح البخاري 6312"
+13,2,"اللّهُمَّ قِني عَذابَكَ يَوْمَ تَبْعَثُ عِبادَك","O Allah, protect me from Your punishment on the Day You resurrect Your servants.","ذكر النوم للمغفرة.","A nightly supplication for forgiveness.","صحيح مسلم 2713"
+14,2,"بِاسْمِكَ رَبِّ وَضَعْتُ جَنْبِي...","In Your name, my Lord, I lay down my side...","ذكر يقال عند النوم للطمأنينة.","Brings tranquility before sleep.","سنن الترمذي 3393"
+15,2,"اللّهُمَّ إِنِّي أَسْأَلُكَ خَيْرَ هَذِهِ اللَّيْلَةِ...","O Allah, I ask You for the good of this night...","دعاء لحفظ الليل.","Supplication for protection during the night.","سنن النسائي 5505"
+
+16,3,"سُبْحَانَ اللَّهِ وَالْحَمْدُ لِلَّهِ...","Glory be to Allah, all praise is for Allah...","أحب الكلام إلى الله.","The most beloved words to Allah.","صحيح مسلم 2137"
+17,3,"لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ...","None has the right to be worshiped but Allah alone...","يعدل عتق أربع رقاب.","Equal to freeing four slaves.","صحيح البخاري 3293"
+18,3,"الْحَمْدُ لِلَّهِ","All praise is due to Allah.","من قالها شكر الله.","Gratitude remembrance.","صحيح مسلم 2738"
+19,3,"اللَّهُ أَكْبَر","Allah is the Greatest.","تكبير يُعظّم الله.","Glorifies Allah’s greatness.","صحيح مسلم 2737"
+20,3,"سُبْحَانَ اللَّهِ وَبِحَمْدِهِ عَدَدَ خَلْقِهِ...","Glory be to Allah and praise Him as many times as His creation...","ذكر يُضاعف الأجر.","Multiplies the reward greatly.","صحيح مسلم 2726"
+
+21,4,"أستغفر الله وأتوب إليه","I seek Allah’s forgiveness and repent to Him.","سبب لمغفرة الذنوب.","A cause for forgiveness.","صحيح مسلم 2702"
+22,4,"سيد الاستغفار: اللهم أنت ربي لا إله إلا أنت...","The best form of seeking forgiveness...","من قاله موقنًا ومات دخل الجنة.","Guaranteed Paradise if said sincerely.","صحيح البخاري 6306"
+23,4,"اللهم اغفر لي وتب علي إنك أنت التواب الرحيم","O Allah, forgive me and accept my repentance...","دعاء للتوبة والمغفرة.","Repentance and forgiveness.","سنن الترمذي 3420"
+24,4,"أستغفر الله العظيم الذي لا إله إلا هو الحي القيوم وأتوب إليه","I seek forgiveness from Allah, the Ever-Living...","يمحو الذنوب بإذن الله.","Erases sins by Allah’s will.","سنن ابن ماجه 3814"
+
+25,5,"اللّهُـمَّ صَلِّ وَسَلِّمْ عَلَى نَبِيِّنَا مُحَمَّد","O Allah, send prayers and peace upon our Prophet Muhammad.","سبب للبركة والشفاعة.","Brings blessings and intercession.","سنن الترمذي 484"
+26,5,"اللهم صل وسلم على محمد عدد ما ذكره الذاكرون","O Allah, send prayers upon Muhammad as many times as He is remembered.","تزيد الأجر مع التكرار.","Increases rewards with repetition.","البيهقي في الشعب"
+27,5,"اللهم صل وسلم على سيدنا محمد في الأولين والآخرين","O Allah, send blessings upon our Prophet in the first and the last.","دعاء جامع في الصلاة عليه.","Comprehensive salutation.","النسائي الكبرى 1290"
+
+28,6,"اللّهُـمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْهَمِّ وَالْحَزَنِ...","O Allah, I seek refuge in You from worry and grief...","إزالة الهم والحزن.","Removes worry and grief.","صحيح البخاري 6369"
+29,6,"حَسْبِيَ اللَّهُ لَا إِلَهَ إِلَّا هُوَ...","Allah is sufficient for me, there is no deity except Him...","من قالها كفاه الله.","Allah suffices whoever says it.","صحيح أبي داود 5081"
+30,6,"اللّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْجُبْنِ وَالْبُخْلِ...","O Allah, I seek refuge in You from cowardice and miserliness...","يُقوي النفس ويزيل الخوف.","Strengthens courage and faith.","صحيح البخاري 2820"
+31,6,"اللّهُمَّ اجعلني من التوابين واجعلني من المتطهرين","O Allah, make me among the repentant and purified.","طهارة النفس والقلب.","Purity of heart and soul.","سنن الترمذي 3565"
+
+32,7,"أستغفر الله ثلاثًا بعد الصلاة","I seek Allah’s forgiveness three times after prayer.","غفران الذنوب بعد الصلاة.","Forgiveness after prayers.","صحيح مسلم 591"
+33,7,"اللهم أنت السلام ومنك السلام تباركت يا ذا الجلال والإكرام","O Allah, You are Peace and from You is peace...","ذكر بعد السلام من الصلاة.","Said after concluding prayer.","صحيح مسلم 591"
+34,7,"لا إله إلا الله وحده لا شريك له...","None has the right to be worshiped but Allah alone...","ذكر بعد كل صلاة.","Said after every obligatory prayer.","صحيح مسلم 594"
+35,7,"سُبْحَانَ اللَّهِ (33) وَالْحَمْدُ لِلَّهِ (33) وَاللَّهُ أَكْبَر (34)","33× سبحان الله، 33× الحمد لله، 34× الله أكبر.","تُكمل مائة ذكر بعد الصلاة.","Completes 100 dhikr after prayer.","صحيح مسلم 597"
+
+36,3,"لا حول ولا قوة إلا بالله","There is no power and no strength except with Allah.","كنز من كنوز الجنة.","A treasure from Paradise.","صحيح البخاري 4205"
+37,3,"حَسْبُنَا اللَّهُ وَنِعْمَ الْوَكِيلُ","Allah is sufficient for us and He is the best disposer of affairs.","تثبيت في الشدائد.","Strength in hardships.","صحيح البخاري 4563"
+38,3,"اللّهُـمَّ اجعل القرآن ربيع قلوبنا","O Allah, make the Qur'an the spring of our hearts.","راحة للقلب ونور للصدر.","Comfort to the heart, light to the chest.","صحيح الحاكم 1/509"
+39,3,"اللّهُمَّ إني أسألك الجنة وأعوذ بك من النار","O Allah, I ask You for Paradise and seek refuge from Hellfire.","من أعظم الدعاء.","Among the greatest supplications.","صحيح الترمذي 2572"
+40,3,"اللّهُمَّ آتِ نَفْسِي تَقْوَاهَا","O Allah, grant my soul its piety.","دعاء لتزكية النفس.","Purification of the soul.","صحيح مسلم 2722"
+
+41,1,"اللّهُمَّ اجعل يومي هذا خيرًا من أمسه","O Allah, make this day better than yesterday.","دعاء لبداية اليوم بالخير.","A prayer for a blessed day.","أثر حسن"
+42,2,"اللّهُمَّ بارك لنا في نومنا ويقظتنا","O Allah, bless our sleep and awakening.","دعاء للراحة والبركة.","Supplication for comfort and blessing.","أثر حسن"
+43,4,"اللّهُمَّ تب علينا توبة نصوحًا","O Allah, accept from us sincere repentance.","توبة نصوح خالصة.","Sincere repentance.","أثر حسن"
+44,5,"اللّهُمَّ صل على محمد عدد أنفاس الخلائق","O Allah, send prayers upon Muhammad as many as the breaths of creation.","مضاعفة الثواب.","Multiplies the reward immensely.","أثر حسن"
+45,6,"اللّهُمَّ اكشف همّي ونفّس كربي","O Allah, relieve my distress and remove my sorrow.","راحة النفس وزوال الكرب.","Relief and tranquility.","أثر حسن"
+46,7,"اللّهُمَّ تقبل صلاتنا واغفر زلّاتنا","O Allah, accept our prayers and forgive our mistakes.","دعاء بعد الصلاة.","Supplication after prayer.","أثر حسن"
+47,3,"اللّهُمَّ اجعل لساننا رطبًا بذكرك","O Allah, make our tongues moist with Your remembrance.","دوام الذكر.","Continuous remembrance.","أثر حسن"
+48,1,"اللّهُمَّ اجعل صباحنا صباح خيرٍ وبركة","O Allah, make our morning full of good and blessings.","دعاء لبداية اليوم.","Morning blessing.","أثر حسن"
+49,2,"اللّهُمَّ اجعل نومنا راحةً لنا وشفاءً لأجسادنا","O Allah, make our sleep rest for our bodies.","دعاء قبل النوم.","Supplication before sleep.","أثر حسن"
+50,4,"اللّهُمَّ اغسل قلوبنا من الذنوب وطهّرها من العيوب","O Allah, cleanse our hearts of sins and purify them from faults.","طهارة القلب.","Purity of heart.","أثر حسن"
