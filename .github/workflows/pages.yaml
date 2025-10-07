@@ -61,6 +61,9 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+    - name: List files in dist
+      run: ls -la ./Frontend/dist
+
     - name: deploy to pages
       id: deployment
       uses: actions/deploy-pages@v4
