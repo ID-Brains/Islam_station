@@ -5,8 +5,6 @@ import react from "@astrojs/react";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
-    site: "https://id-brains.github.io",
-    base: "/Islam_station",
     output: "static",
     // adapter: node({ mode: "standalone" }),
     vite: {
@@ -22,34 +20,32 @@ export default defineConfig({
                     short_name: "IslamStation",
                     description:
                         "A unified platform for Quran search, prayer times, and spiritual guidance",
-                    start_url: "/Islam_station/",
+                    start_url: "/",
                     display: "standalone",
                     background_color: "#ffffff",
                     theme_color: "#0ea5a4",
                     icons: [
                         {
-                            src: "/Islam_station/pwa-192x192.svg",
+                            src: "/pwa-192x192.svg",
                             sizes: "any",
                             type: "image/svg+xml",
                         },
                         {
-                            src: "/Islam_station/pwa-512x512.svg",
+                            src: "/pwa-512x512.svg",
                             sizes: "any",
                             type: "image/svg+xml",
                         },
                     ],
                 },
                 includeAssets: [
-                    "/Islam_station/index.html",
-                    "/Islam_station/manifest.webmanifest",
-                    "/Islam_station/pwa-192x192.svg",
-                    "/Islam_station/pwa-512x512.svg",
-                    "/Islam_station/masjed.png",
+                    "index.html",
+                    "manifest.webmanifest",
+                    "pwa-192x192.svg",
+                    "pwa-512x512.svg",
+                    "masjed.png",
                 ],
                 workbox: {
-                    additionalManifestEntries: [
-                        { url: "/Islam_station/index.html", revision: null },
-                    ],
+                    additionalManifestEntries: [{ url: "index.html", revision: null }],
                 },
                 filename: "sw.js",
             }),

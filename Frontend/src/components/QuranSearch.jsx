@@ -1,6 +1,7 @@
 // QuranSearch.jsx - Advanced Quran search component with RTL support
 import React, { useState, useEffect } from "react";
 import { surahs } from "../data/surahs.js";
+import VirtualizedSurahList from "./VirtualizedSurahList.jsx";
 
 const SearchResultCard = ({ result }) => (
     <div className="bg-base-100 rounded-xl p-6 border border-white/10 hover:border-primary/30 transition-all duration-300">
@@ -49,6 +50,7 @@ const SearchResultCard = ({ result }) => (
 );
 
 const QuranSearch = () => {
+    const [activeTab, setActiveTab] = useState("browse"); // default to "browse" now
     const [searchQuery, setSearchQuery] = useState("");
     const [searchResults, setSearchResults] = useState([]);
     const [isSearching, setIsSearching] = useState(false);
@@ -97,7 +99,10 @@ const QuranSearch = () => {
     };
 
     useEffect(() => {
+        // If user types into the search box, switch to the search tab and perform search
         if (searchQuery.trim()) {
+            setActiveTab("search");
+
             const timeoutId = setTimeout(() => {
                 setCurrentPage(1);
                 performSearch();
@@ -105,10 +110,27 @@ const QuranSearch = () => {
 
             return () => clearTimeout(timeoutId);
         } else {
+            // No query typed: clear results and keep Browse as default
             setSearchResults([]);
             setTotalPages(0);
+            // Keep the browse tab active unless a URL param forces search (handled below)
         }
     }, [searchQuery, searchType, language, selectedSurah]);
+
+    // On mount, check URL for `q` param to auto-switch to search
+    useEffect(() => {
+        try {
+            if (typeof window !== 'undefined') {
+                const params = new URLSearchParams(window.location.search);
+                if (params.get('q')) {
+                    setActiveTab('search');
+                    setSearchQuery(params.get('q'));
+                }
+            }
+        } catch (e) {
+            // ignore
+        }
+    }, []);
 
     const handleSearch = (e) => {
         e.preventDefault();
@@ -121,10 +143,68 @@ const QuranSearch = () => {
         performSearch();
     };
 
+    const handleSurahSelect = (surah) => {
+        // When a surah is selected from the list, navigate to it
+        window.location.href = `/quran/read?surah=${surah.id}`;
+    };
+
     return (
-        <div className="w-full max-w-4xl mx-auto">
-            {/* Search Form */}
-            <form onSubmit={handleSearch} className="mb-8">
+        <div className="w-full max-w-7xl mx-auto">
+            {/* Tabs */}
+            <div className="flex gap-2 mb-6">
+                <button
+                    className={`flex-1 py-3 px-6 rounded-xl font-semibold transition-all ${
+                        activeTab === "search"
+                            ? "bg-primary text-primary-content shadow-lg"
+                            : "bg-base-200 text-base-content hover:bg-base-300"
+                    }`}
+                    onClick={() => setActiveTab("search")}
+                >
+                    <svg
+                        className="w-5 h-5 inline-block mr-2"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                        />
+                    </svg>
+                    Search Verses
+                </button>
+                <button
+                    className={`flex-1 py-3 px-6 rounded-xl font-semibold transition-all ${
+                        activeTab === "browse"
+                            ? "bg-primary text-primary-content shadow-lg"
+                            : "bg-base-200 text-base-content hover:bg-base-300"
+                    }`}
+                    onClick={() => setActiveTab("browse")}
+                >
+                    <svg
+                        className="w-5 h-5 inline-block mr-2"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                        />
+                    </svg>
+                    Browse Surahs
+                </button>
+            </div>
+
+            {/* Search Tab Content */}
+            {activeTab === "search" && (
+                <div>
+                    {/* Search Form */}
+                    <form onSubmit={handleSearch} className="mb-8">
                 <div className="bg-base-200 rounded-2xl p-6 shadow-lg">
                     {/* Main Search Input */}
                     <div className="relative mb-6">
@@ -366,6 +446,15 @@ const QuranSearch = () => {
                             </p>
                         </div>
                     </div>
+                </div>
+            )}
+                </div>
+            )}
+
+            {/* Browse Surahs Tab Content */}
+            {activeTab === "browse" && (
+                <div className="h-[600px]">
+                    <VirtualizedSurahList onSurahSelect={handleSurahSelect} />
                 </div>
             )}
         </div>
