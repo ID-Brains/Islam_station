@@ -111,8 +111,9 @@ import HomePrayerTable from "../components/HomePrayerTable.jsx";
     </script>
     <script src="/scripts/Random_ayah.js" is:inline></script>
 
-    <script type="module">
-        import locationService from "/utils/LocationService.js";
+    <script type="module" define:vars={{ base: import.meta.env.BASE_URL }}>
+        const locationServiceUrl = `${base}utils/LocationService.js`.replace(/\/+/g, "/");
+        const locationService = await import(locationServiceUrl).then((m) => m.default);
 
         // Initialize location button
         document.addEventListener("DOMContentLoaded", () => {
