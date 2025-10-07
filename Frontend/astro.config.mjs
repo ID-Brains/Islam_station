@@ -1,16 +1,15 @@
 import { defineConfig } from "astro/config";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@astrojs/react";
-import node from "@astrojs/node";
+// import node from "@astrojs/node";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
-    output: "server",
-    adapter: node({ mode: "standalone" }),
+    output: "static",
+    // adapter: node({ mode: "standalone" }),
     vite: {
         plugins: [
             tailwindcss(),
-            // Vite PWA plugin
             VitePWA({
                 registerType: "autoUpdate",
                 devOptions: {
@@ -46,10 +45,8 @@ export default defineConfig({
                     "masjed.png",
                 ],
                 workbox: {
-                    // default precaching; tune runtimeCaching for API routes if needed
                     additionalManifestEntries: [{ url: "index.html", revision: null }],
                 },
-                // Make explicit filename so we can register it easily
                 filename: "sw.js",
             }),
         ],
