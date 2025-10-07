@@ -62,7 +62,7 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
     - name: List files in dist
-      run: ls -la ./Frontend/dist
+      run: ls -la ./Frontend
 
     - name: deploy to pages
       id: deployment
