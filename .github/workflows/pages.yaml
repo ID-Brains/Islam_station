@@ -26,7 +26,7 @@ jobs:
         with:
           node-version: "22"
           cache: "npm"
-          cache-dependency-path: './Frontend/package-lock.json'
+          cache-dependency-path: "./Frontend/package-lock.json"
 
       - name: setup the pages
         uses: actions/configure-pages@v1
@@ -42,19 +42,28 @@ jobs:
         run: |
           npm run build
           echo "Build done"
-      - name: clean non-static files
+      - name: prepare for deployment
         working-directory: ./Frontend
         run: |
+          # Remove symlinks and non-static files
           find dist -type l -delete
           find dist -type f \( -name '*.mjs' -o -name '*.map' -o -name '*.ts' -o -name '*.jsx' -o -name '*.cjs' \) -delete
-          find dist -type f -name '.*' -delete
-          echo "Removed symlinks, non-static files, and dotfiles from dist directory."
+          find dist -type f -name '.*' ! -name '.nojekyll' -delete
+
+          # Create .nojekyll file for GitHub Pages
+          touch dist/.nojekyll
+
+          # Verify directory structure
+          echo "Contents of dist directory:"
+          ls -lah dist/
+          echo "Total size:"
+          du -sh dist/
+          echo "Deployment preparation complete."
 
       - name: upload artifact
-        uses: actions/upload-artifact@v4.6.2
+        uses: actions/upload-pages-artifact@v3
         with:
           path: ./Frontend/dist
-          name: github-pages
 
   deploy:
     needs: build
@@ -66,10 +75,3 @@ jobs:
       - name: deploy to pages
         id: deployment
         uses: actions/deploy-pages@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          artifact_name: github-pages
-          timeout: 600000
-          error_count: 10
-          reporting_interval: 5000
-          preview: false
