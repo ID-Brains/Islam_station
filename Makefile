@@ -27,7 +27,7 @@ help:
 install: install-backend install-frontend
 
 install-backend:
-	cd backend && pip install -r requirements.txt
+	cd backend && uv sync
 
 install-frontend:
 	cd Frontend && npm install

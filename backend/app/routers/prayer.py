@@ -3,9 +3,9 @@ Prayer API Router for The Islamic Guidance Station
 """
 
 import httpx
-from datetime import date, datetime
+from datetime import date
 from fastapi import APIRouter, Query, HTTPException
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 
 from ..services.prayer_service import PrayerService
 
@@ -13,74 +13,10 @@ router = APIRouter()
 
 
 @router.get("/times")
-async def get_prayer_times(
-    latitude: float = Query(..., description="Latitude of the location", ge=-90, le=90),
-    longitude: float = Query(
-        ..., description="Longitude of the location", ge=-180, le=180
-    ),
-    date_str: Optional[str] = Query(None, description="Date in YYYY-MM-DD format"),
-    method: str = Query(default="MuslimWorldLeague", description="Calculation method"),
-) -> Dict[str, Any]:
-    """
-    Get prayer times for a specific location and date
-
-    Args:
-        latitude: Location latitude
-        longitude: Location longitude
-        date_str: Date for calculation (defaults to today)
-        method: Calculation method name
-
-    Returns:
-        Prayer times for the location and date
-    """
-    try:
-        # Parse date if provided
-        if date_str:
-            try:
-                date_obj = datetime.strptime(date_str, "%Y-%m-%d").date()
-            except ValueError:
-                raise HTTPException(
-                    status_code=400, detail="Invalid date format. Use YYYY-MM-DD"
-                )
-        else:
-            date_obj = date.today()
-
-        # Validate method
-        if method not in PrayerService.CALCULATION_METHODS:
-            raise HTTPException(
-                status_code=400,
-                detail=f"Invalid calculation method. Available: {list(PrayerService.CALCULATION_METHODS.keys())}",
-            )
-
-        # Calculate prayer times
-        prayer_times = PrayerService.calculate_prayer_times(
-            latitude=latitude,
-            longitude=longitude,
-            date_obj=date_obj,
-            method=method,
-        )
-
-        # Get next prayer info
-        next_prayer = PrayerService.get_next_prayer(prayer_times["times"])
-
-        return {
-            **prayer_times,
-            "next_prayer": next_prayer,
-        }
-
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Failed to calculate prayer times: {str(e)}"
-        )
-
-
-@router.get("/pTimes")
 async def find_time_with_geolocation(
     latitude: float = Query(..., description="Latitude of the location"),
     longitude: float = Query(..., description="Longitude of the location"),
-    method: str = Query(default="MuslimWorldLeague", description="Calculation method"),
+    method: str = Query(default="Egyptian", description="Calculation method"),
 ) -> Dict[str, Any]:
     """
     Get prayer times for a specific location (backward compatible endpoint)
@@ -129,99 +65,6 @@ async def find_time_with_geolocation(
     except Exception as e:
         raise HTTPException(
             status_code=500, detail=f"Failed to get prayer times: {str(e)}"
-        )
-
-
-@router.get("/next")
-async def get_next_prayer(
-    latitude: float = Query(..., description="Latitude of the location"),
-    longitude: float = Query(..., description="Longitude of the location"),
-    method: str = Query(default="MuslimWorldLeague", description="Calculation method"),
-) -> Dict[str, Any]:
-    """
-    Get the next prayer time and countdown
-
-    Args:
-        latitude: Location latitude
-        longitude: Location longitude
-        method: Calculation method
-
-    Returns:
-        Next prayer information with countdown
-    """
-    try:
-        # Calculate today's prayer times
-        prayer_times = PrayerService.calculate_prayer_times(
-            latitude=latitude,
-            longitude=longitude,
-            date_obj=date.today(),
-            method=method,
-        )
-
-        # Get next prayer
-        next_prayer = PrayerService.get_next_prayer(prayer_times["times"])
-
-        if not next_prayer:
-            raise HTTPException(
-                status_code=404, detail="Could not determine next prayer"
-            )
-
-        return {
-            "next_prayer": next_prayer,
-            "location": {"latitude": latitude, "longitude": longitude},
-            "all_times": prayer_times["times"],
-        }
-
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Failed to get next prayer: {str(e)}"
-        )
-
-
-@router.get("/monthly")
-async def get_monthly_prayer_times(
-    latitude: float = Query(..., description="Latitude of the location"),
-    longitude: float = Query(..., description="Longitude of the location"),
-    year: int = Query(..., description="Year", ge=2000, le=2100),
-    month: int = Query(..., description="Month", ge=1, le=12),
-    method: str = Query(default="MuslimWorldLeague", description="Calculation method"),
-) -> Dict[str, Any]:
-    """
-    Get prayer times for an entire month
-
-    Args:
-        latitude: Location latitude
-        longitude: Location longitude
-        year: Year for calculation
-        month: Month for calculation (1-12)
-        method: Calculation method
-
-    Returns:
-        Prayer times for each day of the month
-    """
-    try:
-        monthly_times = PrayerService.get_monthly_prayer_times(
-            latitude=latitude,
-            longitude=longitude,
-            year=year,
-            month=month,
-            method=method,
-        )
-
-        return {
-            "year": year,
-            "month": month,
-            "location": {"latitude": latitude, "longitude": longitude},
-            "method": method,
-            "prayer_times": monthly_times,
-        }
-
-    except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail=f"Failed to calculate monthly prayer times: {str(e)}",
         )
 
 

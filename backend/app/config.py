@@ -61,9 +61,16 @@ class Settings(BaseSettings):
     # Rate Limiting
     RATE_LIMIT_REQUESTS: int = 100
     RATE_LIMIT_WINDOW: int = 60  # seconds
+    RATE_LIMIT_ENABLED: bool = True
+
+    # Monitoring
+    METRICS_ENABLED: bool = True
+    HEALTH_CHECK_ENABLED: bool = True
 
     # Logging
     LOG_LEVEL: str = "INFO"
+    LOG_FORMAT: str = "json"
+    CORRELATION_ID_HEADER: str = "X-Correlation-ID"
 
     @staticmethod
     def _parse_allowed_origins(raw: str) -> list[str]:

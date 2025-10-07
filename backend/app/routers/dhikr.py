@@ -8,8 +8,6 @@ from typing import Any, Dict
 from ..database import execute_query, execute_query_single
 from ..queries.dhikr_queries import (
     get_daily_dhikr_query,
-    get_dhikr_by_category_query,
-    get_dhikr_by_id_query,
     get_random_dhikr_query,
 )
 
@@ -55,52 +53,6 @@ async def get_daily_dhikr(
         )
 
 
-@router.get("/category/{category_id}")
-async def get_dhikr_by_category(
-    category_id: int,
-    limit: int = Query(default=20, description="Maximum number of results", le=100),
-    offset: int = Query(default=0, description="Offset for pagination", ge=0),
-) -> Dict[str, Any]:
-    """
-    Get all dhikr/dua from a specific category
-
-    Args:
-        category_id: Category ID to filter by
-        limit: Maximum results to return
-        offset: Pagination offset
-
-    Returns:
-        List of dhikr from the category
-    """
-    try:
-        # Validate category ID
-        if category_id < 1:
-            raise HTTPException(status_code=400, detail="Invalid category ID")
-
-        # Get category query
-        query = get_dhikr_by_category_query()
-
-        # Add pagination
-        query += f" LIMIT ${2} OFFSET ${3}"
-
-        # Execute query
-        dhikr_list = await execute_query(query, category_id, limit, offset)
-
-        return {
-            "category_id": category_id,
-            "dhikr": dhikr_list,
-            "limit": limit,
-            "offset": offset,
-            "count": len(dhikr_list),
-        }
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Failed to fetch dhikr by category: {str(e)}"
-        )
-
-
 @router.get("/random")
 async def get_random_dhikr(
     category_id: int = Query(None, description="Optional category filter"),
@@ -143,70 +95,6 @@ async def get_random_dhikr(
     except Exception as e:
         raise HTTPException(
             status_code=500, detail=f"Failed to fetch random dhikr: {str(e)}"
-        )
-
-
-@router.get("/{dhikr_id}")
-async def get_dhikr_by_id(
-    dhikr_id: int,
-) -> Dict[str, Any]:
-    """
-    Get specific dhikr/dua by ID
-
-    Args:
-        dhikr_id: Unique identifier of the dhikr
-
-    Returns:
-        Dhikr details
-    """
-    try:
-        # Validate dhikr ID
-        if dhikr_id < 1:
-            raise HTTPException(status_code=400, detail="Invalid dhikr ID")
-
-        # Get dhikr query
-        query = get_dhikr_by_id_query()
-
-        # Execute query
-        dhikr = await execute_query_single(query, dhikr_id)
-
-        if not dhikr:
-            raise HTTPException(status_code=404, detail="Dhikr not found")
-
-        return {"dhikr": dhikr}
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to fetch dhikr: {str(e)}")
-
-
-@router.get("/categories")
-async def get_dhikr_categories() -> Dict[str, Any]:
-    """
-    Get all available dhikr/dua categories
-
-    Returns:
-        List of categories with counts
-    """
-    try:
-        query = """
-            SELECT c."category_id", c."name_ar", c."name_en",
-                   COUNT(d."dhikr_id") as dhikr_count
-            FROM "categories" c
-            LEFT JOIN "dhikr" d ON c."category_id" = d."category_id"
-            GROUP BY c."category_id", c."name_ar", c."name_en"
-            ORDER BY c."category_id" ASC
-        """
-
-        categories = await execute_query(query)
-
-        return {
-            "categories": categories,
-            "count": len(categories),
-        }
-    except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Failed to fetch categories: {str(e)}"
         )
 
 

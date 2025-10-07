@@ -26,6 +26,7 @@ dependencies = [
     "python-dotenv==1.0.0",
     "requests==2.31.0",
     "praytimes",
+    "pyarabic>=0.6.15",
 ]
 
 [dependency-groups]

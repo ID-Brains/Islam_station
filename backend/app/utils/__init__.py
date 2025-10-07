@@ -16,6 +16,15 @@ from .error_handler import (
     log_api_request,
     log_api_response,
 )
+from .arabic_text import (
+    remove_diacritics,
+    normalize_arabic_search,
+    normalize_arabic_for_display,
+    is_arabic_text,
+    clean_search_query,
+    create_search_variants,
+    is_pyarabic_available,
+)
 
 __all__ = [
     "IslamicStationException",
@@ -30,4 +39,11 @@ __all__ = [
     "validate_pagination_params",
     "log_api_request",
     "log_api_response",
+    "remove_diacritics",
+    "normalize_arabic_search",
+    "normalize_arabic_for_display",
+    "is_arabic_text",
+    "clean_search_query",
+    "create_search_variants",
+    "is_pyarabic_available",
 ]

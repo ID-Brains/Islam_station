@@ -30,6 +30,11 @@ app.include_router(prayer.router, prefix="/api/prayer", tags=["Prayer"])
 app.include_router(mosque.router, prefix="/api/mosque", tags=["Mosque"])
 app.include_router(dhikr.router, prefix="/api/dhikr", tags=["Dhikr"])
 
+# Include health router
+from .routers.health import router as health_router
+
+app.include_router(health_router, prefix="/health", tags=["Health"])
+
 # Exception handlers will be added after utils module is properly imported
 # For now, using default FastAPI exception handling
 
@@ -99,9 +104,3 @@ async def shutdown_event():
 async def root():
     """Root endpoint"""
     return {"message": "Welcome to The Islamic Guidance Station"}
-
-
-@app.get("/health")
-async def health_check():
-    """Health check endpoint"""
-    return {"status": "healthy"}

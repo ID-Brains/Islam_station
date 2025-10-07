@@ -74,7 +74,7 @@ class PrayerService:
         latitude: float,
         longitude: float,
         date_obj: date,
-        method: str = "MuslimWorldLeague",
+        method: str = "Egyptian",
         timezone_offset: float = 0,
         adjustments: Optional[Dict[str, int]] = None,
     ) -> Dict[str, Any]:
@@ -97,7 +97,7 @@ class PrayerService:
 
         # Get method parameters
         method_params = PrayerService.CALCULATION_METHODS.get(
-            method, PrayerService.CALCULATION_METHODS["MuslimWorldLeague"]
+            method, PrayerService.CALCULATION_METHODS["Egyptian"]
         )
 
         # Calculate Julian date
@@ -374,7 +374,7 @@ class PrayerService:
         latitude: float,
         longitude: float,
         date_obj: Optional[date] = None,
-        method: str = "MuslimWorldLeague",
+        method: str = "Egyptian",
     ) -> Dict[str, Any]:
         """
         Fetch prayer times from external Al Adhan API
@@ -401,7 +401,7 @@ class PrayerService:
             "Jafari": 0,
         }
 
-        method_code = method_map.get(method, 3)
+        method_code = method_map.get(method, 5)
 
         url = f"http://api.aladhan.com/v1/timings/{date_obj.strftime('%d-%m-%Y')}"
         params = {"latitude": latitude, "longitude": longitude, "method": method_code}
@@ -497,7 +497,7 @@ class PrayerService:
         longitude: float,
         year: int,
         month: int,
-        method: str = "MuslimWorldLeague",
+        method: str = "Egyptian",
     ) -> List[Dict[str, Any]]:
         """
         Calculate prayer times for an entire month
