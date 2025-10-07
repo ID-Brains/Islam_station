@@ -19,7 +19,7 @@ jobs:
       - name: check
         uses: actions/checkout@v4
         with:
-          fetch_depth: 0  
+          fetch-depth: 0
 
       - name: setup Node.js environment
         uses: actions/setup-node@v4
