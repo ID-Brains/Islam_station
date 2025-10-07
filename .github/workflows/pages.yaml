@@ -31,6 +31,7 @@ jobs:
       with:
         node-version: "22"
         cache: "npm" # we could say it will be faster 
+        cache-dependency-path: './Frontend/package-lock.json'
 
     - name : setup the pages
       uses: actions/configure-pages@v1
