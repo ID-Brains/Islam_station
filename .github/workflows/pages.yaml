@@ -47,7 +47,8 @@ jobs:
         run: |
           find dist -type l -delete
           find dist -type f \( -name '*.mjs' -o -name '*.map' -o -name '*.ts' -o -name '*.jsx' -o -name '*.cjs' \) -delete
-          echo "Removed symlinks and non-static files from dist directory."
+          find dist -type f -name '.*' -delete
+          echo "Removed symlinks, non-static files, and dotfiles from dist directory."
 
       - name: upload artifact
         uses: actions/upload-artifact@v4.6.2
