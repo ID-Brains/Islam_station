@@ -1,58 +1,53 @@
-name : try to pages
+name: try to pages
 
 on:
-  push :
-    branches: [ "main" ]
+  push:
+    branches: ["main"]
   pull_request:
-    branches : [ "main" ]
-
+    branches: ["main"]
   workflow_dispatch:
-# for manually  triggres
 
-# all the permissions for github pages
 permissions:
-  contents : read
+  contents: read
   pages: write
   id-token: write
 
-
-
 jobs:
   build:
-    runs-on : ubuntu-latest
+    runs-on: ubuntu-latest
     steps:
-    - name : check
-      uses: actions/checkout@v4
-      with: 
-        fetch_depth: 0  #fetch all history to be better
+      - name: check
+        uses: actions/checkout@v4
+        with:
+          fetch_depth: 0  
 
-    - name : setup Node.js environment
-      uses: actions/setup-node@v4
-      with:
-        node-version: "22"
-        cache: "npm" # we could say it will be faster 
-        cache-dependency-path: './Frontend/package-lock.json'
+      - name: setup Node.js environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: './Frontend/package-lock.json'
 
-    - name : setup the pages
-      uses: actions/configure-pages@v1
+      - name: setup the pages
+        uses: actions/configure-pages@v1
 
+      - name: install dependencies
+        working-directory: ./Frontend
+        run: |
+          npm ci
+          echo "Dependencies were successfully installed"
 
-    - name : install depend.
-      working-directory: ./Frontend
-      run: |
-        npm ci   
-        echo "Dependencies was successfully installed "
+      - name: build the astro
+        working-directory: ./Frontend
+        run: |
+          npm run build
+          echo "Build done"
 
-    - name : build the astro
-      working-directory: ./Frontend
-      run: |
-        npm run build 
-        echo "done"
-
-    - name: build the artifact
-      uses: actions/upload-artifact@v4.6.2
-      with:
-        path: ./Frontend/dist
+      - name: upload artifact
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          path: ./Frontend/dist
+          name: github-pages
 
   deploy:
     needs: build
@@ -61,18 +56,13 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-    - name: List files in dist
-      run: ls -la ./Frontend
-
-    - name: deploy to pages
-      id: deployment
-      uses: actions/deploy-pages@v4
-
-
-  
-
-
-
-
-
-
+      - name: deploy to pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          artifact_name: github-pages
+          timeout: 600000
+          error_count: 10
+          reporting_interval: 5000
+          preview: false
