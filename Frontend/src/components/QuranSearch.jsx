@@ -58,17 +58,6 @@ const QuranSearch = () => {
     const [totalPages, setTotalPages] = useState(0);
     const [searchError, setSearchError] = useState("");
 
-    // Surah list for filter
-    const surahs = [
-        { id: "all", name: "All Surahs", name_ar: "كل السور" },
-        { id: "1", name: "Al-Fatihah", name_ar: "الفاتحة" },
-        { id: "2", name: "Al-Baqarah", name_ar: "البقرة" },
-        { id: "3", name: "Aali Imran", name_ar: "آل عمران" },
-        { id: "55", name: "Ar-Rahman", name_ar: "الرحمن" },
-        { id: "67", name: "Al-Mulk", name_ar: "الملك" },
-        { id: "114", name: "An-Nas", name_ar: "الناس" },
-    ];
-
     const performSearch = async () => {
         if (!searchQuery.trim()) return;
 
