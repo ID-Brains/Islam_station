@@ -42,11 +42,12 @@ jobs:
         run: |
           npm run build
           echo "Build done"
-      - name: remove symlinks
+      - name: clean non-static files
         working-directory: ./Frontend
         run: |
           find dist -type l -delete
-          echo "Removed symlinks from dist directory."
+          find dist -type f \( -name '*.mjs' -o -name '*.map' -o -name '*.ts' -o -name '*.jsx' -o -name '*.cjs' \) -delete
+          echo "Removed symlinks and non-static files from dist directory."
 
       - name: upload artifact
         uses: actions/upload-artifact@v4.6.2
