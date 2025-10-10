@@ -140,7 +140,7 @@ const EnhancedPrayerTable = ({
         try {
             // Try to fetch from API first
             const apiResponse = await fetch(
-                `http://localhost:8000/api/prayer/pTimes?latitude=${location.lat}&longitude=${location.lng}&method=${calculationMethod}`,
+                `http://localhost:8000/api/prayer/times?latitude=${location.lat}&longitude=${location.lng}&method=${calculationMethod}`,
             );
 
             if (apiResponse.ok) {

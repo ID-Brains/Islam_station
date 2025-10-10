@@ -3,7 +3,7 @@
  * Handles all prayer times and Qibla-related API calls
  */
 
-import apiClient from '../utils/apiClient';
+import apiClient from "../utils/apiClient";
 
 /**
  * Get prayer times for a specific location and date
@@ -15,31 +15,31 @@ import apiClient from '../utils/apiClient';
  * @returns {Promise<Object>} Prayer times for the location and date
  */
 export async function getPrayerTimes(params) {
-  try {
-    const { latitude, longitude, date, method = 'MuslimWorldLeague' } = params;
+    try {
+        const { latitude, longitude, date, method = "MuslimWorldLeague" } = params;
 
-    if (!latitude || latitude < -90 || latitude > 90) {
-      throw new Error('Invalid latitude. Must be between -90 and 90.');
+        if (!latitude || latitude < -90 || latitude > 90) {
+            throw new Error("Invalid latitude. Must be between -90 and 90.");
+        }
+        if (!longitude || longitude < -180 || longitude > 180) {
+            throw new Error("Invalid longitude. Must be between -180 and 180.");
+        }
+
+        const queryParams = {
+            latitude,
+            longitude,
+            method,
+        };
+
+        if (date) {
+            queryParams.date_str = date;
+        }
+
+        const response = await apiClient.get("/api/prayer/times", { params: queryParams });
+        return response;
+    } catch (error) {
+        throw error;
     }
-    if (!longitude || longitude < -180 || longitude > 180) {
-      throw new Error('Invalid longitude. Must be between -180 and 180.');
-    }
-
-    const queryParams = {
-      latitude,
-      longitude,
-      method
-    };
-
-    if (date) {
-      queryParams.date_str = date;
-    }
-
-    const response = await apiClient.get('/api/prayer/times', { params: queryParams });
-    return response;
-  } catch (error) {
-    throw error;
-  }
 }
 
 /**
@@ -51,23 +51,23 @@ export async function getPrayerTimes(params) {
  * @returns {Promise<Object>} Prayer times with location information
  */
 export async function getPrayerTimesWithGeolocation(params) {
-  try {
-    const { latitude, longitude, method = 'MuslimWorldLeague' } = params;
+    try {
+        const { latitude, longitude, method = "MuslimWorldLeague" } = params;
 
-    if (!latitude || latitude < -90 || latitude > 90) {
-      throw new Error('Invalid latitude. Must be between -90 and 90.');
-    }
-    if (!longitude || longitude < -180 || longitude > 180) {
-      throw new Error('Invalid longitude. Must be between -180 and 180.');
-    }
+        if (!latitude || latitude < -90 || latitude > 90) {
+            throw new Error("Invalid latitude. Must be between -90 and 90.");
+        }
+        if (!longitude || longitude < -180 || longitude > 180) {
+            throw new Error("Invalid longitude. Must be between -180 and 180.");
+        }
 
-    const response = await apiClient.get('/api/prayer/pTimes', {
-      params: { latitude, longitude, method }
-    });
-    return response;
-  } catch (error) {
-    throw error;
-  }
+        const response = await apiClient.get("/api/prayer/times", {
+            params: { latitude, longitude, method },
+        });
+        return response;
+    } catch (error) {
+        throw error;
+    }
 }
 
 /**
@@ -79,23 +79,23 @@ export async function getPrayerTimesWithGeolocation(params) {
  * @returns {Promise<Object>} Next prayer information with countdown
  */
 export async function getNextPrayer(params) {
-  try {
-    const { latitude, longitude, method = 'MuslimWorldLeague' } = params;
+    try {
+        const { latitude, longitude, method = "MuslimWorldLeague" } = params;
 
-    if (!latitude || latitude < -90 || latitude > 90) {
-      throw new Error('Invalid latitude. Must be between -90 and 90.');
-    }
-    if (!longitude || longitude < -180 || longitude > 180) {
-      throw new Error('Invalid longitude. Must be between -180 and 180.');
-    }
+        if (!latitude || latitude < -90 || latitude > 90) {
+            throw new Error("Invalid latitude. Must be between -90 and 90.");
+        }
+        if (!longitude || longitude < -180 || longitude > 180) {
+            throw new Error("Invalid longitude. Must be between -180 and 180.");
+        }
 
-    const response = await apiClient.get('/api/prayer/next', {
-      params: { latitude, longitude, method }
-    });
-    return response;
-  } catch (error) {
-    throw error;
-  }
+        const response = await apiClient.get("/api/prayer/next", {
+            params: { latitude, longitude, method },
+        });
+        return response;
+    } catch (error) {
+        throw error;
+    }
 }
 
 /**
@@ -109,29 +109,29 @@ export async function getNextPrayer(params) {
  * @returns {Promise<Object>} Prayer times for each day of the month
  */
 export async function getMonthlyPrayerTimes(params) {
-  try {
-    const { latitude, longitude, year, month, method = 'MuslimWorldLeague' } = params;
+    try {
+        const { latitude, longitude, year, month, method = "MuslimWorldLeague" } = params;
 
-    if (!latitude || latitude < -90 || latitude > 90) {
-      throw new Error('Invalid latitude. Must be between -90 and 90.');
-    }
-    if (!longitude || longitude < -180 || longitude > 180) {
-      throw new Error('Invalid longitude. Must be between -180 and 180.');
-    }
-    if (!year || year < 2000 || year > 2100) {
-      throw new Error('Invalid year. Must be between 2000 and 2100.');
-    }
-    if (!month || month < 1 || month > 12) {
-      throw new Error('Invalid month. Must be between 1 and 12.');
-    }
+        if (!latitude || latitude < -90 || latitude > 90) {
+            throw new Error("Invalid latitude. Must be between -90 and 90.");
+        }
+        if (!longitude || longitude < -180 || longitude > 180) {
+            throw new Error("Invalid longitude. Must be between -180 and 180.");
+        }
+        if (!year || year < 2000 || year > 2100) {
+            throw new Error("Invalid year. Must be between 2000 and 2100.");
+        }
+        if (!month || month < 1 || month > 12) {
+            throw new Error("Invalid month. Must be between 1 and 12.");
+        }
 
-    const response = await apiClient.get('/api/prayer/monthly', {
-      params: { latitude, longitude, year, month, method }
-    });
-    return response;
-  } catch (error) {
-    throw error;
-  }
+        const response = await apiClient.get("/api/prayer/monthly", {
+            params: { latitude, longitude, year, month, method },
+        });
+        return response;
+    } catch (error) {
+        throw error;
+    }
 }
 
 /**
@@ -142,23 +142,23 @@ export async function getMonthlyPrayerTimes(params) {
  * @returns {Promise<Object>} Qibla direction in degrees from North and distance to Kaaba
  */
 export async function getQiblaDirection(params) {
-  try {
-    const { latitude, longitude } = params;
+    try {
+        const { latitude, longitude } = params;
 
-    if (!latitude || latitude < -90 || latitude > 90) {
-      throw new Error('Invalid latitude. Must be between -90 and 90.');
-    }
-    if (!longitude || longitude < -180 || longitude > 180) {
-      throw new Error('Invalid longitude. Must be between -180 and 180.');
-    }
+        if (!latitude || latitude < -90 || latitude > 90) {
+            throw new Error("Invalid latitude. Must be between -90 and 90.");
+        }
+        if (!longitude || longitude < -180 || longitude > 180) {
+            throw new Error("Invalid longitude. Must be between -180 and 180.");
+        }
 
-    const response = await apiClient.get('/api/prayer/qibla', {
-      params: { latitude, longitude }
-    });
-    return response;
-  } catch (error) {
-    throw error;
-  }
+        const response = await apiClient.get("/api/prayer/qibla", {
+            params: { latitude, longitude },
+        });
+        return response;
+    } catch (error) {
+        throw error;
+    }
 }
 
 /**
@@ -166,12 +166,12 @@ export async function getQiblaDirection(params) {
  * @returns {Promise<Object>} List of calculation methods with descriptions
  */
 export async function getCalculationMethods() {
-  try {
-    const response = await apiClient.get('/api/prayer/methods');
-    return response;
-  } catch (error) {
-    throw error;
-  }
+    try {
+        const response = await apiClient.get("/api/prayer/methods");
+        return response;
+    } catch (error) {
+        throw error;
+    }
 }
 
 /**
@@ -179,35 +179,35 @@ export async function getCalculationMethods() {
  * @param {string} [method='MuslimWorldLeague'] - Calculation method
  * @returns {Promise<Object>} Prayer times for current location
  */
-export async function getPrayerTimesForCurrentLocation(method = 'MuslimWorldLeague') {
-  try {
-    // Get current location from browser
-    const position = await new Promise((resolve, reject) => {
-      if (!navigator.geolocation) {
-        reject(new Error('Geolocation is not supported by your browser'));
-        return;
-      }
+export async function getPrayerTimesForCurrentLocation(method = "MuslimWorldLeague") {
+    try {
+        // Get current location from browser
+        const position = await new Promise((resolve, reject) => {
+            if (!navigator.geolocation) {
+                reject(new Error("Geolocation is not supported by your browser"));
+                return;
+            }
 
-      navigator.geolocation.getCurrentPosition(resolve, reject, {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 300000 // 5 minutes
-      });
-    });
+            navigator.geolocation.getCurrentPosition(resolve, reject, {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 300000, // 5 minutes
+            });
+        });
 
-    const { latitude, longitude } = position.coords;
+        const { latitude, longitude } = position.coords;
 
-    return await getPrayerTimes({ latitude, longitude, method });
-  } catch (error) {
-    if (error.code === error.PERMISSION_DENIED) {
-      throw new Error('Location permission denied. Please enable location access.');
-    } else if (error.code === error.POSITION_UNAVAILABLE) {
-      throw new Error('Location information unavailable.');
-    } else if (error.code === error.TIMEOUT) {
-      throw new Error('Location request timed out.');
+        return await getPrayerTimes({ latitude, longitude, method });
+    } catch (error) {
+        if (error.code === error.PERMISSION_DENIED) {
+            throw new Error("Location permission denied. Please enable location access.");
+        } else if (error.code === error.POSITION_UNAVAILABLE) {
+            throw new Error("Location information unavailable.");
+        } else if (error.code === error.TIMEOUT) {
+            throw new Error("Location request timed out.");
+        }
+        throw error;
     }
-    throw error;
-  }
 }
 
 /**
@@ -215,30 +215,30 @@ export async function getPrayerTimesForCurrentLocation(method = 'MuslimWorldLeag
  * @param {string} [method='MuslimWorldLeague'] - Calculation method
  * @returns {Promise<Object>} Next prayer information
  */
-export async function getNextPrayerForCurrentLocation(method = 'MuslimWorldLeague') {
-  try {
-    const position = await new Promise((resolve, reject) => {
-      if (!navigator.geolocation) {
-        reject(new Error('Geolocation is not supported by your browser'));
-        return;
-      }
+export async function getNextPrayerForCurrentLocation(method = "MuslimWorldLeague") {
+    try {
+        const position = await new Promise((resolve, reject) => {
+            if (!navigator.geolocation) {
+                reject(new Error("Geolocation is not supported by your browser"));
+                return;
+            }
 
-      navigator.geolocation.getCurrentPosition(resolve, reject, {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 300000
-      });
-    });
+            navigator.geolocation.getCurrentPosition(resolve, reject, {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 300000,
+            });
+        });
 
-    const { latitude, longitude } = position.coords;
+        const { latitude, longitude } = position.coords;
 
-    return await getNextPrayer({ latitude, longitude, method });
-  } catch (error) {
-    if (error.code === error.PERMISSION_DENIED) {
-      throw new Error('Location permission denied. Please enable location access.');
+        return await getNextPrayer({ latitude, longitude, method });
+    } catch (error) {
+        if (error.code === error.PERMISSION_DENIED) {
+            throw new Error("Location permission denied. Please enable location access.");
+        }
+        throw error;
     }
-    throw error;
-  }
 }
 
 /**
@@ -246,29 +246,29 @@ export async function getNextPrayerForCurrentLocation(method = 'MuslimWorldLeagu
  * @returns {Promise<Object>} Qibla direction information
  */
 export async function getQiblaForCurrentLocation() {
-  try {
-    const position = await new Promise((resolve, reject) => {
-      if (!navigator.geolocation) {
-        reject(new Error('Geolocation is not supported by your browser'));
-        return;
-      }
+    try {
+        const position = await new Promise((resolve, reject) => {
+            if (!navigator.geolocation) {
+                reject(new Error("Geolocation is not supported by your browser"));
+                return;
+            }
 
-      navigator.geolocation.getCurrentPosition(resolve, reject, {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 300000
-      });
-    });
+            navigator.geolocation.getCurrentPosition(resolve, reject, {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 300000,
+            });
+        });
 
-    const { latitude, longitude } = position.coords;
+        const { latitude, longitude } = position.coords;
 
-    return await getQiblaDirection({ latitude, longitude });
-  } catch (error) {
-    if (error.code === error.PERMISSION_DENIED) {
-      throw new Error('Location permission denied. Please enable location access.');
+        return await getQiblaDirection({ latitude, longitude });
+    } catch (error) {
+        if (error.code === error.PERMISSION_DENIED) {
+            throw new Error("Location permission denied. Please enable location access.");
+        }
+        throw error;
     }
-    throw error;
-  }
 }
 
 /**
@@ -277,19 +277,19 @@ export async function getQiblaForCurrentLocation() {
  * @returns {Object} Time remaining in hours, minutes, seconds
  */
 export function calculateTimeRemaining(nextPrayerTime) {
-  const now = new Date();
-  const prayerTime = new Date(nextPrayerTime);
-  const diff = prayerTime - now;
+    const now = new Date();
+    const prayerTime = new Date(nextPrayerTime);
+    const diff = prayerTime - now;
 
-  if (diff < 0) {
-    return { hours: 0, minutes: 0, seconds: 0, isPast: true };
-  }
+    if (diff < 0) {
+        return { hours: 0, minutes: 0, seconds: 0, isPast: true };
+    }
 
-  const hours = Math.floor(diff / (1000 * 60 * 60));
-  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-  const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-  return { hours, minutes, seconds, isPast: false };
+    return { hours, minutes, seconds, isPast: false };
 }
 
 /**
@@ -298,18 +298,18 @@ export function calculateTimeRemaining(nextPrayerTime) {
  * @returns {string} Formatted time string
  */
 export function formatTimeRemaining(timeRemaining) {
-  const { hours, minutes, seconds, isPast } = timeRemaining;
+    const { hours, minutes, seconds, isPast } = timeRemaining;
 
-  if (isPast) {
-    return 'Prayer time has passed';
-  }
+    if (isPast) {
+        return "Prayer time has passed";
+    }
 
-  const parts = [];
-  if (hours > 0) parts.push(`${hours}h`);
-  if (minutes > 0) parts.push(`${minutes}m`);
-  if (hours === 0) parts.push(`${seconds}s`);
+    const parts = [];
+    if (hours > 0) parts.push(`${hours}h`);
+    if (minutes > 0) parts.push(`${minutes}m`);
+    if (hours === 0) parts.push(`${seconds}s`);
 
-  return parts.join(' ');
+    return parts.join(" ");
 }
 
 /**
@@ -318,32 +318,32 @@ export function formatTimeRemaining(timeRemaining) {
  * @returns {string} Formatted prayer name
  */
 export function formatPrayerName(prayerName) {
-  const nameMap = {
-    fajr: 'Fajr',
-    sunrise: 'Sunrise',
-    dhuhr: 'Dhuhr',
-    asr: 'Asr',
-    maghrib: 'Maghrib',
-    isha: 'Isha',
-    midnight: 'Midnight',
-    imsak: 'Imsak'
-  };
+    const nameMap = {
+        fajr: "Fajr",
+        sunrise: "Sunrise",
+        dhuhr: "Dhuhr",
+        asr: "Asr",
+        maghrib: "Maghrib",
+        isha: "Isha",
+        midnight: "Midnight",
+        imsak: "Imsak",
+    };
 
-  return nameMap[prayerName?.toLowerCase()] || prayerName;
+    return nameMap[prayerName?.toLowerCase()] || prayerName;
 }
 
 // Export all functions as default object
 export default {
-  getPrayerTimes,
-  getPrayerTimesWithGeolocation,
-  getNextPrayer,
-  getMonthlyPrayerTimes,
-  getQiblaDirection,
-  getCalculationMethods,
-  getPrayerTimesForCurrentLocation,
-  getNextPrayerForCurrentLocation,
-  getQiblaForCurrentLocation,
-  calculateTimeRemaining,
-  formatTimeRemaining,
-  formatPrayerName
+    getPrayerTimes,
+    getPrayerTimesWithGeolocation,
+    getNextPrayer,
+    getMonthlyPrayerTimes,
+    getQiblaDirection,
+    getCalculationMethods,
+    getPrayerTimesForCurrentLocation,
+    getNextPrayerForCurrentLocation,
+    getQiblaForCurrentLocation,
+    calculateTimeRemaining,
+    formatTimeRemaining,
+    formatPrayerName,
 };
