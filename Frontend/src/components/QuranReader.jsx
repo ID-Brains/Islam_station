@@ -122,7 +122,7 @@ const QuranReader = ({ initialSurah = 1, initialVerse = 1 }) => {
     }
 
     return (
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-7xl mx-auto">
             {/* Reader Controls */}
             <div className="bg-base-200 rounded-2xl p-6 mb-6 shadow-lg">
                 <div className="flex flex-wrap items-center justify-between gap-4">
