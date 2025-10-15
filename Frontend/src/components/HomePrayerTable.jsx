@@ -1,13 +1,70 @@
-// HomePrayerTable.jsx - Home page prayer table with auto location detection
-import React, { useState, useEffect } from "react";
-import EnhancedPrayerTable from "./EnhancedPrayerTable.jsx";
+// HomePrayerTable.jsx - Consolidated prayer table with auto location detection and full prayer times
+import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
+import { getCurrentLocation, getGeolocationConfig } from "../utils/geolocationHelper";
+import useLocationStorage from "../hooks/useLocationStorage";
+import { getPrayerTimes } from "../services/prayerService";
+
+// Prayer Countdown Component
+const PrayerCountdown = ({ prayerTime }) => {
+    const [countdown, setCountdown] = useState("");
+
+    useEffect(() => {
+        const calculateCountdown = () => {
+            const now = new Date();
+
+            // Parse 12-hour format time (e.g., "5:30 AM" or "6:45 PM")
+            const timeMatch = prayerTime.match(/(\d+):(\d+)\s*(AM|PM)/i);
+            if (!timeMatch) return;
+
+            let hours = parseInt(timeMatch[1]);
+            const minutes = parseInt(timeMatch[2]);
+            const period = timeMatch[3].toUpperCase();
+
+            // Convert to 24-hour format for calculation
+            if (period === "PM" && hours !== 12) {
+                hours += 12;
+            } else if (period === "AM" && hours === 12) {
+                hours = 0;
+            }
+
+            let prayerDate = new Date();
+            prayerDate.setHours(hours, minutes, 0, 0);
+
+            // If prayer time has passed today, set for tomorrow
+            if (prayerDate <= now) {
+                prayerDate.setDate(prayerDate.getDate() + 1);
+            }
+
+            const diff = prayerDate - now;
+            const hoursRemaining = Math.floor(diff / (1000 * 60 * 60));
+            const minutesRemaining = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+            if (hoursRemaining > 0) {
+                setCountdown(`${hoursRemaining}h ${minutesRemaining}m`);
+            } else {
+                setCountdown(`${minutesRemaining}m`);
+            }
+        };
+
+        calculateCountdown();
+        const interval = setInterval(calculateCountdown, 60000); // Update every minute
+
+        return () => clearInterval(interval);
+    }, [prayerTime]);
+
+    return <span className="text-xs font-medium">{countdown}</span>;
+};
 
 const HomePrayerTable = () => {
-    const [location, setLocation] = useState({ lat: 24.7136, lng: 46.6753 });
+    // State management
+    const [prayers, setPrayers] = useState([]);
+    const [nextPrayer, setNextPrayer] = useState(null);
     const [calculationMethod, setCalculationMethod] = useState("Egyptian");
     const [isLocationDetected, setIsLocationDetected] = useState(false);
     const [locationStatus, setLocationStatus] = useState("detecting");
-    const [nextPrayer, setNextPrayer] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState("");
+    const [lastUpdated, setLastUpdated] = useState(null);
     const [showNotification, setShowNotification] = useState(false);
     const [visitedBefore, setVisitedBefore] = useState(() => {
         try {
@@ -23,6 +80,10 @@ const HomePrayerTable = () => {
             return false;
         }
     });
+
+    // Use location storage hook for persistence
+    const { location, saveLocation, isLocationValid } = useLocationStorage();
+    const onNextPrayerChangeRef = useRef(null);
 
     // Helper to request Notification permission
     const requestNotificationPermission = async () => {
@@ -41,57 +102,37 @@ const HomePrayerTable = () => {
         }
     };
 
+    // Initialize location detection on mount
     useEffect(() => {
-        // If user hasn't visited before, prompt for location permission now.
-        // On subsequent visits (refreshes), we'll show the next-prayer notification
-        // once the next prayer time is available.
+        // If user hasn't visited before, request permission now
         if (!visitedBefore) {
             try {
-                // mark as visited so future loads show the notification
                 localStorage.setItem("visitedBefore", "true");
-            } catch (e) {
-                // ignore
-            }
+            } catch (e) {}
             setVisitedBefore(true);
 
-            // Prompt for location permission so the browser asks the user immediately
+            // Request location permission on first visit
             if (navigator.geolocation) {
+                const config = getGeolocationConfig();
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
                         const newLocation = {
                             lat: position.coords.latitude,
                             lng: position.coords.longitude,
                         };
-                        setLocation(newLocation);
+                        saveLocation(newLocation, { userSaved: true });
                         setIsLocationDetected(true);
                         setLocationStatus("detected");
-                        // Store location for future use
-                        try {
-                            localStorage.setItem("userLocation", JSON.stringify(newLocation));
-                        } catch (e) {}
                     },
                     (error) => {
-                        // user denied or error — just keep default
                         setLocationStatus("default");
                     },
-                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 },
+                    {
+                        enableHighAccuracy: config.enableHighAccuracy,
+                        timeout: config.timeout,
+                        maximumAge: config.maximumAge,
+                    },
                 );
-                // Note: Notification permission will be requested when user interacts with notification settings
-                // Automatic request on page load violates browser security policies
-            }
-        }
-
-        // Check if location is stored in localStorage
-        const storedLocation = localStorage.getItem("userLocation");
-        if (storedLocation) {
-            try {
-                const parsed = JSON.parse(storedLocation);
-                setLocation({ lat: parsed.lat, lng: parsed.lng });
-                setIsLocationDetected(true);
-                setLocationStatus("stored");
-                return;
-            } catch (e) {
-                console.error("Error parsing stored location:", e);
             }
         }
 
@@ -101,40 +142,27 @@ const HomePrayerTable = () => {
             setCalculationMethod(storedMethod);
         }
 
-        // If no stored location, try to get current location
-        setLocationStatus("detecting");
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const newLocation = {
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude,
-                    };
-                    setLocation(newLocation);
+        // If no valid stored location, try to get current location
+        if (!isLocationValid()) {
+            setLocationStatus("detecting");
+            getCurrentLocation()
+                .then((coords) => {
+                    saveLocation({ lat: coords.lat, lng: coords.lng });
                     setIsLocationDetected(true);
                     setLocationStatus("detected");
-                    // Store location for future use
-                    localStorage.setItem("userLocation", JSON.stringify(newLocation));
-                },
-                (error) => {
+                })
+                .catch((error) => {
                     console.log("Could not get location:", error.message);
                     setLocationStatus("default");
-                    // Keep default location (Riyadh, Saudi Arabia)
-                },
-                {
-                    enableHighAccuracy: true,
-                    timeout: 10000,
-                    maximumAge: 300000, // 5 minutes
-                },
-            );
+                });
         } else {
-            setLocationStatus("default");
+            setLocationStatus("stored");
         }
 
         // Listen for location updates from the location button
         const handleLocationUpdate = (event) => {
             const { lat, lng } = event.detail;
-            setLocation({ lat, lng });
+            saveLocation({ lat, lng });
             setIsLocationDetected(true);
             setLocationStatus("detected");
         };
@@ -148,7 +176,6 @@ const HomePrayerTable = () => {
         };
 
         window.addEventListener("systemNotificationsChanged", handleSystemNotificationsChanged);
-
         window.addEventListener("locationUpdated", handleLocationUpdate);
 
         return () => {
@@ -158,8 +185,134 @@ const HomePrayerTable = () => {
                 handleSystemNotificationsChanged,
             );
         };
-    }, []);
+    }, [visitedBefore, isLocationValid, saveLocation]);
 
+    // Fetch prayer times
+    const fetchPrayerTimes = useCallback(async () => {
+        if (!location) return;
+
+        setIsLoading(true);
+        setError("");
+
+        try {
+            const data = await getPrayerTimes({
+                latitude: location.lat,
+                longitude: location.lng,
+                method: calculationMethod,
+            });
+
+            if (data && data.prayer_times) {
+                const prayerTimes = data.prayer_times;
+
+                const prayerList = [
+                    {
+                        name: "Imsak",
+                        time: prayerTimes.imsak ? formatTime(prayerTimes.imsak) : "05:20 AM",
+                    },
+                    {
+                        name: "Fajr",
+                        time: prayerTimes.fajr ? formatTime(prayerTimes.fajr) : "05:30 AM",
+                    },
+                    {
+                        name: "Sunrise",
+                        time: prayerTimes.sunrise ? formatTime(prayerTimes.sunrise) : "06:45 AM",
+                    },
+                    {
+                        name: "Dhuhr",
+                        time: prayerTimes.dhuhr ? formatTime(prayerTimes.dhuhr) : "12:15 PM",
+                    },
+                    {
+                        name: "Asr",
+                        time: prayerTimes.asr ? formatTime(prayerTimes.asr) : "03:45 PM",
+                    },
+                    {
+                        name: "Maghrib",
+                        time: prayerTimes.maghrib ? formatTime(prayerTimes.maghrib) : "06:20 PM",
+                    },
+                    {
+                        name: "Isha",
+                        time: prayerTimes.isha ? formatTime(prayerTimes.isha) : "07:45 PM",
+                    },
+                ];
+
+                setPrayers(prayerList);
+            } else {
+                throw new Error("Invalid prayer times data");
+            }
+        } catch (err) {
+            console.error("Error fetching prayer times:", err);
+            setError(err.userMessage || err.message || "Failed to load prayer times");
+        } finally {
+            setLastUpdated(new Date());
+            setIsLoading(false);
+        }
+    }, [location, calculationMethod]);
+
+    // Fetch prayer times when location or method changes
+    useEffect(() => {
+        fetchPrayerTimes();
+    }, [fetchPrayerTimes]);
+
+    // Format time to 12-hour format
+    const formatTime = (time24) => {
+        if (!time24 || !time24.includes(":")) return time24;
+        const [hours, minutes] = time24.split(":").map(Number);
+        const period = hours >= 12 ? "PM" : "AM";
+        const hour12 = hours % 12 || 12;
+        const m = minutes.toString().padStart(2, "0");
+        return `${hour12}:${m} ${period}`;
+    };
+
+    // Calculate next prayer
+    const calculateNextPrayer = useCallback(() => {
+        if (prayers.length === 0) return;
+
+        const now = new Date();
+        const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+        const prayerMinutes = prayers.map((prayer) => {
+            const timeMatch = prayer.time.match(/(\d+):(\d+)\s*(AM|PM)/i);
+            if (!timeMatch) return 0;
+
+            let hours = parseInt(timeMatch[1]);
+            const minutes = parseInt(timeMatch[2]);
+            const period = timeMatch[3].toUpperCase();
+
+            if (period === "PM" && hours !== 12) {
+                hours += 12;
+            } else if (period === "AM" && hours === 12) {
+                hours = 0;
+            }
+
+            return hours * 60 + minutes;
+        });
+
+        let nextIndex = prayerMinutes.findIndex((minutes) => minutes > currentMinutes);
+        if (nextIndex === -1) nextIndex = 1; // Next day Fajr
+
+        setNextPrayer(nextIndex);
+
+        if (onNextPrayerChangeRef.current && nextIndex !== null) {
+            const nextPrayerInfo = {
+                name: prayers[nextIndex].name,
+                time: prayers[nextIndex].time,
+                minutesUntil:
+                    prayerMinutes[nextIndex] - currentMinutes < 0
+                        ? 24 * 60 - currentMinutes + prayerMinutes[nextIndex]
+                        : prayerMinutes[nextIndex] - currentMinutes,
+            };
+            onNextPrayerChangeRef.current(nextPrayerInfo);
+        }
+    }, [prayers]);
+
+    // Calculate next prayer every minute
+    useEffect(() => {
+        calculateNextPrayer();
+        const interval = setInterval(calculateNextPrayer, 60000);
+        return () => clearInterval(interval);
+    }, [calculateNextPrayer]);
+
+    // Get location badge
     const getLocationBadge = () => {
         switch (locationStatus) {
             case "detecting":
@@ -201,98 +354,65 @@ const HomePrayerTable = () => {
         }
     };
 
-    const handleNextPrayerChange = (prayerInfo) => {
-        setNextPrayer(prayerInfo);
-        // If the user has visited before (refresh), show the notification when next prayer becomes available
-        if (visitedBefore) {
-            try {
-                const today = new Date().toDateString();
-                const lastNotified = localStorage.getItem("lastPrayerNotification");
+    // Get prayer status
+    const getPrayerStatus = (index) => {
+        if (nextPrayer === null) return "Loading";
+        if (index === nextPrayer) return "Next";
+        if (index < nextPrayer) return "Completed";
+        return "Upcoming";
+    };
 
-                // Only show the notification if we haven't shown/dismissed it today
-                if (lastNotified !== today) {
-                    // Try to show system notification if enabled
-                    const showSystem = (() => {
-                        try {
-                            return localStorage.getItem("systemNotifications") === "true";
-                        } catch (e) {
-                            return false;
-                        }
-                    })();
-
-                    if (
-                        showSystem &&
-                        "Notification" in window &&
-                        Notification.permission === "granted"
-                    ) {
-                        try {
-                            const title = `Next Prayer: ${prayerInfo.name}`;
-                            const body = `${prayerInfo.time} — in ${prayerInfo.minutesUntil < 60 ? `${prayerInfo.minutesUntil}m` : `${Math.floor(prayerInfo.minutesUntil / 60)}h ${prayerInfo.minutesUntil % 60}m`}`;
-                            const n = new Notification(title, {
-                                body,
-                                icon: "/pwa-192x192.svg",
-                                tag: "next-prayer",
-                            });
-                            // clicking the notification should focus the window
-                            n.onclick = () => {
-                                window.focus();
-                                n.close();
-                            };
-                            // Persist that we notified today
-                            localStorage.setItem("lastPrayerNotification", today);
-                        } catch (e) {
-                            // Fall back to in-app notification
-                            setShowNotification(true);
-                            localStorage.setItem("lastPrayerNotification", today);
-                        }
-                    } else if (
-                        showSystem &&
-                        "Notification" in window &&
-                        Notification.permission !== "granted"
-                    ) {
-                        // If user previously enabled system notifications flag but didn't give permission,
-                        // try requesting permission once more, then show in-app if denied.
-                        requestNotificationPermission().then((granted) => {
-                            if (granted) {
-                                try {
-                                    const title = `Next Prayer: ${prayerInfo.name}`;
-                                    const body = `${prayerInfo.time} — in ${prayerInfo.minutesUntil < 60 ? `${prayerInfo.minutesUntil}m` : `${Math.floor(prayerInfo.minutesUntil / 60)}h ${prayerInfo.minutesUntil % 60}m`}`;
-                                    const n = new Notification(title, {
-                                        body,
-                                        icon: "/pwa-192x192.svg",
-                                        tag: "next-prayer",
-                                    });
-                                    n.onclick = () => {
-                                        window.focus();
-                                        n.close();
-                                    };
-                                    localStorage.setItem("lastPrayerNotification", today);
-                                } catch (e) {
-                                    setShowNotification(true);
-                                    localStorage.setItem("lastPrayerNotification", today);
-                                }
-                            } else {
-                                setShowNotification(true);
-                                localStorage.setItem("lastPrayerNotification", today);
-                            }
-                        });
-                    } else {
-                        // No system notifications requested or supported — fall back to in-app
-                        setShowNotification(true);
-                        localStorage.setItem("lastPrayerNotification", today);
-                    }
-                }
-            } catch (e) {
-                // If localStorage is not available, fall back to in-memory show
-                setShowNotification(true);
-            }
+    // Get status color
+    const getStatusColor = (status) => {
+        switch (status) {
+            case "Next":
+                return "bg-primary text-primary-content";
+            case "Completed":
+                return "bg-base-300 text-base-content";
+            case "Upcoming":
+                return "bg-base-200";
+            default:
+                return "bg-base-200";
         }
     };
+
+    if (isLoading) {
+        return (
+            <div className="text-center py-8">
+                <span className="loading loading-spinner loading-lg"></span>
+                <p className="mt-4 text-base-content/70">Calculating prayer times...</p>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="text-center py-8">
+                <svg
+                    className="w-16 h-16 mx-auto text-error/30 mb-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                >
+                    <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    ></path>
+                </svg>
+                <p className="text-error mb-2">{error}</p>
+                <button onClick={fetchPrayerTimes} className="btn btn-primary btn-sm">
+                    Retry
+                </button>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-3">
             {/* Next Prayer Notification */}
-            {showNotification && nextPrayer && (
+            {showNotification && nextPrayer !== null && (
                 <div className="relative animate-fade-in">
                     <div className="alert bg-gradient-to-r from-primary/20 via-primary/10 to-transparent border-l-4 border-primary shadow-lg">
                         <div className="flex-1">
@@ -314,33 +434,16 @@ const HomePrayerTable = () => {
                                 </div>
                                 <div className="flex-1">
                                     <h3 className="font-bold text-lg text-primary mb-1">
-                                        Next Prayer: {nextPrayer.name}
+                                        Next Prayer: {prayers[nextPrayer]?.name}
                                     </h3>
                                     <p className="text-base-content/80 text-sm">
                                         <span className="font-semibold text-lg">
-                                            {nextPrayer.time}
+                                            {prayers[nextPrayer]?.time}
                                         </span>
-                                        <span className="ml-2 text-base-content/60">
-                                            (
-                                            {nextPrayer.minutesUntil < 60
-                                                ? `in ${nextPrayer.minutesUntil} minutes`
-                                                : `in ${Math.floor(nextPrayer.minutesUntil / 60)}h ${nextPrayer.minutesUntil % 60}m`}
-                                            )
-                                        </span>
-                                    </p>
-                                    <p className="text-xs text-base-content/60 mt-1">
-                                        May Allah accept your prayers 🤲
                                     </p>
                                 </div>
                                 <button
-                                    onClick={() => {
-                                        setShowNotification(false);
-                                        try {
-                                            // Persist dismissal for today so repeated callbacks won't re-open it
-                                            const today = new Date().toDateString();
-                                            localStorage.setItem("lastPrayerNotification", today);
-                                        } catch (e) {}
-                                    }}
+                                    onClick={() => setShowNotification(false)}
                                     className="btn btn-ghost btn-sm btn-circle"
                                     aria-label="Close notification"
                                 >
@@ -369,12 +472,74 @@ const HomePrayerTable = () => {
                 {getLocationBadge()}
             </div>
 
-            <EnhancedPrayerTable
-                latitude={location.lat}
-                longitude={location.lng}
-                calculationMethod={calculationMethod}
-                onNextPrayerChange={handleNextPrayerChange}
-            />
+            {/* Location and Method Info */}
+            <div className="mb-4 p-3 bg-base-100 rounded-lg">
+                <div className="flex items-center justify-between text-sm text-base-content/70">
+                    <span>
+                        Location: {location?.lat?.toFixed(4)}, {location?.lng?.toFixed(4)}
+                    </span>
+                    <span>Method: {calculationMethod}</span>
+                    {lastUpdated && <span>Updated: {lastUpdated.toLocaleTimeString()}</span>}
+                </div>
+            </div>
+
+            {/* Prayer Times Table */}
+            <div className="overflow-x-auto">
+                <table className="table w-full">
+                    <thead>
+                        <tr>
+                            <th>Prayer</th>
+                            <th>Time</th>
+                            <th>Status</th>
+                            <th>Countdown</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {prayers.map((prayer, index) => {
+                            const status = getPrayerStatus(index);
+                            const statusColor = getStatusColor(status);
+
+                            return (
+                                <tr key={prayer.name} className={`${statusColor} transition-colors`}>
+                                    <td className="font-medium">{prayer.name}</td>
+                                    <td className="font-mono">{prayer.time}</td>
+                                    <td>
+                                        <span className="badge badge-ghost">{status}</span>
+                                    </td>
+                                    <td>
+                                        {(status === "Next" || status === "Upcoming") && (
+                                            <PrayerCountdown prayerTime={prayer.time} />
+                                        )}
+                                        {status === "Completed" && (
+                                            <span className="text-xs opacity-70">Completed</span>
+                                        )}
+                                    </td>
+                                </tr>
+                            );
+                        })}
+                    </tbody>
+                </table>
+            </div>
+
+            {/* Refresh Button */}
+            <div className="mt-4 text-center">
+                <button onClick={fetchPrayerTimes} className="btn btn-outline btn-sm">
+                    <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                        ></path>
+                    </svg>
+                    Refresh Prayer Times
+                </button>
+            </div>
 
             {!isLocationDetected && (
                 <div className="alert alert-info">

@@ -1,113 +1,197 @@
-<!-- drawer component -->
+<!-- drawer component --><!-- Hidden checkbox for drawer state (DaisyUI pattern) -->
+<input
+  type="checkbox"
+  id="drawer-navigation-checkbox"
+  class="drawer-toggle hidden"
+/>
+
+<!-- Drawer backdrop -->
+<label
+  for="drawer-navigation-checkbox"
+  class="drawer-overlay fixed inset-0 z-40 bg-black/50 opacity-0 transition-opacity pointer-events-none hidden"
+  id="drawer-backdrop"></label>
+
+<!-- Drawer content -->
 <div
-   id="drawer-navigation"
-   class="fixed top-0 left-0 z-50 h-screen w-full sm:w-80 md:w-96 lg:w-[28rem] max-w-full -translate-x-full overflow-y-auto bg-gradient-to-b from-primary/95 via-primary/90 to-neutral/90 p-4 sm:p-5 text-primary-content shadow-2xl shadow-black/30 transition-transform backdrop-blur-xl"
-   tabindex="-1"
-   aria-labelledby="drawer-navigation-label"
+  id="drawer-navigation"
+  class="drawer-side fixed top-0 left-0 z-50 h-screen w-full sm:w-80 md:w-96 lg:w-[28rem] max-w-full overflow-y-auto bg-gradient-to-b from-primary/95 via-primary/90 to-neutral/90 p-4 sm:p-5 text-primary-content shadow-2xl shadow-black/30 transition-transform -translate-x-full backdrop-blur-xl"
+  tabindex="-1"
+  aria-labelledby="drawer-navigation-label"
 >
-   <div class="flex items-start justify-between">
-      <div>
-         <p class="text-xs uppercase tracking-[0.3em] text-primary-content/70">Navigation</p>
-         <h5 id="drawer-navigation-label" class="mt-1 text-lg font-semibold">Quick Access</h5>
-      </div>
-      <button
-         type="button"
-         data-drawer-hide="drawer-navigation"
-         aria-controls="drawer-navigation"
-         class="btn btn-circle btn-ghost bg-white/10 text-primary-content hover:bg-white/20"
-         aria-label="Close menu"
+  <div class="flex items-start justify-between">
+    <div>
+      <p class="text-xs uppercase tracking-[0.3em] text-primary-content/70">
+        Navigation
+      </p>
+      <h5 id="drawer-navigation-label" class="mt-1 text-lg font-semibold">
+        Quick Access
+      </h5>
+    </div>
+    <button
+      type="button"
+      data-drawer-hide="drawer-navigation"
+      aria-controls="drawer-navigation"
+      class="btn btn-circle btn-ghost bg-white/10 text-primary-content hover:bg-white/20"
+      aria-label="Close menu"
+    >
+      <svg
+        class="h-5 w-5"
+        fill="currentColor"
+        viewBox="0 0 20 20"
+        xmlns="http://www.w3.org/2000/svg"
       >
-         <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-            <path
-               fill-rule="evenodd"
-               d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-               clip-rule="evenodd"
-            ></path>
-         </svg>
-      </button>
-   </div>
- <form class="w-full mx-auto lg:hidden mb-4 mt-4">
-         <label
-            for="drawer-search"
-            class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white "
-         >Search</label>
-         <div class="relative">
-            <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-               <svg
-                  class="w-4 h-4 text-gray-500 dark:text-gray-400"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 20 20"
-               >
-                  <path
-                     stroke="currentColor"
-                     stroke-linecap="round"
-                     stroke-linejoin="round"
-                     stroke-width="2"
-                     d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-                  />
-               </svg>
-            </div>
-            <input
-               type="search"
-               id="drawer-search"
-               class="block w-full p-3 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-               placeholder="Search ...."
-            />
-            <button
-               type="submit"
-               class="text-white absolute end-2 bottom-2 bg-primary focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-primary cursor-pointer"
-            >Search</button>
-         </div>
-      </form>
-   <div class="mt-4 sm:mt-6 space-y-4 sm:space-y-6">
-      <div class="rounded-xl sm:rounded-2xl border border-white/10 bg-white/10 p-3 sm:p-4 shadow-inner shadow-black/10">
-         <p class="text-xs uppercase tracking-[0.2em] text-primary-content/60">Next Prayer</p>
-         <div class="mt-2 sm:mt-3 flex items-end justify-between">
-            <div>
-               <p class="text-xl sm:text-2xl font-semibold">Asr</p>
-               <p class="text-xs sm:text-sm text-primary-content/70">3:42 PM • In 28 mins</p>
-            </div>
-            <span class="badge badge-secondary badge-sm sm:badge-lg">Soon</span>
-         </div>
-         <div class="mt-3 sm:mt-4 grid grid-cols-3 gap-2 sm:gap-3 text-center text-xs">
-            <div class="rounded-lg sm:rounded-xl bg-white/10 p-1.5 sm:p-2">
-               <p class="font-semibold text-[10px] sm:text-xs">Fajr</p>
-               <p class="text-primary-content/70 text-[10px] sm:text-xs">05:08</p>
-            </div>
-            <div class="rounded-lg sm:rounded-xl bg-white/10 p-1.5 sm:p-2">
-               <p class="font-semibold text-[10px] sm:text-xs">Dhuhr</p>
-               <p class="text-primary-content/70 text-[10px] sm:text-xs">12:24</p>
-            </div>
-            <div class="rounded-lg sm:rounded-xl bg-white/10 p-1.5 sm:p-2">
-               <p class="font-semibold text-[10px] sm:text-xs">Maghrib</p>
-               <p class="text-primary-content/70 text-[10px] sm:text-xs">18:05</p>
-            </div>
-         </div>
+        <path
+          fill-rule="evenodd"
+          d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+          clip-rule="evenodd"></path>
+      </svg>
+    </button>
+  </div>
+  <form class="w-full mx-auto lg:hidden mb-4 mt-4">
+    <label
+      for="drawer-search"
+      class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
+      >Search</label
+    >
+    <div class="relative">
+      <div
+        class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none"
+      >
+        <svg
+          class="w-4 h-4 text-gray-500 dark:text-gray-400"
+          aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 20 20"
+        >
+          <path
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"></path>
+        </svg>
       </div>
-
-      <nav class="menu menu-sm sm:menu-lg rounded-xl sm:rounded-2xl border border-white/10 bg-white/5 p-2 sm:p-3 text-sm font-semibold">
-         <p class="px-3 sm:px-4 pb-2 text-xs uppercase tracking-[0.15em] sm:tracking-[0.2em] text-primary-content/60">Dashboard</p>
-         <li><a href="/" class="rounded-lg sm:rounded-xl tracking-[0.15em] sm:tracking-[0.2em] text-xs sm:text-sm">🕌 Prayer Times</a></li>
-         <li><a href="/quran/search" class="rounded-lg sm:rounded-xl tracking-[0.15em] sm:tracking-[0.2em] text-xs sm:text-sm">📖 Quran Library</a></li>
-         <li><a href="/qibla" class="rounded-lg sm:rounded-xl tracking-[0.15em] sm:tracking-[0.2em] text-xs sm:text-sm">🧭 Qibla Finder</a></li>
-      </nav>
-
-      <div class="rounded-xl sm:rounded-2xl border border-white/10 bg-white/10 p-3 sm:p-4">
-         <p class="text-xs uppercase tracking-[0.15em] sm:tracking-[0.2em] text-primary-content/60">Preferences</p>
-         <div class="mt-3 sm:mt-4 space-y-2 sm:space-y-3">
-            <label class="flex items-center justify-between gap-3 text-xs sm:text-sm">
-               <span>Hijri Calendar</span>
-               <input type="checkbox" class="toggle toggle-warning toggle-sm sm:toggle-md" />
-            </label>
-         </div>
+      <input
+        type="search"
+        id="drawer-search"
+        class="block w-full p-3 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        placeholder="Search ...."
+      />
+      <button
+        type="submit"
+        class="text-white absolute end-2 bottom-2 bg-primary focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-primary cursor-pointer"
+        >Search</button
+      >
+    </div>
+  </form>
+  <div class="mt-4 sm:mt-6 space-y-4 sm:space-y-6">
+    <div
+      class="rounded-xl sm:rounded-2xl border border-white/10 bg-white/10 p-3 sm:p-4 shadow-inner shadow-black/10"
+    >
+      <p class="text-xs uppercase tracking-[0.2em] text-primary-content/60">
+        Next Prayer
+      </p>
+      <div class="mt-2 sm:mt-3 flex items-end justify-between">
+        <div>
+          <p class="text-xl sm:text-2xl font-semibold">Asr</p>
+          <p class="text-xs sm:text-sm text-primary-content/70">
+            3:42 PM • In 28 mins
+          </p>
+        </div>
+        <span class="badge badge-secondary badge-sm sm:badge-lg">Soon</span>
       </div>
-   </div>
+      <div
+        class="mt-3 sm:mt-4 grid grid-cols-3 gap-2 sm:gap-3 text-center text-xs"
+      >
+        <div class="rounded-lg sm:rounded-xl bg-white/10 p-1.5 sm:p-2">
+          <p class="font-semibold text-[10px] sm:text-xs">Fajr</p>
+          <p class="text-primary-content/70 text-[10px] sm:text-xs">05:08</p>
+        </div>
+        <div class="rounded-lg sm:rounded-xl bg-white/10 p-1.5 sm:p-2">
+          <p class="font-semibold text-[10px] sm:text-xs">Dhuhr</p>
+          <p class="text-primary-content/70 text-[10px] sm:text-xs">12:24</p>
+        </div>
+        <div class="rounded-lg sm:rounded-xl bg-white/10 p-1.5 sm:p-2">
+          <p class="font-semibold text-[10px] sm:text-xs">Maghrib</p>
+          <p class="text-primary-content/70 text-[10px] sm:text-xs">18:05</p>
+        </div>
+      </div>
+    </div>
 
-   <div class="mt-6 sm:mt-8 rounded-xl sm:rounded-2xl border border-white/10 bg-white/10 p-3 sm:p-4 text-xs sm:text-sm">
-      <ul class="mt-2 sm:mt-3 space-y-1 sm:space-y-2">
-         <li><a class="flex items-center justify-between rounded-lg sm:rounded-xl px-2 sm:px-3 py-1.5 sm:py-2 hover:bg-white/10 tracking-[0.15em] sm:tracking-[0.2em] cursor-pointer text-xs sm:text-sm">Settings<span class="badge badge-outline badge-xs sm:badge-sm">6</span></a></li>
-      </ul>
-   </div>
+    <nav
+      class="menu menu-sm sm:menu-lg rounded-xl sm:rounded-2xl border border-white/10 bg-white/5 p-2 sm:p-3 text-sm font-semibold"
+    >
+      <p
+        class="px-3 sm:px-4 pb-2 text-xs uppercase tracking-[0.15em] sm:tracking-[0.2em] text-primary-content/60"
+      >
+        Dashboard
+      </p>
+      <li>
+        <a
+          href="/"
+          class="rounded-lg sm:rounded-xl tracking-[0.15em] sm:tracking-[0.2em] text-xs sm:text-sm"
+          >🕌 Prayer Times</a>
+      </li>
+      <li>
+        <a
+          href="/quran/search"
+          class="rounded-lg sm:rounded-xl tracking-[0.15em] sm:tracking-[0.2em] text-xs sm:text-sm"
+          >📖 Quran Library</a>
+      </li>
+      <li>
+        <a
+          href="/qibla"
+          class="rounded-lg sm:rounded-xl tracking-[0.15em] sm:tracking-[0.2em] text-xs sm:text-sm"
+          >🧭 Qibla Finder</a>
+      </li>
+    </nav>
+
+    <div
+      class="rounded-xl sm:rounded-2xl border border-white/10 bg-white/10 p-3 sm:p-4"
+    >
+      <p
+        class="text-xs uppercase tracking-[0.15em] sm:tracking-[0.2em] text-primary-content/60"
+      >
+        Preferences
+      </p>
+      <div class="mt-3 sm:mt-4 space-y-2 sm:space-y-3">
+        <label
+          class="flex items-center justify-between gap-3 text-xs sm:text-sm"
+        >
+          <span>Hijri Calendar</span>
+          <input
+            type="checkbox"
+            class="toggle toggle-warning toggle-sm sm:toggle-md"
+          />
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="mt-6 sm:mt-8 rounded-xl sm:rounded-2xl border border-white/10 bg-white/10 p-3 sm:p-4 text-xs sm:text-sm"
+  >
+    <ul class="mt-2 sm:mt-3 space-y-1 sm:space-y-2">
+      <li>
+        <a
+          class="flex items-center justify-between rounded-lg sm:rounded-xl px-2 sm:px-3 py-1.5 sm:py-2 hover:bg-white/10 tracking-[0.15em] sm:tracking-[0.2em] cursor-pointer text-xs sm:text-sm"
+          >Settings<span class="badge badge-outline badge-xs sm:badge-sm"
+            >6</span
+          ></a>
+      </li>
+    </ul>
+  </div>
 </div>
+
+<style>
+  /* Drawer toggle functionality */
+  #drawer-navigation-checkbox:checked ~ #drawer-navigation {
+    transform: translateX(0);
+  }
+
+  #drawer-navigation-checkbox:checked ~ #drawer-backdrop {
+    pointer-events: auto;
+    opacity: 1;
+  }
+</style>

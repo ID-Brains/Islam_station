@@ -1,7 +1,7 @@
 // PrayerSettingsPage.jsx - Wrapper component that manages location state
 import React, { useState, useEffect, useCallback } from 'react';
 import PrayerSettings from './PrayerSettings.jsx';
-import EnhancedPrayerTable from './EnhancedPrayerTable.jsx';
+import HomePrayerTable from './HomePrayerTable.jsx';
 
 const PrayerSettingsPage = () => {
   const [location, setLocation] = useState({ lat: 24.7136, lng: 46.6753 });
@@ -116,12 +116,7 @@ const PrayerSettingsPage = () => {
             )}
           </h2>
 
-          <EnhancedPrayerTable
-            latitude={location.lat}
-            longitude={location.lng}
-            calculationMethod={calculationMethod}
-            prayerAdjustments={prayerAdjustments}
-          />
+          <HomePrayerTable />
         </div>
       </div>
     </div>

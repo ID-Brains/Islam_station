@@ -68,30 +68,27 @@ const QuranSearch = () => {
         setSearchError("");
 
         try {
-            const params = new URLSearchParams({
+            const { default: apiClient } = await import('../utils/apiClient');
+
+            const params = {
                 q: searchQuery.trim(),
                 type: searchType,
                 language: language,
                 page: currentPage.toString(),
                 limit: "10",
-            });
+            };
 
             if (selectedSurah !== "all") {
-                params.append("surah", selectedSurah);
+                params.surah = selectedSurah;
             }
 
-            const response = await fetch(`http://127.0.0.1:8000/api/quran/search?${params}`);
+            const data = await apiClient.get('/api/quran/search', { params });
 
-            if (!response.ok) {
-                throw new Error("Search request failed");
-            }
-
-            const data = await response.json();
             setSearchResults(data.results || []);
             setTotalPages(data.totalPages || 0);
         } catch (error) {
             console.error("Search error:", error);
-            setSearchError("Failed to perform search. Please try again.");
+            setSearchError(error.userMessage || error.message || "Failed to perform search. Please try again.");
             setSearchResults([]);
         } finally {
             setIsSearching(false);

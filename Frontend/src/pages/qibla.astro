@@ -1,494 +1,695 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Navbar from '../components/UI/Navbar.astro';
-import Sidebar from '../components/UI/Sidebar.astro';
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/UI/Navbar.astro";
+import Sidebar from "../components/UI/Sidebar.astro";
 ---
 
 <Layout title="Qibla Finder - Islamic Guidance Station">
-	<Navbar />
-	<Sidebar />
-	<main class="relative isolate overflow-hidden">
-		<div class="absolute inset-x-0 top-0 -z-10 h-[32rem]"></div>
+  <Navbar />
+  <Sidebar />
+  <main class="relative isolate overflow-hidden">
+    <div class="absolute inset-x-0 top-0 -z-10 h-[32rem]"></div>
 
-		<!-- Hero Section -->
-		<section class="mx-auto flex max-w-6xl flex-col gap-8 sm:gap-12 px-4 sm:px-6 pb-12 sm:pb-16 pt-24 sm:pt-28">
-			<!-- Header -->
-			<div class="text-center mb-4 sm:mb-8">
-				<h1 class="text-balance text-3xl sm:text-4xl font-black leading-tight text-base-content md:text-5xl xl:text-6xl tracking-[0.15em] sm:tracking-[0.2em] mb-3 sm:mb-4">
-					🧭 Qibla Finder
-				</h1>
-				<p class="text-sm sm:text-base md:text-lg text-gray-600 dark:text-gray-300 px-4">
-					Find the direction to the Kaaba in Mecca
-				</p>
-			</div>
+    <!-- Hero Section -->
+    <section
+      class="mx-auto flex max-w-6xl flex-col gap-8 sm:gap-12 px-4 sm:px-6 pb-12 sm:pb-16 pt-24 sm:pt-28"
+    >
+      <!-- Header -->
+      <div class="text-center mb-4 sm:mb-8">
+        <h1
+          class="text-balance text-3xl sm:text-4xl font-black leading-tight text-base-content md:text-5xl xl:text-6xl tracking-[0.15em] sm:tracking-[0.2em] mb-3 sm:mb-4"
+        >
+          🧭 Qibla Finder
+        </h1>
+        <p
+          class="text-sm sm:text-base md:text-lg text-gray-600 dark:text-gray-300 px-4"
+        >
+          Find the direction to the Kaaba in Mecca
+        </p>
+      </div>
 
-			<!-- Main Card -->
-			<div class="max-w-4xl mx-auto w-full">
-				<div class="card bg-base-100 shadow-2xl border border-base-300">
-					<div class="card-body items-center text-center p-4 sm:p-6 md:p-8">
-						<!-- Status Message -->
-						<div id="statusMessage" class="alert alert-info mb-4 sm:mb-6 w-full py-3 sm:py-4">
-							<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-5 h-5 sm:w-6 sm:h-6">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-							</svg>
-							<span class="text-xs sm:text-sm">Click "Find Qibla" to detect your location</span>
-						</div>
+      <!-- Main Card -->
+      <div class="max-w-4xl mx-auto w-full">
+        <div class="card bg-base-100 shadow-2xl border border-base-300">
+          <div class="card-body items-center text-center p-4 sm:p-6 md:p-8">
+            <!-- Status Message -->
+            <div
+              id="statusMessage"
+              class="alert alert-info mb-4 sm:mb-6 w-full py-3 sm:py-4"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                class="stroke-current shrink-0 w-5 h-5 sm:w-6 sm:h-6"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                ></path>
+              </svg>
+              <span class="text-xs sm:text-sm"
+                >Click "Find Qibla" to detect your location</span
+              >
+            </div>
 
-						<!-- Compass Container -->
-						<div class="relative w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 mx-auto mb-6 sm:mb-8">
-							<!-- Compass Base -->
-							<div class="absolute inset-0 rounded-full bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900 dark:to-teal-900 shadow-xl">
-								<!-- Cardinal Directions -->
-								<div class="absolute inset-0">
-									<div class="absolute top-1 sm:top-2 left-1/2 -translate-x-1/2 text-xs sm:text-sm font-bold text-red-600 dark:text-red-400">N</div>
-									<div class="absolute bottom-1 sm:bottom-2 left-1/2 -translate-x-1/2 text-xs sm:text-sm font-bold text-gray-600 dark:text-gray-400">S</div>
-									<div class="absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 text-xs sm:text-sm font-bold text-gray-600 dark:text-gray-400">E</div>
-									<div class="absolute left-1 sm:left-2 top-1/2 -translate-y-1/2 text-xs sm:text-sm font-bold text-gray-600 dark:text-gray-400">W</div>
-								</div>
+            <!-- Compass Container -->
+            <div
+              class="relative w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 mx-auto mb-6 sm:mb-8"
+            >
+              <!-- Compass Base -->
+              <div
+                class="absolute inset-0 rounded-full bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900 dark:to-teal-900 shadow-xl"
+              >
+                <!-- Cardinal Directions -->
+                <div class="absolute inset-0">
+                  <div
+                    class="absolute top-1 sm:top-2 left-1/2 -translate-x-1/2 text-xs sm:text-sm font-bold text-red-600 dark:text-red-400"
+                  >
+                    N
+                  </div>
+                  <div
+                    class="absolute bottom-1 sm:bottom-2 left-1/2 -translate-x-1/2 text-xs sm:text-sm font-bold text-gray-600 dark:text-gray-400"
+                  >
+                    S
+                  </div>
+                  <div
+                    class="absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 text-xs sm:text-sm font-bold text-gray-600 dark:text-gray-400"
+                  >
+                    E
+                  </div>
+                  <div
+                    class="absolute left-1 sm:left-2 top-1/2 -translate-y-1/2 text-xs sm:text-sm font-bold text-gray-600 dark:text-gray-400"
+                  >
+                    W
+                  </div>
+                </div>
 
-								<!-- Compass Needle Container -->
-								<div id="compassNeedle" class="absolute inset-0 transition-transform duration-500 ease-out" style="transform: rotate(0deg);">
-									<!-- Qibla Direction Arrow -->
-									<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full">
-										<svg class="w-full h-full" viewBox="0 0 100 100">
-											<!-- North pointer (red) -->
-											<path d="M 50 10 L 55 50 L 50 45 L 45 50 Z" fill="#ef4444" stroke="#dc2626" stroke-width="0.5"/>
-											<!-- South pointer (gray) -->
-											<path d="M 50 90 L 55 50 L 50 55 L 45 50 Z" fill="#6b7280" stroke="#4b5563" stroke-width="0.5"/>
-											<!-- Center dot -->
-											<circle cx="50" cy="50" r="4" fill="#059669" stroke="#047857" stroke-width="1"/>
-										</svg>
-									</div>
-								</div>
+                <!-- Compass Needle Container -->
+                <div
+                  id="compassNeedle"
+                  class="absolute inset-0 transition-transform duration-500 ease-out"
+                  style="transform: rotate(0deg);"
+                >
+                  <!-- Qibla Direction Arrow -->
+                  <div
+                    class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full"
+                  >
+                    <svg class="w-full h-full" viewBox="0 0 100 100">
+                      <!-- North pointer (red) -->
+                      <path
+                        d="M 50 10 L 55 50 L 50 45 L 45 50 Z"
+                        fill="#ef4444"
+                        stroke="#dc2626"
+                        stroke-width="0.5"></path>
+                      <!-- South pointer (gray) -->
+                      <path
+                        d="M 50 90 L 55 50 L 50 55 L 45 50 Z"
+                        fill="#6b7280"
+                        stroke="#4b5563"
+                        stroke-width="0.5"></path>
+                      <!-- Center dot -->
+                      <circle
+                        cx="50"
+                        cy="50"
+                        r="4"
+                        fill="#059669"
+                        stroke="#047857"
+                        stroke-width="1"></circle>
+                    </svg>
+                  </div>
+                </div>
 
-								<!-- Degree Markers -->
-								<div class="absolute inset-0">
-									{Array.from({ length: 36 }).map((_, i) => {
-										const angle = i * 10;
-										const isMajor = angle % 30 === 0;
-										return (
-											<div
-												class="absolute top-1/2 left-1/2 origin-center"
-												style={`transform: translate(-50%, -50%) rotate(${angle}deg) translateY(-38%);`}
-											>
-												<div class={`w-0.5 mx-auto ${isMajor ? 'h-3 bg-gray-600 dark:bg-gray-300' : 'h-2 bg-gray-400 dark:bg-gray-500'}`}></div>
-											</div>
-										);
-									})}
-								</div>
-							</div>
+                <!-- Degree Markers -->
+                <div class="absolute inset-0">
+                  {
+                    Array.from({ length: 36 }).map((_, i) => {
+                      const angle = i * 10;
+                      const isMajor = angle % 30 === 0;
+                      return (
+                        <div
+                          class="absolute top-1/2 left-1/2 origin-center"
+                          style={`transform: translate(-50%, -50%) rotate(${angle}deg) translateY(-38%);`}
+                        >
+                          <div
+                            class={`w-0.5 mx-auto ${isMajor ? "h-3 bg-gray-600 dark:bg-gray-300" : "h-2 bg-gray-400 dark:bg-gray-500"}`}
+                          />
+                        </div>
+                      );
+                    })
+                  }
+                </div>
+              </div>
 
-							<!-- Kaaba Icon (rotates with needle) -->
-							<div id="kaabaIcon" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none opacity-0 transition-opacity duration-500">
-								<div class="text-4xl sm:text-5xl md:text-6xl">🕋</div>
-							</div>
-						</div>
+              <!-- Kaaba Icon (rotates with needle) -->
+              <div
+                id="kaabaIcon"
+                class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none opacity-0 transition-opacity duration-500"
+              >
+                <div class="text-4xl sm:text-5xl md:text-6xl">🕋</div>
+              </div>
+            </div>
 
-						<!-- Qibla Information -->
-						<div id="qiblaInfo" class="hidden w-full space-y-3 sm:space-y-4 mb-4 sm:mb-6">
-							<div class="stats stats-vertical sm:stats-horizontal shadow w-full">
-								<div class="stat py-3 sm:py-4">
-									<div class="stat-title text-xs sm:text-sm">Qibla Direction</div>
-									<div class="stat-value text-emerald-600 text-2xl sm:text-3xl md:text-4xl" id="qiblaAngle">0°</div>
-									<div class="stat-desc text-xs">From North</div>
-								</div>
-								<div class="stat py-3 sm:py-4">
-									<div class="stat-title text-xs sm:text-sm">Distance to Kaaba</div>
-									<div class="stat-value text-teal-600 text-xl sm:text-2xl md:text-3xl" id="distanceToKaaba">0 km</div>
-									<div class="stat-desc text-xs">Great circle distance</div>
-								</div>
-							</div>
+            <!-- Qibla Information -->
+            <div
+              id="qiblaInfo"
+              class="hidden w-full space-y-3 sm:space-y-4 mb-4 sm:mb-6"
+            >
+              <div
+                class="stats stats-vertical sm:stats-horizontal shadow w-full"
+              >
+                <div class="stat py-3 sm:py-4">
+                  <div class="stat-title text-xs sm:text-sm">
+                    Qibla Direction
+                  </div>
+                  <div
+                    class="stat-value text-emerald-600 text-2xl sm:text-3xl md:text-4xl"
+                    id="qiblaAngle"
+                  >
+                    0°
+                  </div>
+                  <div class="stat-desc text-xs">From North</div>
+                </div>
+                <div class="stat py-3 sm:py-4">
+                  <div class="stat-title text-xs sm:text-sm">
+                    Distance to Kaaba
+                  </div>
+                  <div
+                    class="stat-value text-teal-600 text-xl sm:text-2xl md:text-3xl"
+                    id="distanceToKaaba"
+                  >
+                    0 km
+                  </div>
+                  <div class="stat-desc text-xs">Great circle distance</div>
+                </div>
+              </div>
 
-							<div class="alert alert-success py-3 sm:py-4">
-								<svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-								</svg>
-								<div class="text-xs sm:text-sm">
-									<h3 class="font-bold">Qibla Direction Found!</h3>
-									<div class="text-xs">Your location: <span id="userLocation">Unknown</span></div>
-								</div>
-							</div>
-						</div>
+              <div class="alert alert-success py-3 sm:py-4">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="stroke-current shrink-0 h-5 w-5 sm:h-6 sm:w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <div class="text-xs sm:text-sm">
+                  <h3 class="font-bold">Qibla Direction Found!</h3>
+                  <div class="text-xs">
+                    Your location: <span id="userLocation">Unknown</span>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-						<!-- Action Buttons -->
-						<div class="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto">
-							<button id="findQiblaBtn" class="btn btn-primary btn-md sm:btn-lg w-full sm:w-auto">
-								<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-								</svg>
-								<span class="text-sm sm:text-base">Find Qibla</span>
-							</button>
-							<button id="useCompassBtn" class="btn btn-outline btn-md sm:btn-lg hidden w-full sm:w-auto">
-								<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-								</svg>
-								<span class="text-sm sm:text-base">Use Device Compass</span>
-							</button>
-						</div>
+            <!-- Action Buttons -->
+            <div
+              class="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto"
+            >
+              <button
+                id="findQiblaBtn"
+                class="btn btn-primary btn-md sm:btn-lg w-full sm:w-auto"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5 sm:h-6 sm:w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                  ></path>
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+                <span class="text-sm sm:text-base">Find Qibla</span>
+              </button>
+              <button
+                id="useCompassBtn"
+                class="btn btn-outline btn-md sm:btn-lg hidden w-full sm:w-auto"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5 sm:h-6 sm:w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                </svg>
+                <span class="text-sm sm:text-base">Use Device Compass</span>
+              </button>
+            </div>
 
-						<!-- Compass Calibration Info -->
-						<div id="compassInfo" class="hidden alert alert-warning mt-3 sm:mt-4 w-full py-3 sm:py-4">
-							<svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-							</svg>
-							<span class="text-xs sm:text-sm">For best results, calibrate your device compass by moving it in a figure-8 pattern.</span>
-						</div>
-					</div>
-				</div>
+            <!-- Compass Calibration Info -->
+            <div
+              id="compassInfo"
+              class="hidden alert alert-warning mt-3 sm:mt-4 w-full py-3 sm:py-4"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="stroke-current shrink-0 h-5 w-5 sm:h-6 sm:w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                ></path>
+              </svg>
+              <span class="text-xs sm:text-sm"
+                >For best results, calibrate your device compass by moving it in
+                a figure-8 pattern.</span
+              >
+            </div>
+          </div>
+        </div>
 
-				<!-- Instructions Card -->
-				<div class="card bg-base-100 shadow-xl mt-6 sm:mt-8">
-					<div class="card-body p-4 sm:p-6">
-						<h2 class="card-title text-emerald-700 dark:text-emerald-400 text-base sm:text-lg">
-							<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-							</svg>
-							How to Use
-						</h2>
-						<ul class="list-disc list-inside space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-gray-700 dark:text-gray-300 ml-2 sm:ml-0">
-							<li>Click "Find Qibla" to detect your current location</li>
-							<li>Allow location access when prompted by your browser</li>
-							<li>The compass will automatically point toward the Kaaba</li>
-							<li>On mobile devices, you can use the device compass for real-time orientation</li>
-							<li>Align the red arrow with North for accurate Qibla direction</li>
-						</ul>
-					</div>
-				</div>
-			</div>
-		</section>
-	</main>
+        <!-- Instructions Card -->
+        <div class="card bg-base-100 shadow-xl mt-6 sm:mt-8">
+          <div class="card-body p-4 sm:p-6">
+            <h2
+              class="card-title text-emerald-700 dark:text-emerald-400 text-base sm:text-lg"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5 sm:h-6 sm:w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                ></path>
+              </svg>
+              How to Use
+            </h2>
+            <ul
+              class="list-disc list-inside space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-gray-700 dark:text-gray-300 ml-2 sm:ml-0"
+            >
+              <li>Click "Find Qibla" to detect your current location</li>
+              <li>Allow location access when prompted by your browser</li>
+              <li>The compass will automatically point toward the Kaaba</li>
+              <li>
+                On mobile devices, you can use the device compass for real-time
+                orientation
+              </li>
+              <li>
+                Align the red arrow with North for accurate Qibla direction
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
 </Layout>
 
 <script>
-	// Kaaba coordinates (Mecca, Saudi Arabia)
-	const KAABA_LAT = 21.4225;
-	const KAABA_LNG = 39.8262;
+  // Kaaba coordinates (Mecca, Saudi Arabia)
+  const KAABA_LAT = 21.4225;
+  const KAABA_LNG = 39.8262;
 
-	let currentHeading = 0;
-	let qiblaDirection = 0;
-	let compassSupported = false;
+  let currentHeading = 0;
+  let qiblaDirection = 0;
+  let compassSupported = false;
 
-	// Calculate Qibla direction from user's location to Kaaba
-	function calculateQiblaDirection(userLat: number, userLng: number): number {
-		// Convert degrees to radians
-		const lat1 = userLat * Math.PI / 180;
-		const lat2 = KAABA_LAT * Math.PI / 180;
-		const lng1 = userLng * Math.PI / 180;
-		const lng2 = KAABA_LNG * Math.PI / 180;
+  // Calculate Qibla direction from user's location to Kaaba
+  function calculateQiblaDirection(userLat: number, userLng: number): number {
+    // Convert degrees to radians
+    const lat1 = (userLat * Math.PI) / 180;
+    const lat2 = (KAABA_LAT * Math.PI) / 180;
+    const lng1 = (userLng * Math.PI) / 180;
+    const lng2 = (KAABA_LNG * Math.PI) / 180;
 
-		// Calculate Qibla direction using formula
-		const y = Math.sin(lng2 - lng1);
-		const x = Math.cos(lat1) * Math.tan(lat2) - Math.sin(lat1) * Math.cos(lng2 - lng1);
-		let qibla = Math.atan2(y, x) * 180 / Math.PI;
+    // Calculate Qibla direction using formula
+    const y = Math.sin(lng2 - lng1);
+    const x =
+      Math.cos(lat1) * Math.tan(lat2) - Math.sin(lat1) * Math.cos(lng2 - lng1);
+    let qibla = (Math.atan2(y, x) * 180) / Math.PI;
 
-		// Normalize to 0-360
-		qibla = (qibla + 360) % 360;
+    // Normalize to 0-360
+    qibla = (qibla + 360) % 360;
 
-		return qibla;
-	}
+    return qibla;
+  }
 
-	// Calculate distance between two points using Haversine formula
-	function calculateDistance(lat1: number, lng1: number, lat2: number, lng2: number): number {
-		const R = 6371; // Earth's radius in km
-		const dLat = (lat2 - lat1) * Math.PI / 180;
-		const dLng = (lng2 - lng1) * Math.PI / 180;
-		const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-			Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-			Math.sin(dLng / 2) * Math.sin(dLng / 2);
-		const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-		return R * c;
-	}
+  // Calculate distance between two points using Haversine formula
+  function calculateDistance(
+    lat1: number,
+    lng1: number,
+    lat2: number,
+    lng2: number
+  ): number {
+    const R = 6371; // Earth's radius in km
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLng = ((lng2 - lng1) * Math.PI) / 180;
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos((lat1 * Math.PI) / 180) *
+        Math.cos((lat2 * Math.PI) / 180) *
+        Math.sin(dLng / 2) *
+        Math.sin(dLng / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  }
 
-	// Update compass needle rotation
-	function updateCompassNeedle(direction: number) {
-		const needle = document.getElementById('compassNeedle');
-		if (needle) {
-			needle.style.transform = `rotate(${direction}deg)`;
-		}
-	}
+  // Update compass needle rotation
+  function updateCompassNeedle(direction: number) {
+    const needle = document.getElementById("compassNeedle");
+    if (needle) {
+      needle.style.transform = `rotate(${direction}deg)`;
+    }
+  }
 
-	// Show Qibla information
-	function showQiblaInfo(qibla: number, distance: number, location: string) {
-		const qiblaInfo = document.getElementById('qiblaInfo');
-		const qiblaAngle = document.getElementById('qiblaAngle');
-		const distanceToKaaba = document.getElementById('distanceToKaaba');
-		const userLocation = document.getElementById('userLocation');
-		const kaabaIcon = document.getElementById('kaabaIcon');
+  // Show Qibla information
+  function showQiblaInfo(qibla: number, distance: number, location: string) {
+    const qiblaInfo = document.getElementById("qiblaInfo");
+    const qiblaAngle = document.getElementById("qiblaAngle");
+    const distanceToKaaba = document.getElementById("distanceToKaaba");
+    const userLocation = document.getElementById("userLocation");
+    const kaabaIcon = document.getElementById("kaabaIcon");
 
-		if (qiblaInfo && qiblaAngle && distanceToKaaba && userLocation) {
-			qiblaInfo.classList.remove('hidden');
-			qiblaAngle.textContent = `${Math.round(qibla)}°`;
-			distanceToKaaba.textContent = `${Math.round(distance)} km`;
-			userLocation.textContent = location;
-		}
+    if (qiblaInfo && qiblaAngle && distanceToKaaba && userLocation) {
+      qiblaInfo.classList.remove("hidden");
+      qiblaAngle.textContent = `${Math.round(qibla)}°`;
+      distanceToKaaba.textContent = `${Math.round(distance)} km`;
+      userLocation.textContent = location;
+    }
 
-		if (kaabaIcon) {
-			kaabaIcon.classList.remove('opacity-0');
-		}
+    if (kaabaIcon) {
+      kaabaIcon.classList.remove("opacity-0");
+    }
 
-		qiblaDirection = qibla;
-		updateCompassNeedle(qibla);
-	}
+    qiblaDirection = qibla;
+    updateCompassNeedle(qibla);
+  }
 
-	// Update status message
-	function updateStatus(message: string, type: 'info' | 'success' | 'error' | 'warning' = 'info') {
-		const statusMessage = document.getElementById('statusMessage');
-		if (statusMessage) {
-			statusMessage.className = `alert alert-${type} mb-6 w-full`;
-			const span = statusMessage.querySelector('span');
-			if (span) {
-				span.textContent = message;
-			}
-		}
-	}
+  // Update status message
+  function updateStatus(
+    message: string,
+    type: "info" | "success" | "error" | "warning" = "info"
+  ) {
+    const statusMessage = document.getElementById("statusMessage");
+    if (statusMessage) {
+      statusMessage.className = `alert alert-${type} mb-6 w-full`;
+      const span = statusMessage.querySelector("span");
+      if (span) {
+        span.textContent = message;
+      }
+    }
+  }
 
-	// Find Qibla based on geolocation
-	async function findQibla() {
-		const findBtn = document.getElementById('findQiblaBtn') as HTMLButtonElement;
-		if (findBtn) {
-			findBtn.disabled = true;
-			findBtn.innerHTML = '<span class="loading loading-spinner"></span> Detecting Location...';
-		}
+  // Find Qibla based on geolocation
+  async function findQibla() {
+    const findBtn = document.getElementById(
+      "findQiblaBtn"
+    ) as HTMLButtonElement;
+    if (findBtn) {
+      findBtn.disabled = true;
+      findBtn.innerHTML =
+        '<span class="loading loading-spinner"></span> Detecting Location...';
+    }
 
-		updateStatus('Getting your location...', 'info');
+    updateStatus("Getting your location...", "info");
 
-		if (!navigator.geolocation) {
-			updateStatus('Geolocation is not supported by your browser', 'error');
-			if (findBtn) {
-				findBtn.disabled = false;
-				findBtn.innerHTML = `
+    if (!navigator.geolocation) {
+      updateStatus("Geolocation is not supported by your browser", "error");
+      if (findBtn) {
+        findBtn.disabled = false;
+        findBtn.innerHTML = `
 					<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
 					</svg>
 					Find Qibla
 				`;
-			}
-			return;
-		}
+      }
+      return;
+    }
 
-		navigator.geolocation.getCurrentPosition(
-			async (position) => {
-				const lat = position.coords.latitude;
-				const lng = position.coords.longitude;
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
 
-				// Calculate Qibla direction
-				const qibla = calculateQiblaDirection(lat, lng);
-				const distance = calculateDistance(lat, lng, KAABA_LAT, KAABA_LNG);
+        // Calculate Qibla direction
+        const qibla = calculateQiblaDirection(lat, lng);
+        const distance = calculateDistance(lat, lng, KAABA_LAT, KAABA_LNG);
 
-				// Get location name (optional, using reverse geocoding)
-				let locationName = `${lat.toFixed(4)}°, ${lng.toFixed(4)}°`;
-				
-				try {
-					const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
-					const data = await response.json();
-					if (data.address) {
-						locationName = data.address.city || data.address.town || data.address.village || locationName;
-					}
-				} catch (error) {
-					console.error('Error fetching location name:', error);
-				}
+        // Get location name (optional, using reverse geocoding)
+        let locationName = `${lat.toFixed(4)}°, ${lng.toFixed(4)}°`;
 
-				showQiblaInfo(qibla, distance, locationName);
-				updateStatus('Qibla direction found successfully!', 'success');
+        try {
+          const response = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`
+          );
+          const data = await response.json();
+          if (data.address) {
+            locationName =
+              data.address.city ||
+              data.address.town ||
+              data.address.village ||
+              locationName;
+          }
+        } catch (error) {
+          console.error("Error fetching location name:", error);
+        }
 
-				// Enable compass button if supported
-				if (compassSupported) {
-					const compassBtn = document.getElementById('useCompassBtn');
-					if (compassBtn) {
-						compassBtn.classList.remove('hidden');
-					}
-				}
+        showQiblaInfo(qibla, distance, locationName);
+        updateStatus("Qibla direction found successfully!", "success");
 
-				if (findBtn) {
-					findBtn.disabled = false;
-					findBtn.innerHTML = `
+        // Enable compass button if supported
+        if (compassSupported) {
+          const compassBtn = document.getElementById("useCompassBtn");
+          if (compassBtn) {
+            compassBtn.classList.remove("hidden");
+          }
+        }
+
+        if (findBtn) {
+          findBtn.disabled = false;
+          findBtn.innerHTML = `
 						<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
 						</svg>
 						Refresh Location
 					`;
-				}
-			},
-			(error) => {
-				let errorMessage = 'Unable to get your location';
-				switch (error.code) {
-					case error.PERMISSION_DENIED:
-						errorMessage = 'Location permission denied. Please enable location access.';
-						break;
-					case error.POSITION_UNAVAILABLE:
-						errorMessage = 'Location information is unavailable.';
-						break;
-					case error.TIMEOUT:
-						errorMessage = 'Location request timed out.';
-						break;
-				}
-				updateStatus(errorMessage, 'error');
+        }
+      },
+      (error) => {
+        let errorMessage = "Unable to get your location";
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            errorMessage =
+              "Location permission denied. Please enable location access.";
+            break;
+          case error.POSITION_UNAVAILABLE:
+            errorMessage = "Location information is unavailable.";
+            break;
+          case error.TIMEOUT:
+            errorMessage = "Location request timed out.";
+            break;
+        }
+        updateStatus(errorMessage, "error");
 
-				if (findBtn) {
-					findBtn.disabled = false;
-					findBtn.innerHTML = `
+        if (findBtn) {
+          findBtn.disabled = false;
+          findBtn.innerHTML = `
 						<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
 						</svg>
 						Find Qibla
 					`;
-				}
-			}
-		);
-	}
+        }
+      }
+    );
+  }
 
-	// Handle device orientation for compass
-	function handleOrientation(event: DeviceOrientationEvent) {
-		if (event.alpha !== null) {
-			currentHeading = event.alpha;
-			// Adjust needle to show Qibla direction relative to device orientation
-			const adjustedDirection = qiblaDirection - currentHeading;
-			updateCompassNeedle(adjustedDirection);
-		}
-	}
+  // Handle device orientation for compass
+  function handleOrientation(event: DeviceOrientationEvent) {
+    if (event.alpha !== null) {
+      currentHeading = event.alpha;
+      // Adjust needle to show Qibla direction relative to device orientation
+      const adjustedDirection = qiblaDirection - currentHeading;
+      updateCompassNeedle(adjustedDirection);
+    }
+  }
 
-	// Enable device compass
-	function enableCompass() {
-		const compassInfo = document.getElementById('compassInfo');
-		const compassBtn = document.getElementById('useCompassBtn') as HTMLButtonElement;
+  // Enable device compass
+  function enableCompass() {
+    const compassInfo = document.getElementById("compassInfo");
+    const compassBtn = document.getElementById(
+      "useCompassBtn"
+    ) as HTMLButtonElement;
 
-		if (compassBtn) {
-			compassBtn.disabled = true;
-			compassBtn.innerHTML = '<span class="loading loading-spinner"></span> Activating...';
-		}
+    if (compassBtn) {
+      compassBtn.disabled = true;
+      compassBtn.innerHTML =
+        '<span class="loading loading-spinner"></span> Activating...';
+    }
 
-		// Request permission for iOS 13+
-		if (typeof (DeviceOrientationEvent as any).requestPermission === 'function') {
-			(DeviceOrientationEvent as any).requestPermission()
-				.then((permissionState: string) => {
-					if (permissionState === 'granted') {
-						window.addEventListener('deviceorientation', handleOrientation);
-						if (compassInfo) {
-							compassInfo.classList.remove('hidden');
-						}
-						if (compassBtn) {
-							compassBtn.innerHTML = '✓ Compass Active';
-							compassBtn.classList.add('btn-success');
-						}
-						updateStatus('Device compass activated! Move your device to see real-time direction.', 'success');
-					}
-				})
-				.catch((error: Error) => {
-					console.error('Error requesting orientation permission:', error);
-					updateStatus('Could not activate device compass', 'error');
-					if (compassBtn) {
-						compassBtn.disabled = false;
-						compassBtn.innerHTML = 'Use Device Compass';
-					}
-				});
-		} else {
-			// For other browsers
-			window.addEventListener('deviceorientation', handleOrientation);
-			if (compassInfo) {
-				compassInfo.classList.remove('hidden');
-			}
-			if (compassBtn) {
-				compassBtn.innerHTML = '✓ Compass Active';
-				compassBtn.classList.add('btn-success');
-			}
-			updateStatus('Device compass activated! Move your device to see real-time direction.', 'success');
-		}
-	}
+    // Request permission for iOS 13+
+    if (
+      typeof (DeviceOrientationEvent as any).requestPermission === "function"
+    ) {
+      (DeviceOrientationEvent as any)
+        .requestPermission()
+        .then((permissionState: string) => {
+          if (permissionState === "granted") {
+            window.addEventListener("deviceorientation", handleOrientation);
+            if (compassInfo) {
+              compassInfo.classList.remove("hidden");
+            }
+            if (compassBtn) {
+              compassBtn.innerHTML = "✓ Compass Active";
+              compassBtn.classList.add("btn-success");
+            }
+            updateStatus(
+              "Device compass activated! Move your device to see real-time direction.",
+              "success"
+            );
+          }
+        })
+        .catch((error: Error) => {
+          console.error("Error requesting orientation permission:", error);
+          updateStatus("Could not activate device compass", "error");
+          if (compassBtn) {
+            compassBtn.disabled = false;
+            compassBtn.innerHTML = "Use Device Compass";
+          }
+        });
+    } else {
+      // For other browsers
+      window.addEventListener("deviceorientation", handleOrientation);
+      if (compassInfo) {
+        compassInfo.classList.remove("hidden");
+      }
+      if (compassBtn) {
+        compassBtn.innerHTML = "✓ Compass Active";
+        compassBtn.classList.add("btn-success");
+      }
+      updateStatus(
+        "Device compass activated! Move your device to see real-time direction.",
+        "success"
+      );
+    }
+  }
 
-	// Check if device orientation is supported
-	function checkCompassSupport() {
-		if (window.DeviceOrientationEvent) {
-			compassSupported = true;
-		}
-	}
+  // Check if device orientation is supported
+  function checkCompassSupport() {
+    if (window.DeviceOrientationEvent) {
+      compassSupported = true;
+    }
+  }
 
-	// Initialize
-	document.addEventListener('DOMContentLoaded', () => {
-		checkCompassSupport();
+  // Initialize
+  document.addEventListener("DOMContentLoaded", () => {
+    checkCompassSupport();
 
-		const findBtn = document.getElementById('findQiblaBtn');
-		const compassBtn = document.getElementById('useCompassBtn');
+    const findBtn = document.getElementById("findQiblaBtn");
+    const compassBtn = document.getElementById("useCompassBtn");
 
-		if (findBtn) {
-			findBtn.addEventListener('click', findQibla);
-		}
+    if (findBtn) {
+      findBtn.addEventListener("click", findQibla);
+    }
 
-		if (compassBtn) {
-			compassBtn.addEventListener('click', enableCompass);
-		}
-	});
+    if (compassBtn) {
+      compassBtn.addEventListener("click", enableCompass);
+    }
+  });
 </script>
 
 <script is:inline>
-	// Drawer functionality
-	import('flowbite').then(({ Drawer }) => {
-		const $targetEl = document.getElementById('drawer-navigation');
-		const options = {
-			placement: 'left',
-			backdrop: true,
-			bodyScrolling: false,
-			edge: false,
-			edgeOffset: '',
-			backdropClasses: 'bg-gray-900/50 dark:bg-gray-900/80 fixed inset-0 z-40',
-		};
+  // DaisyUI Drawer functionality (using checkbox)
+  document.addEventListener("DOMContentLoaded", () => {
+    const drawerCheckbox = document.getElementById(
+      "drawer-navigation-checkbox"
+    );
 
-		const instanceOptions = {
-			id: 'drawer-navigation',
-			override: true
-		};
+    // Toggle drawer on button click
+    document
+      .querySelectorAll('[data-drawer-target="drawer-navigation"]')
+      .forEach((button) => {
+        button.addEventListener("click", (e) => {
+          e.preventDefault();
+          if (drawerCheckbox) {
+            drawerCheckbox.checked = !drawerCheckbox.checked;
+          }
+        });
+      });
 
-		const drawer = new Drawer($targetEl, options, instanceOptions);
+    // Hide drawer when clicking hide button
+    document
+      .querySelectorAll('[data-drawer-hide="drawer-navigation"]')
+      .forEach((button) => {
+        button.addEventListener("click", (e) => {
+          e.preventDefault();
+          if (drawerCheckbox) {
+            drawerCheckbox.checked = false;
+          }
+        });
+      });
 
-		// Toggle drawer on button click
-		document.querySelectorAll('[data-drawer-target="drawer-navigation"]').forEach(button => {
-			button.addEventListener('click', (e) => {
-				e.preventDefault();
-				drawer.toggle();
-			});
-		});
-
-		// Hide drawer when clicking hide button
-		document.querySelectorAll('[data-drawer-hide="drawer-navigation"]').forEach(button => {
-			button.addEventListener('click', (e) => {
-				e.preventDefault();
-				drawer.hide();
-			});
-		});
-
-		// Close drawer when clicking links
-		const drawerLinks = document.querySelectorAll('#drawer-navigation a');
-		drawerLinks.forEach(link => {
-			link.addEventListener('click', () => {
-				setTimeout(() => drawer.hide(), 100);
-			});
-		});
-	});
+    // Close drawer when clicking links
+    const drawerLinks = document.querySelectorAll("#drawer-navigation a");
+    drawerLinks.forEach((link) => {
+      link.addEventListener("click", () => {
+        if (drawerCheckbox) {
+          setTimeout(() => {
+            drawerCheckbox.checked = false;
+          }, 100);
+        }
+      });
+    });
+  });
 </script>
 
 <style>
-	@keyframes pulse-subtle {
-		0%, 100% {
-			transform: scale(1);
-		}
-		50% {
-			transform: scale(1.05);
-		}
-	}
+  @keyframes pulse-subtle {
+    0%,
+    100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.05);
+    }
+  }
 
-	#kaabaIcon {
-		animation: pulse-subtle 2s ease-in-out infinite;
-	}
+  #kaabaIcon {
+    animation: pulse-subtle 2s ease-in-out infinite;
+  }
 
-	/* Smooth compass rotation */
-	#compassNeedle {
-		will-change: transform;
-	}
+  /* Smooth compass rotation */
+  #compassNeedle {
+    will-change: transform;
+  }
 
-	/* Custom compass styling */
-	.compass-ring {
-		box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.1);
-	}
+  /* Custom compass styling */
+  .compass-ring {
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.1);
+  }
 </style>
