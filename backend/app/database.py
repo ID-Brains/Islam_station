@@ -3,6 +3,7 @@ Database connection and pool management for raw SQL operations
 """
 
 import asyncpg
+import logfire
 from typing import Optional, Any, Dict, List
 from contextlib import asynccontextmanager
 
@@ -13,25 +14,40 @@ _pool: Optional[asyncpg.Pool] = None
 
 
 async def create_database_pool() -> None:
-    """Create asyncpg connection pool"""
+    """Create asyncpg connection pool with logging"""
     global _pool
     if _pool is None:
-        _pool = await asyncpg.create_pool(
-            settings.DATABASE_URL,
-            min_size=5,
-            max_size=settings.DATABASE_POOL_SIZE,
-            max_queries=50000,
-            max_inactive_connection_lifetime=300.0,
-            statement_cache_size=0,
-        )
+        try:
+            _pool = await asyncpg.create_pool(
+                settings.DATABASE_URL,
+                min_size=5,
+                max_size=settings.DATABASE_POOL_SIZE,
+                max_queries=50000,
+                max_inactive_connection_lifetime=300.0,
+                statement_cache_size=0,
+            )
+            logfire.info(
+                "Database pool created",
+                pool_size=settings.DATABASE_POOL_SIZE,
+                min_size=5,
+            )
+        except Exception:
+            logfire.exception("Failed to create database pool")
+            raise
 
 
 async def close_database_pool() -> None:
     """Close database connection pool"""
     global _pool
     if _pool:
-        await _pool.close()
-        _pool = None
+        try:
+            await _pool.close()
+            logfire.info("Database pool closed")
+        except Exception:
+            logfire.exception("Error closing database pool")
+            raise
+        finally:
+            _pool = None
 
 
 @asynccontextmanager

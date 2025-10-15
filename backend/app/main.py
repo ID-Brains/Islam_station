@@ -2,12 +2,17 @@
 Main FastAPI application for The Islamic Guidance Station
 """
 
-from fastapi import FastAPI
+import uuid
+import logfire
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from .config import settings
 from .database import create_database_pool, close_database_pool
 from .routers import quran, prayer, mosque, dhikr
+
+# Configure Logfire for structured logging and observability
+logfire.configure()
 
 app = FastAPI(
     title="The Islamic Guidance Station",
@@ -23,6 +28,19 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+# Request tracking middleware for distributed tracing
+@app.middleware("http")
+async def add_request_id_middleware(request: Request, call_next):
+    """Add X-Request-ID header to all requests for tracing"""
+    request_id = request.headers.get("X-Request-ID", str(uuid.uuid4()))
+    request.state.request_id = request_id
+
+    response = await call_next(request)
+    response.headers["X-Request-ID"] = request_id
+    return response
+
 
 # Include routers
 app.include_router(quran.router, prefix="/api/quran", tags=["Quran"])
