@@ -3,6 +3,7 @@ Database connection and pool management for raw SQL operations
 """
 
 import asyncpg
+import asyncio
 from typing import Optional, Any, Dict, List
 from contextlib import asynccontextmanager
 
@@ -26,7 +27,7 @@ async def create_database_pool() -> None:
                 max_size=settings.DATABASE_POOL_SIZE,
                 max_queries=50000,
                 max_inactive_connection_lifetime=300.0,
-                statement_cache_size=100,  # Cache prepared statements
+                statement_cache_size=(settings.DATABASE_STATEMENT_CACHE_SIZE),
                 command_timeout=30.0,  # Query timeout
                 server_settings={
                     "application_name": "islam-station-api",
@@ -37,7 +38,7 @@ async def create_database_pool() -> None:
                 "Database pool created",
                 pool_size=settings.DATABASE_POOL_SIZE,
                 min_size=5,
-                statement_cache_size=100,
+                statement_cache_size=(settings.DATABASE_STATEMENT_CACHE_SIZE),
                 command_timeout=30,
             )
         except Exception:
@@ -46,15 +47,28 @@ async def create_database_pool() -> None:
 
 
 async def close_database_pool() -> None:
-    """Close database connection pool"""
+    """Close database connection pool with graceful timeout handling"""
     global _pool
     if _pool:
         try:
-            await _pool.close()
-            logger.info("Database pool closed")
+            # Release all connections back to the pool first
+            await _pool.expire_connections()
+            logger.info("Expired all database connections")
+
+            # Close with a reasonable timeout
+            try:
+                await asyncio.wait_for(_pool.close(), timeout=5.0)
+                logger.info("Database pool closed successfully")
+            except asyncio.TimeoutError:
+                logger.warning(
+                    "Database pool close timed out after 5 seconds, "
+                    "forcing termination"
+                )
+                # Force close by setting pool to None
+                pass
+
         except Exception:
             logger.exception("Error closing database pool")
-            raise
         finally:
             _pool = None
 

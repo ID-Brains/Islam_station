@@ -34,6 +34,7 @@ class Settings(BaseSettings):
     DATABASE_URL: str
     DATABASE_POOL_SIZE: int = 25
     DATABASE_MAX_OVERFLOW: int = 30
+    DATABASE_STATEMENT_CACHE_SIZE: int = 0  # Disable for PgBouncer compatibility
 
     # External APIs
     NOMINATIM_API_BASE: str = "https://nominatim.openstreetmap.org"

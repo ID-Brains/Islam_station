@@ -11,6 +11,9 @@ from ..queries.quran_queries import (
     get_surah_query,
     get_random_verse_query,
 )
+from ..logging_config import get_logger
+
+logger = get_logger(__name__)
 
 # Import Arabic text processing utilities
 try:
@@ -161,6 +164,15 @@ async def search_quran(
             "totalPages": total_pages,
         }
     except Exception as e:
+        logger.exception(
+            "Quran search failed",
+            query=q,
+            search_type=type,
+            language=language,
+            page=page,
+            limit=limit,
+            surah=surah,
+        )
         raise HTTPException(status_code=500, detail=f"Search failed: {str(e)}")
 
 
@@ -203,6 +215,10 @@ async def get_surah(
     except HTTPException:
         raise
     except Exception as e:
+        logger.exception(
+            "Failed to fetch surah",
+            surah_number=surah_number,
+        )
         raise HTTPException(status_code=500, detail=f"Failed to fetch surah: {str(e)}")
 
 
@@ -230,6 +246,9 @@ async def get_all_surahs() -> Dict[str, Any]:
             "count": len(surahs),
         }
     except Exception as e:
+        logger.exception(
+            "Failed to fetch surahs list",
+        )
         raise HTTPException(
             status_code=500, detail=f"Failed to fetch surahs list: {str(e)}"
         )
@@ -254,6 +273,9 @@ async def get_random_verse() -> Dict[str, Any]:
     except HTTPException:
         raise
     except Exception as e:
+        logger.exception(
+            "Failed to fetch random verse",
+        )
         raise HTTPException(
             status_code=500, detail=f"Failed to fetch random verse: {str(e)}"
         )
