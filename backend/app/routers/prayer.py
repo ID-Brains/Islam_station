@@ -8,6 +8,9 @@ from fastapi import APIRouter, Query, HTTPException
 from typing import Any, Dict
 
 from ..services.prayer_service import PrayerService
+from ..logging_config import get_logger
+
+logger = get_logger(__name__)
 
 router = APIRouter()
 
@@ -39,6 +42,13 @@ async def find_time_with_geolocation(
                 latitude=latitude, longitude=longitude, method=method
             )
         except Exception:
+            logger.warning(
+                "API prayer time fetch failed, using local calculation",
+                latitude=latitude,
+                longitude=longitude,
+                method=method,
+                fallback_source="local_calculation",
+            )
             # Fallback to local calculation
             prayer_times = PrayerService.calculate_prayer_times(
                 latitude=latitude,
@@ -62,10 +72,16 @@ async def find_time_with_geolocation(
             "date": prayer_times.get("date", date.today().isoformat()),
         }
 
-    except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Failed to get prayer times: {str(e)}"
+    except HTTPException:
+        raise
+    except Exception:
+        logger.exception(
+            "Failed to get prayer times",
+            latitude=latitude,
+            longitude=longitude,
+            method=method,
         )
+        raise HTTPException(status_code=500, detail="Failed to get prayer times")
 
 
 @router.get("/qibla")
@@ -91,9 +107,16 @@ async def get_qibla_direction(
             **qibla_info,
         }
 
-    except Exception as e:
+    except HTTPException:
+        raise
+    except Exception:
+        logger.exception(
+            "Failed to calculate Qibla direction",
+            latitude=latitude,
+            longitude=longitude,
+        )
         raise HTTPException(
-            status_code=500, detail=f"Failed to calculate Qibla direction: {str(e)}"
+            status_code=500, detail="Failed to calculate Qibla direction"
         )
 
 
@@ -148,4 +171,9 @@ async def get_country_from_coords(latitude: float, longitude: float) -> str:
             country = address.get("country", "Unknown")
             return country
     except Exception:
+        logger.warning(
+            "Failed to get country from coordinates",
+            latitude=latitude,
+            longitude=longitude,
+        )
         return "Unknown"

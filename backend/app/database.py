@@ -3,11 +3,13 @@ Database connection and pool management for raw SQL operations
 """
 
 import asyncpg
-import logfire
 from typing import Optional, Any, Dict, List
 from contextlib import asynccontextmanager
 
 from .config import settings
+from .logging_config import get_logger
+
+logger = get_logger(__name__)
 
 
 _pool: Optional[asyncpg.Pool] = None
@@ -24,15 +26,22 @@ async def create_database_pool() -> None:
                 max_size=settings.DATABASE_POOL_SIZE,
                 max_queries=50000,
                 max_inactive_connection_lifetime=300.0,
-                statement_cache_size=0,
+                statement_cache_size=100,  # Cache prepared statements
+                command_timeout=30.0,  # Query timeout
+                server_settings={
+                    "application_name": "islam-station-api",
+                    "timezone": "UTC",
+                },
             )
-            logfire.info(
+            logger.info(
                 "Database pool created",
                 pool_size=settings.DATABASE_POOL_SIZE,
                 min_size=5,
+                statement_cache_size=100,
+                command_timeout=30,
             )
         except Exception:
-            logfire.exception("Failed to create database pool")
+            logger.exception("Failed to create database pool")
             raise
 
 
@@ -42,9 +51,9 @@ async def close_database_pool() -> None:
     if _pool:
         try:
             await _pool.close()
-            logfire.info("Database pool closed")
+            logger.info("Database pool closed")
         except Exception:
-            logfire.exception("Error closing database pool")
+            logger.exception("Error closing database pool")
             raise
         finally:
             _pool = None

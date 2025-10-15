@@ -6,7 +6,11 @@ import math
 from typing import Any, Optional
 
 import httpx
-import logfire
+from tenacity import retry, stop_after_attempt, wait_exponential
+
+from ..logging_config import get_logger
+
+logger = get_logger(__name__)
 
 
 class MosqueService:
@@ -16,6 +20,10 @@ class MosqueService:
     TIMEOUT: float = 30.0
 
     @staticmethod
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=2, max=10),
+    )
     async def find_nearby_mosques(
         latitude: float,
         longitude: float,
@@ -85,7 +93,7 @@ class MosqueService:
             return mosques[:limit]
 
         except Exception:
-            logfire.exception(
+            logger.exception(
                 "Failed to find nearby mosques",
                 latitude=latitude,
                 longitude=longitude,
@@ -94,6 +102,10 @@ class MosqueService:
             return []
 
     @staticmethod
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=2, max=10),
+    )
     async def search_mosques_by_name(
         name: str,
         city: str | None = None,
@@ -159,7 +171,7 @@ class MosqueService:
             }
 
         except Exception:
-            logfire.exception(
+            logger.exception(
                 "Failed to search mosques by name",
                 name=name,
                 city=city,
@@ -174,6 +186,10 @@ class MosqueService:
             }
 
     @staticmethod
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=2, max=10),
+    )
     async def get_mosques_in_area(
         min_lat: float,
         min_lng: float,
@@ -220,7 +236,7 @@ class MosqueService:
             return mosques
 
         except Exception:
-            logfire.exception(
+            logger.exception(
                 "Failed to get mosques in area",
                 min_lat=min_lat,
                 min_lng=min_lng,
@@ -230,6 +246,10 @@ class MosqueService:
             return []
 
     @staticmethod
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=2, max=10),
+    )
     async def get_mosques_by_city(city: str) -> list[dict[str, Any]]:
         """
         Get all mosques in a specific city
@@ -269,13 +289,17 @@ class MosqueService:
             return mosques
 
         except Exception:
-            logfire.exception(
+            logger.exception(
                 "Failed to get mosques by city",
                 city=city,
             )
             return []
 
     @staticmethod
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=2, max=10),
+    )
     async def get_mosques_by_country(country: str) -> list[dict[str, Any]]:
         """
         Get all mosques in a specific country
@@ -315,14 +339,20 @@ class MosqueService:
             return mosques
 
         except Exception:
-            logfire.exception(
+            logger.exception(
                 "Failed to get mosques by country",
                 country=country,
             )
             return []
 
     @staticmethod
-    async def get_mosque_details(mosque_id: int) -> dict[str, Any] | None:
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=2, max=10),
+    )
+    async def get_mosque_details(
+        mosque_id: int,
+    ) -> dict[str, Any] | None:
         """
         Get detailed information about a specific mosque from OSM
 
@@ -357,7 +387,7 @@ class MosqueService:
             return None
 
         except Exception:
-            logfire.exception(
+            logger.exception(
                 "Failed to get mosque details",
                 mosque_id=mosque_id,
             )
@@ -389,6 +419,10 @@ class MosqueService:
         return []
 
     @staticmethod
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=2, max=10),
+    )
     async def get_mosques_along_route(
         waypoints: list[tuple[float, float]],
         buffer_meters: int = 2000,
@@ -440,7 +474,7 @@ class MosqueService:
             return all_mosques
 
         except Exception:
-            logfire.exception(
+            logger.exception(
                 "Failed to get mosques along route",
                 waypoints_count=len(waypoints),
                 buffer_meters=buffer_meters,

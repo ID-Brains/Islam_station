@@ -2,11 +2,13 @@
 Dhikr & Dua API Router for The Islamic Guidance Station
 """
 
-import logfire
 from fastapi import APIRouter, Query, HTTPException
 from typing import Any, Dict
 
 from ..services.dhikr_service import DhikrService
+from ..logging_config import get_logger
+
+logger = get_logger(__name__)
 
 router = APIRouter()
 
@@ -36,7 +38,7 @@ async def get_random_dhikr(
     except HTTPException:
         raise
     except Exception:
-        logfire.exception(
+        logger.exception(
             "Failed to fetch random dhikr",
             category_id=category_id,
         )
