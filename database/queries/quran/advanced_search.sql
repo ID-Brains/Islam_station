@@ -8,7 +8,10 @@ SELECT
     a."ayah_en",
     s."surah_name_ar",
     s."surah_name_en",
-    ts_rank(a."ayah_ar_tsv", plainto_tsquery('arabic', $1)) + ts_rank(to_tsvector('english', a."ayah_en"), plainto_tsquery('english', $1)) AS rank
+    GREATEST(
+        ts_rank(a."ayah_ar_tsv", plainto_tsquery('arabic', $1)),
+        ts_rank(to_tsvector('english', a."ayah_en"), plainto_tsquery('english', $1))
+    ) AS rank
 FROM "ayahs" a
 JOIN "surahs" s ON a."surah_id" = s."surah_id"
 WHERE 

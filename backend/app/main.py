@@ -2,12 +2,18 @@
 Main FastAPI application for The Islamic Guidance Station
 """
 
-from fastapi import FastAPI
+import uuid
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from .config import settings
 from .database import create_database_pool, close_database_pool
 from .routers import quran, prayer, mosque, dhikr
+from .logging_config import setup_logging, get_logger
+
+# Configure logging
+setup_logging()
+logger = get_logger(__name__)
 
 app = FastAPI(
     title="The Islamic Guidance Station",
@@ -23,6 +29,19 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+# Request tracking middleware for distributed tracing
+@app.middleware("http")
+async def add_request_id_middleware(request: Request, call_next):
+    """Add X-Request-ID header to all requests for tracing"""
+    request_id = request.headers.get("X-Request-ID", str(uuid.uuid4()))
+    request.state.request_id = request_id
+
+    response = await call_next(request)
+    response.headers["X-Request-ID"] = request_id
+    return response
+
 
 # Include routers
 app.include_router(quran.router, prefix="/api/quran", tags=["Quran"])
@@ -95,9 +114,9 @@ async def shutdown_event():
     """Close database connections on shutdown"""
     try:
         await close_database_pool()
-        print("✅ Database pool closed successfully")
-    except Exception as e:
-        print(f"⚠️  Warning: Error closing database pool: {e}")
+        logger.info("Database pool closed successfully")
+    except Exception:
+        logger.exception("Error closing database pool")
 
 
 @app.get("/")

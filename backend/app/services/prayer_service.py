@@ -2,10 +2,15 @@
 Prayer Service - Business logic for prayer times calculations
 """
 
-from typing import Dict, Any, Optional, List
-from datetime import datetime, date
 import math
 import httpx
+from tenacity import retry, stop_after_attempt, wait_exponential
+from typing import Dict, Any, Optional, List
+from datetime import datetime, date
+
+from ..logging_config import get_logger
+
+logger = get_logger(__name__)
 
 
 class PrayerService:
@@ -370,6 +375,10 @@ class PrayerService:
         return f"{hours:02d}:{minutes:02d}"
 
     @staticmethod
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=2, max=10),
+    )
     async def get_prayer_times_from_api(
         latitude: float,
         longitude: float,
@@ -432,7 +441,27 @@ class PrayerService:
                 else:
                     raise Exception("API returned non-200 code")
 
+        except (httpx.HTTPError, httpx.TimeoutException) as e:
+            logger.exception(
+                "Failed to fetch prayer times from Aladhan API",
+                latitude=latitude,
+                longitude=longitude,
+                date=date_obj.isoformat(),
+                method=method,
+                error_type=type(e).__name__,
+            )
+            # Fallback to local calculation
+            return PrayerService.calculate_prayer_times(
+                latitude, longitude, date_obj, method
+            )
         except Exception:
+            logger.exception(
+                "Failed to parse prayer times response",
+                latitude=latitude,
+                longitude=longitude,
+                date=date_obj.isoformat(),
+                method=method,
+            )
             # Fallback to local calculation
             return PrayerService.calculate_prayer_times(
                 latitude, longitude, date_obj, method
