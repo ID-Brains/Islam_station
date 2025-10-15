@@ -4,8 +4,24 @@ import { getSurah } from "../services/quranService";
 import { surahs } from "../data/surahs";
 
 const QuranReader = ({ initialSurah = 1, initialVerse = 1 }) => {
-    const [currentSurah, setCurrentSurah] = useState(initialSurah);
-    const [currentVerse, setCurrentVerse] = useState(initialVerse);
+    // Initialize state from URL params if available, otherwise use props
+    const [currentSurah, setCurrentSurah] = useState(() => {
+        if (typeof window !== 'undefined') {
+            const params = new URLSearchParams(window.location.search);
+            const s = params.get('surah');
+            return s ? parseInt(s, 10) : initialSurah;
+        }
+        return initialSurah;
+    });
+    
+    const [currentVerse, setCurrentVerse] = useState(() => {
+        if (typeof window !== 'undefined') {
+            const params = new URLSearchParams(window.location.search);
+            const v = params.get('verse');
+            return v ? parseInt(v, 10) : initialVerse;
+        }
+        return initialVerse;
+    });
     const [surahInfo, setSurahInfo] = useState(null);
     const [verses, setVerses] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -58,25 +74,17 @@ const QuranReader = ({ initialSurah = 1, initialVerse = 1 }) => {
         }
     };
 
+    // Update state when props change (for programmatic navigation)
     useEffect(() => {
-        setCurrentSurah(initialSurah);
-        setCurrentVerse(initialVerse);
-    }, [initialSurah, initialVerse]);
-
-    // Read URL params on mount so deep links like /quran/read?surah=5 work
-    useEffect(() => {
-        try {
-            if (typeof window !== 'undefined') {
-                const params = new URLSearchParams(window.location.search);
-                const s = params.get('surah');
-                const v = params.get('verse');
-                if (s) setCurrentSurah(parseInt(s, 10));
-                if (v) setCurrentVerse(parseInt(v, 10));
-            }
-        } catch (e) {
-            // ignore
+        // Only update if props explicitly changed and no URL params override
+        const params = new URLSearchParams(window.location.search);
+        if (!params.get('surah')) {
+            setCurrentSurah(initialSurah);
         }
-    }, []);
+        if (!params.get('verse')) {
+            setCurrentVerse(initialVerse);
+        }
+    }, [initialSurah, initialVerse]);
 
     useEffect(() => {
         if (currentSurah) fetchSurahData(currentSurah);
