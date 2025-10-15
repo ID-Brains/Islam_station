@@ -42,11 +42,19 @@ class APIClient {
       const hostname = window.location.hostname;
 
       if (hostname === 'localhost' || hostname === '127.0.0.1') {
+        // In dev: backend runs on 8000, frontend on 5173/3000
+        // Always use port 8000 for backend to avoid hitting Astro routes
         return 'http://localhost:8000';
       }
 
-      // Production - assume API is on same domain with /api path
-      return `${window.location.protocol}//${window.location.host}/api`;
+      // Production - use separate backend domain if available
+      const backendUrl = import.meta.env?.PUBLIC_BACKEND_URL;
+      if (backendUrl) {
+        return backendUrl;
+      }
+
+      // Fallback: assume API is on same domain with /api path
+      return `${window.location.protocol}//${window.location.host}`;
     }
 
     // SSR fallback
