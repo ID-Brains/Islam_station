@@ -116,7 +116,7 @@ async def rate_limit_dependency(
     window_seconds: int = settings.RATE_LIMIT_WINDOW,
 ) -> None:
     """
-    Rate limit dependency for FastAPI routes
+    Rate limit dependency for FastAPI routes (Open access - IP based only)
 
     Args:
         request: FastAPI request object
@@ -126,20 +126,8 @@ async def rate_limit_dependency(
     Raises:
         HTTPException: If rate limit exceeded
     """
-    # Get identifier (IP address or user ID if authenticated)
+    # Get identifier (IP address only - no authentication)
     identifier = request.client.host if request.client else "unknown"
-
-    # Check if user is authenticated and use user ID instead
-    auth_header = request.headers.get("Authorization")
-    if auth_header and auth_header.startswith("Bearer "):
-        try:
-            from .auth import verify_token
-
-            token = auth_header.split(" ")[1]
-            payload = verify_token(token)
-            identifier = f"user:{payload.get('sub')}"
-        except Exception:
-            pass  # Use IP if token verification fails
 
     # Check rate limit
     if not rate_limiter.is_allowed(identifier, max_requests, window_seconds):

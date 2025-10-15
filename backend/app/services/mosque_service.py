@@ -6,6 +6,11 @@ import math
 from typing import Any, Optional
 
 import httpx
+from tenacity import retry, stop_after_attempt, wait_exponential
+
+from ..logging_config import get_logger
+
+logger = get_logger(__name__)
 
 
 class MosqueService:
@@ -15,6 +20,10 @@ class MosqueService:
     TIMEOUT: float = 30.0
 
     @staticmethod
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=2, max=10),
+    )
     async def find_nearby_mosques(
         latitude: float,
         longitude: float,
@@ -58,16 +67,24 @@ class MosqueService:
                 if mosque:
                     # Calculate distance and bearing
                     distance_meters = MosqueService._calculate_distance_meters(
-                        latitude, longitude, mosque["latitude"], mosque["longitude"],
+                        latitude,
+                        longitude,
+                        mosque["latitude"],
+                        mosque["longitude"],
                     )
                     mosque["distance_meters"] = round(distance_meters, 2)
                     mosque["distance_km"] = round(distance_meters / 1000, 2)
 
                     bearing = MosqueService._calculate_bearing(
-                        latitude, longitude, mosque["latitude"], mosque["longitude"],
+                        latitude,
+                        longitude,
+                        mosque["latitude"],
+                        mosque["longitude"],
                     )
                     mosque["bearing"] = bearing
-                    mosque["compass_direction"] = MosqueService.get_compass_direction(bearing)
+                    mosque["compass_direction"] = MosqueService.get_compass_direction(
+                        bearing
+                    )
 
                     mosques.append(mosque)
 
@@ -75,12 +92,20 @@ class MosqueService:
             mosques.sort(key=lambda x: x["distance_meters"])
             return mosques[:limit]
 
-        except Exception as e:
-            # Log error silently, could use proper logger here
-            pass
+        except Exception:
+            logger.exception(
+                "Failed to find nearby mosques",
+                latitude=latitude,
+                longitude=longitude,
+                radius_meters=radius_meters,
+            )
             return []
 
     @staticmethod
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=2, max=10),
+    )
     async def search_mosques_by_name(
         name: str,
         city: str | None = None,
@@ -145,9 +170,13 @@ class MosqueService:
                 "has_more": (offset + len(paginated_results)) < total,
             }
 
-        except Exception as e:
-            # Log error silently, could use proper logger here
-            pass
+        except Exception:
+            logger.exception(
+                "Failed to search mosques by name",
+                name=name,
+                city=city,
+                country=country,
+            )
             return {
                 "results": [],
                 "total": 0,
@@ -157,6 +186,10 @@ class MosqueService:
             }
 
     @staticmethod
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=2, max=10),
+    )
     async def get_mosques_in_area(
         min_lat: float,
         min_lng: float,
@@ -202,12 +235,21 @@ class MosqueService:
 
             return mosques
 
-        except Exception as e:
-            # Log error silently, could use proper logger here
-            pass
+        except Exception:
+            logger.exception(
+                "Failed to get mosques in area",
+                min_lat=min_lat,
+                min_lng=min_lng,
+                max_lat=max_lat,
+                max_lng=max_lng,
+            )
             return []
 
     @staticmethod
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=2, max=10),
+    )
     async def get_mosques_by_city(city: str) -> list[dict[str, Any]]:
         """
         Get all mosques in a specific city
@@ -246,12 +288,18 @@ class MosqueService:
 
             return mosques
 
-        except Exception as e:
-            # Log error silently, could use proper logger here
-            pass
+        except Exception:
+            logger.exception(
+                "Failed to get mosques by city",
+                city=city,
+            )
             return []
 
     @staticmethod
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=2, max=10),
+    )
     async def get_mosques_by_country(country: str) -> list[dict[str, Any]]:
         """
         Get all mosques in a specific country
@@ -290,13 +338,21 @@ class MosqueService:
 
             return mosques
 
-        except Exception as e:
-            # Log error silently, could use proper logger here
-            pass
+        except Exception:
+            logger.exception(
+                "Failed to get mosques by country",
+                country=country,
+            )
             return []
 
     @staticmethod
-    async def get_mosque_details(mosque_id: int) -> dict[str, Any] | None:
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=2, max=10),
+    )
+    async def get_mosque_details(
+        mosque_id: int,
+    ) -> dict[str, Any] | None:
         """
         Get detailed information about a specific mosque from OSM
 
@@ -330,9 +386,11 @@ class MosqueService:
                 return MosqueService._parse_osm_element(elements[0])
             return None
 
-        except Exception as e:
-            # Log error silently, could use proper logger here
-            pass
+        except Exception:
+            logger.exception(
+                "Failed to get mosque details",
+                mosque_id=mosque_id,
+            )
             return None
 
     @staticmethod
@@ -361,6 +419,10 @@ class MosqueService:
         return []
 
     @staticmethod
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=2, max=10),
+    )
     async def get_mosques_along_route(
         waypoints: list[tuple[float, float]],
         buffer_meters: int = 2000,
@@ -411,9 +473,12 @@ class MosqueService:
 
             return all_mosques
 
-        except Exception as e:
-            # Log error silently, could use proper logger here
-            pass
+        except Exception:
+            logger.exception(
+                "Failed to get mosques along route",
+                waypoints_count=len(waypoints),
+                buffer_meters=buffer_meters,
+            )
             return []
 
     @staticmethod
@@ -449,13 +514,17 @@ class MosqueService:
         if tags.get("addr:housenumber"):
             address_parts.append(tags["addr:housenumber"])
 
-        address = ", ".join(address_parts) if address_parts else tags.get("addr:full", "")
+        address = (
+            ", ".join(address_parts) if address_parts else tags.get("addr:full", "")
+        )
 
         return {
             "mosque_id": element.get("id"),
             "name": tags.get("name", tags.get("name:en", "Unnamed Mosque")),
             "address": address,
-            "city": tags.get("addr:city", tags.get("addr:town", tags.get("addr:village", ""))),
+            "city": tags.get(
+                "addr:city", tags.get("addr:town", tags.get("addr:village", ""))
+            ),
             "country": tags.get("addr:country", ""),
             "latitude": lat,
             "longitude": lon,

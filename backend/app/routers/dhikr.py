@@ -5,11 +5,10 @@ Dhikr & Dua API Router for The Islamic Guidance Station
 from fastapi import APIRouter, Query, HTTPException
 from typing import Any, Dict
 
-from ..database import execute_query, execute_query_single
-from ..queries.dhikr_queries import (
-    get_daily_dhikr_query,
-    get_random_dhikr_query,
-)
+from ..services.dhikr_service import DhikrService
+from ..logging_config import get_logger
+
+logger = get_logger(__name__)
 
 router = APIRouter()
 
@@ -28,22 +27,7 @@ async def get_random_dhikr(
         Random dhikr
     """
     try:
-        # Get random dhikr query
-        query = get_random_dhikr_query()
-
-        # Add category filter if provided
-        if category_id:
-            dhikr = await execute_query_single(query, category_id)
-        else:
-            # Get random from all categories
-            query = """
-                SELECT "dhikr_id", "category_id", "text_ar", "text_en",
-                       "benefits_ar", "benefits_en", "reference"
-                FROM "dhikr"
-                ORDER BY RANDOM()
-                LIMIT 1
-            """
-            dhikr = await execute_query_single(query)
+        dhikr = await DhikrService.get_random_dhikr(category_id)
 
         if not dhikr:
             raise HTTPException(status_code=404, detail="No dhikr found")
@@ -53,7 +37,9 @@ async def get_random_dhikr(
         }
     except HTTPException:
         raise
-    except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Failed to fetch random dhikr: {str(e)}"
+    except Exception:
+        logger.exception(
+            "Failed to fetch random dhikr",
+            category_id=category_id,
         )
+        raise HTTPException(status_code=500, detail="Failed to fetch random dhikr")

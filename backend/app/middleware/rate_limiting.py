@@ -97,22 +97,8 @@ class RateLimitingMiddleware(BaseHTTPMiddleware):
         return response
 
     def _get_identifier(self, request: Request) -> str:
-        """Get identifier for rate limiting"""
-        # Try to get user ID from authentication
-        auth_header = request.headers.get("Authorization")
-        if auth_header and auth_header.startswith("Bearer "):
-            try:
-                from ..dependencies.auth import verify_token
-
-                token = auth_header.split(" ")[1]
-                payload = verify_token(token)
-                user_id = payload.get("sub")
-                if user_id:
-                    return f"user:{user_id}"
-            except Exception:
-                pass  # Fall back to IP if token verification fails
-
-        # Use IP address as identifier
+        """Get identifier for rate limiting (IP-based only - no authentication)"""
+        # Use IP address as identifier (open access platform)
         client_ip = self._get_client_ip(request)
         return f"ip:{client_ip}"
 

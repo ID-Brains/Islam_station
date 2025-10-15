@@ -23,12 +23,18 @@ def _load_query(filename: str) -> str:
 
 def get_nearby_mosques_query() -> str:
     """
-    Get optimized spatial query for finding nearby mosques
+    Simple query for mosques - spatial functionality moved to OpenStreetMap API
 
-    Expected parameters: latitude, longitude, radius_meters
-    Returns: mosques within radius with distance
+    Expected parameters: None (nearby search handled by OpenStreetMap API)
+    Returns: basic mosque listing
     """
-    return _load_query("nearby_search.sql")
+    return """
+        SELECT "mosque_id", "name", "address", "city", "country",
+               latitude, longitude
+        FROM "mosques"
+        ORDER BY "name" ASC
+        LIMIT 100
+    """
 
 
 def get_mosque_by_id_query() -> str:
@@ -40,8 +46,7 @@ def get_mosque_by_id_query() -> str:
     """
     return """
         SELECT "mosque_id", "name", "address", "city", "country",
-               ST_Y(location::geometry) as latitude,
-               ST_X(location::geometry) as longitude
+               latitude, longitude
         FROM "mosques"
         WHERE "mosque_id" = $1
     """
@@ -56,8 +61,7 @@ def search_mosques_by_name_query() -> str:
     """
     return """
         SELECT "mosque_id", "name", "address", "city", "country",
-               ST_Y(location::geometry) as latitude,
-               ST_X(location::geometry) as longitude
+               latitude, longitude
         FROM "mosques"
         WHERE "name" ILIKE $1
     """
@@ -65,18 +69,17 @@ def search_mosques_by_name_query() -> str:
 
 def get_mosques_in_bbox_query() -> str:
     """
-    Get query to fetch mosques within a bounding box
+    Get query to fetch mosques - bbox functionality moved to OpenStreetMap API
 
-    Expected parameters: min_lng, min_lat, max_lng, max_lat
-    Returns: all mosques within the rectangular area
+    Expected parameters: None (spatial search handled by OpenStreetMap API)
+    Returns: basic mosque listing
     """
     return """
         SELECT "mosque_id", "name", "address", "city", "country",
-               ST_Y(location::geometry) as latitude,
-               ST_X(location::geometry) as longitude
+               latitude, longitude
         FROM "mosques"
-        WHERE location && ST_MakeEnvelope($1, $2, $3, $4, 4326)
         ORDER BY "name" ASC
+        LIMIT 100
     """
 
 
@@ -89,8 +92,7 @@ def get_mosques_by_city_query() -> str:
     """
     return """
         SELECT "mosque_id", "name", "address", "city", "country",
-               ST_Y(location::geometry) as latitude,
-               ST_X(location::geometry) as longitude
+               latitude, longitude
         FROM "mosques"
         WHERE LOWER("city") = LOWER($1)
         ORDER BY "name" ASC
@@ -106,8 +108,7 @@ def get_mosques_by_country_query() -> str:
     """
     return """
         SELECT "mosque_id", "name", "address", "city", "country",
-               ST_Y(location::geometry) as latitude,
-               ST_X(location::geometry) as longitude
+               latitude, longitude
         FROM "mosques"
         WHERE LOWER("country") = LOWER($1)
         ORDER BY "city" ASC, "name" ASC

@@ -25,7 +25,6 @@ def test_create_tables(db_engine):
     """Test if all tables can be created successfully"""
     try:
         # Read SQL files in correct order
-        init_extensions_sql = "CREATE EXTENSION IF NOT EXISTS postgis;"
         tables_sql = read_sql_file("tables.sql")
         init_sql = read_sql_file("init.sql")
         indexes_sql = read_sql_file("indexes.sql")
@@ -38,7 +37,6 @@ def test_create_tables(db_engine):
             conn.commit()
 
             # Execute schema creation
-            conn.execute(text(init_extensions_sql))  # Enable PostGIS first
             conn.execute(text(tables_sql))
             conn.execute(text(init_sql))
             conn.execute(text(indexes_sql))
@@ -60,7 +58,7 @@ def test_create_tables(db_engine):
                     text(
                         f"""
                     SELECT EXISTS (
-                        SELECT FROM information_schema.tables 
+                        SELECT FROM information_schema.tables
                         WHERE table_name = '{table}'
                     )
                 """
@@ -91,7 +89,7 @@ def test_insert_sample_data(db_engine):
                 text(
                     """
                 INSERT INTO ayahs (ayah_id,surah_id,ayah_no_surah,ayah_no_quran,ayah_ar,ayah_en,juz_no,ruko_no,manzil_no,total_ayah_quran,no_of_word_ayah,list_of_words)
-                VALUES (1,1,1,1,'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ','In the name of Allah, the Entirely Merciful, the Especially Merciful',1,1,1,6236,4,'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ')  
+                VALUES (1,1,1,1,'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ','In the name of Allah, the Entirely Merciful, the Especially Merciful',1,1,1,6236,4,'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ')
             """
                 )
             )
@@ -108,21 +106,21 @@ def test_insert_sample_data(db_engine):
         pytest.fail(f"Failed to insert sample data: {str(e)}")
 
 
-def test_spatial_functions(db_engine):
-    """Test PostGIS spatial functions"""
+def test_basic_mosque_functions(db_engine):
+    """Test basic mosque functions without PostGIS"""
     try:
         with db_engine.connect() as conn:
-            # Insert sample mosque with location
+            # Insert sample mosque with basic location
             conn.execute(
                 text(
                     """
                 INSERT INTO mosques (
-                    mosque_id, name, location, address
+                    mosque_id, name, latitude, longitude, address
                 )
                 VALUES (
                     1,
                     'Masjid Al-Haram',
-                    ST_SetSRID(ST_MakePoint(39.826206, 21.422487), 4326),
+                    21.422487, 39.826206,
                     'Mecca, Saudi Arabia'
                 )
             """
@@ -130,24 +128,12 @@ def test_spatial_functions(db_engine):
             )
             conn.commit()
 
-            # Test spatial query
-            result = conn.execute(
-                text(
-                    """
-                SELECT COUNT(*) 
-                FROM mosques 
-                WHERE ST_DWithin(
-                    location::geography,
-                    ST_SetSRID(ST_MakePoint(39.826206, 21.422487), 4326)::geography,
-                    5000  -- 5km radius
-                )
-            """
-                )
-            )
-            assert result.scalar() == 1, "Spatial query failed"
+            # Test basic query
+            result = conn.execute(text("SELECT COUNT(*) FROM mosques WHERE name = 'Masjid Al-Haram'"))
+            assert result.scalar() == 1, "Basic mosque query failed"
 
     except Exception as e:
-        pytest.fail(f"Failed to test spatial functions: {str(e)}")
+        pytest.fail(f"Failed to test basic mosque functions: {str(e)}")
 
 
 def test_indexes(db_engine):
@@ -157,7 +143,7 @@ def test_indexes(db_engine):
             result = conn.execute(
                 text(
                     """
-                SELECT COUNT(*) FROM pg_indexes 
+                SELECT COUNT(*) FROM pg_indexes
                 WHERE tablename IN ('surahs', 'ayahs', 'mosques')
             """
                 )
@@ -176,15 +162,9 @@ def test_functions(db_engine):
             result = conn.execute(text("SELECT * FROM get_ayahs_by_surah(1)"))
             assert result.rowcount >= 0, "get_ayahs_by_surah function failed"
 
-            # Test find_nearby_mosques function
-            result = conn.execute(
-                text(
-                    """
-                SELECT * FROM find_nearby_mosques(21.422487, 39.826206, 5)
-            """
-                )
-            )
-            assert result.rowcount >= 0, "find_nearby_mosques function failed"
+            # Test basic mosque search function (no spatial functions)
+            result = conn.execute(text("SELECT * FROM get_mosques_by_city('Mecca')"))
+            assert result.rowcount >= 0, "get_mosques_by_city function failed"
 
     except Exception as e:
         pytest.fail(f"Failed to test custom functions: {str(e)}")
