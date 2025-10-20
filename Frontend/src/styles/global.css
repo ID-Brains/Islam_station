@@ -11,13 +11,32 @@
   font-family: 'Inter', sans-serif;
 }
 
-/* RTL/LTR Direction Support */
+/* RTL/LTR Direction Support - Arabic First */
 [dir="rtl"] {
   font-family: 'Amiri', serif;
 }
 
 [dir="ltr"] {
   font-family: 'Inter', sans-serif;
+}
+
+/* Default to RTL Arabic styling */
+html {
+  font-family: 'Amiri', serif;
+  direction: rtl;
+  text-align: right;
+}
+
+body {
+  font-family: 'Amiri', serif;
+  text-align: right;
+}
+
+/* LTR fallback for non-Arabic content */
+html[dir="ltr"],
+body[dir="ltr"] {
+  font-family: 'Inter', sans-serif;
+  text-align: left;
 }
 
 /* RTL specific styles */
@@ -196,6 +215,271 @@
 		--noise: 0;
 	}
 
+/* Islamic Color Schemes and Themes */
+:root {
+  /* Primary Islamic Colors */
+  --islamic-gold: #fbbf24;
+  --islamic-green: #047857;
+  --islamic-blue: #1e3a8a;
+  --islamic-purple: #6b21a8;
+  --islamic-red: #b91c1c;
+
+  /* Quran Text Colors */
+  --quran-arabic: #1f2937;
+  --quran-arabic-dark: #111827;
+  --quran-translation: #4b5563;
+  --quran-translation-dark: #9ca3af;
+  --verse-number: #6b7280;
+  --basmalah: #059669;
+
+  /* Background Colors */
+  --quran-bg-light: #fefce8;
+  --quran-bg-dark: #1f2937;
+  --quran-card-light: #ffffff;
+  --quran-card-dark: #374151;
+
+  /* Border and Decoration */
+  --islamic-border: #d4d4d8;
+  --islamic-pattern: #e5e7eb;
+  --verse-separator: #9ca3af;
+}
+
+/* Enhanced Islamic Theme for Light Mode */
+[data-theme="islamic"] {
+  --quran-bg: var(--quran-bg-light);
+  --quran-text: var(--quran-arabic);
+  --quran-card: var(--quran-card-light);
+  --quran-border: var(--islamic-border);
+}
+
+/* Enhanced Islamic Theme for Dark Mode */
+[data-theme="islamic"].dark,
+[data-theme="dark"] {
+  --quran-bg: var(--quran-bg-dark);
+  --quran-text: #f9fafb;
+  --quran-card: var(--quran-card-dark);
+  --quran-border: #4b5563;
+}
+
+/* Quran Typography */
+.font-quran {
+  font-family: 'Amiri', 'Quran', 'Noto Naskh Arabic', serif;
+  line-height: 2.2;
+  letter-spacing: 0.02em;
+}
+
+.font-quran-large {
+  font-size: 1.875rem;
+  line-height: 2.5;
+}
+
+.font-quran-medium {
+  font-size: 1.5rem;
+  line-height: 2.2;
+}
+
+.font-quran-small {
+  font-size: 1.25rem;
+  line-height: 2;
+}
+
+/* Basmalah Styling */
+.basmalah {
+  font-family: 'Quran', 'Amiri', serif;
+  font-size: 1.25rem;
+  color: var(--basmalah);
+  text-align: center;
+  margin: 2rem 0 1.5rem 0;
+  font-weight: 600;
+  position: relative;
+  padding: 1rem 0;
+}
+
+.basmalah::before,
+.basmalah::after {
+  content: "۞";
+  color: var(--islamic-gold);
+  font-size: 1.5rem;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.basmalah::before {
+  right: 25%;
+}
+
+.basmalah::after {
+  left: 25%;
+}
+
+/* Verse Number Styling */
+.verse-number {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.875rem;
+  color: var(--verse-number);
+  font-weight: 500;
+  background: linear-gradient(135deg, var(--islamic-green), var(--islamic-blue));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  display: inline-block;
+  min-width: 2.5rem;
+  text-align: center;
+  margin: 0 0.5rem;
+}
+
+/* Quran Verse Container */
+.quran-verse {
+  background: var(--quran-card);
+  border: 1px solid var(--quran-border);
+  border-radius: 1rem;
+  padding: 2rem;
+  margin: 1rem 0;
+  position: relative;
+  transition: all 0.3s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.quran-verse:hover {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+  border-color: var(--islamic-gold);
+}
+
+.quran-verse.arabic {
+  text-align: right;
+  direction: rtl;
+  font-family: 'Amiri', serif;
+  font-size: 1.5rem;
+  line-height: 2.2;
+  color: var(--quran-text);
+  margin-bottom: 1rem;
+}
+
+.quran-verse.translation {
+  text-align: left;
+  direction: ltr;
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--quran-translation);
+  margin-bottom: 0.5rem;
+  font-style: italic;
+}
+
+.quran-verse.transliteration {
+  text-align: right;
+  direction: rtl;
+  font-family: 'Amiri', serif;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--quran-translation);
+  margin-bottom: 0.5rem;
+  font-style: italic;
+  opacity: 0.8;
+}
+
+/* Surah Header */
+.surah-header {
+  text-align: center;
+  padding: 2rem;
+  background: linear-gradient(135deg, var(--islamic-green), var(--islamic-blue));
+  color: white;
+  border-radius: 1rem;
+  margin: 2rem 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.surah-header::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 10px,
+    rgba(255, 255, 255, 0.1) 10px,
+    rgba(255, 255, 255, 0.1) 20px
+  );
+  animation: islamic-pattern 20s linear infinite;
+}
+
+@keyframes islamic-pattern {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+.surah-name {
+  font-family: 'Amiri', serif;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.surah-meaning {
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  opacity: 0.9;
+}
+
+/* Verse Separator */
+.verse-separator {
+  text-align: center;
+  margin: 2rem 0;
+  position: relative;
+}
+
+.verse-separator::before {
+  content: "۝";
+  color: var(--islamic-gold);
+  font-size: 2rem;
+  background: var(--quran-card);
+  padding: 0 1rem;
+  position: relative;
+  z-index: 1;
+}
+
+.verse-separator::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--verse-separator), transparent);
+  transform: translateY(-50%);
+}
+
+/* Reading Progress Bar */
+.reading-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--islamic-green), var(--islamic-gold));
+  transform-origin: left;
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+  z-index: 50;
+}
+
+/* Islamic Decorative Elements */
+.islamic-pattern-border {
+  border: 2px solid transparent;
+  background-image: linear-gradient(var(--quran-card), var(--quran-card)),
+                    linear-gradient(45deg, var(--islamic-gold), var(--islamic-green), var(--islamic-blue));
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+}
+
 /* Custom Animations */
 @keyframes fade-in {
   from {
@@ -208,6 +492,50 @@
   }
 }
 
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse-gold {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.4); }
+  50% { box-shadow: 0 0 0 10px rgba(251, 191, 36, 0); }
+}
+
 .animate-fade-in {
   animation: fade-in 0.6s ease-out forwards;
+}
+
+.animate-slide-in {
+  animation: slide-in-right 0.6s ease-out forwards;
+}
+
+.animate-pulse-gold {
+  animation: pulse-gold 2s infinite;
+}
+
+/* Responsive Typography */
+@media (max-width: 768px) {
+  .font-quran-large { font-size: 1.5rem; }
+  .font-quran-medium { font-size: 1.25rem; }
+  .font-quran-small { font-size: 1.125rem; }
+
+  .quran-verse {
+    padding: 1.5rem;
+    margin: 0.5rem 0;
+  }
+
+  .quran-verse.arabic {
+    font-size: 1.25rem;
+  }
+
+  .surah-name {
+    font-size: 1.5rem;
+  }
 }

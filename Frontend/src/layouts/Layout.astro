@@ -4,7 +4,7 @@ import '../styles/global.css'
 ---
 
 <!doctype html>
-<html lang="en" dir="ltr" data-theme="islamic">
+<html lang="ar" dir="rtl" data-theme="islamic">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
@@ -29,12 +29,12 @@ import '../styles/global.css'
 		initTheme();
 	</script>
 	<script>
-		// Initialize i18n and set language direction
+		// Initialize i18n and set language direction (Arabic first)
 		import('../i18n/config.js').then(() => {
-			// Set initial language direction based on stored preference or browser
+			// Set initial language direction - default to Arabic, then check stored preference
 			const storedLang = localStorage.getItem('islam-station-language');
 			const browserLang = navigator.language || navigator.userLanguage;
-			const initialLang = storedLang || (browserLang.startsWith('ar') ? 'ar' : 'en');
+			const initialLang = storedLang || 'ar'; // Default to Arabic
 
 			document.documentElement.lang = initialLang;
 			document.documentElement.dir = initialLang === 'ar' ? 'rtl' : 'ltr';

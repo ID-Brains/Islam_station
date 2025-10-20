@@ -23,7 +23,8 @@ i18n
     // Initialize i18next
     .init({
         resources,
-        fallbackLng: "ar", // Default language
+        fallbackLng: "ar", // Default language (Arabic)
+        lng: "ar", // Force initial language to Arabic
         debug: false, // Set to true for development
 
         detection: {

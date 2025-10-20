@@ -6,7 +6,8 @@
     "qibla": "Qibla",
     "mosques": "Mosques",
     "dhikr": "Dhikr",
-    "settings": "Settings"
+    "settings": "Settings",
+    "openMenu": "Open navigation drawer"
   },
   "home": {
     "title": "Islamic Guidance Station",
@@ -16,6 +17,7 @@
     "nextPrayer": "Next Prayer",
     "location": "Location",
     "changeLocation": "Change Location",
+    "locationSet": "Location Set",
     "todaysAyah": "Today's Ayah",
     "readMore": "Read More",
     "searchQuran": "Search Quran",
@@ -38,6 +40,7 @@
     "playAudio": "Play Audio",
     "pauseAudio": "Pause Audio",
     "bookmark": "Bookmark",
+    "removeBookmark": "Remove Bookmark",
     "share": "Share",
     "copyAyah": "Copy Ayah",
     "readingProgress": "Reading Progress",
@@ -45,7 +48,21 @@
     "noResults": "No results found",
     "searchResults": "Search Results",
     "filterBySurah": "Filter by Surah",
-    "allSurahs": "All Surahs"
+    "allSurahs": "All Surahs",
+    "of": "of",
+    "continuous": "Continuous",
+    "paged": "Paged",
+    "verseByVerse": "Verse by Verse",
+    "meccan": "Meccan",
+    "medinan": "Medinan",
+    "revelation": "Revelation",
+    "refresh": "New Verse",
+    "bookmarks": "Bookmarks",
+    "memorized": "Memorized",
+    "active": "Active",
+    "categories": "Categories",
+    "addNoteOptional": "Add a note (optional)",
+    "addBookmark": "Add Bookmark"
   },
   "prayer": {
     "title": "Prayer Times",
