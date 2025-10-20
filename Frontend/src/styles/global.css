@@ -5,6 +5,95 @@
 .font-arabic {
   font-family: 'Amiri', serif;
 }
+
+/* English/Latin Font - Inter */
+.font-latin {
+  font-family: 'Inter', sans-serif;
+}
+
+/* RTL/LTR Direction Support */
+[dir="rtl"] {
+  font-family: 'Amiri', serif;
+}
+
+[dir="ltr"] {
+  font-family: 'Inter', sans-serif;
+}
+
+/* RTL specific styles */
+[dir="rtl"] .text-left {
+  text-align: right;
+}
+
+[dir="rtl"] .text-right {
+  text-align: left;
+}
+
+[dir="rtl"] .float-left {
+  float: right;
+}
+
+[dir="rtl"] .float-right {
+  float: left;
+}
+
+[dir="rtl"] .ml-4 {
+  margin-left: 0;
+  margin-right: 1rem;
+}
+
+[dir="rtl"] .mr-4 {
+  margin-right: 0;
+  margin-left: 1rem;
+}
+
+[dir="rtl"] .pl-4 {
+  padding-left: 0;
+  padding-right: 1rem;
+}
+
+[dir="rtl"] .pr-4 {
+  padding-right: 0;
+  padding-left: 1rem;
+}
+
+/* RTL margin and padding utilities */
+[dir="rtl"] .ms-auto {
+  margin-left: 0;
+  margin-right: auto;
+}
+
+[dir="rtl"] .me-auto {
+  margin-right: 0;
+  margin-left: auto;
+}
+
+[dir="rtl"] .start-0 {
+  left: auto;
+  right: 0;
+}
+
+[dir="rtl"] .end-0 {
+  right: auto;
+  left: 0;
+}
+
+/* RTL flexbox utilities */
+[dir="rtl"] .justify-start {
+  justify-content: flex-end;
+}
+
+[dir="rtl"] .justify-end {
+  justify-content: flex-start;
+}
+
+[dir="rtl"] .flex-row-reverse {
+  flex-direction: row;
+}
+
+[dir="rtl"] .flex-row {
+  flex-direction: row-reverse;
+}
 @plugin "daisyui/theme" {
   name: "mytheme";
   default: true; /* set as default */

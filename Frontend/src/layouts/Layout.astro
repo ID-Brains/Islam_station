@@ -4,7 +4,7 @@ import '../styles/global.css'
 ---
 
 <!doctype html>
-<html lang="en" data-theme="islamic">
+<html lang="en" dir="ltr" data-theme="islamic">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
@@ -14,6 +14,7 @@ import '../styles/global.css'
 		<link rel="preconnect" href="https://fonts.googleapis.com">
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 		<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 		<title>Islam Station</title>
 		<link rel="manifest" href="/manifest.webmanifest" />
 		<meta name="theme-color" content="#0ea5a4" />
@@ -26,6 +27,18 @@ import '../styles/global.css'
 	<script>
 		import { initTheme } from '../scripts/theme.js';
 		initTheme();
+	</script>
+	<script>
+		// Initialize i18n and set language direction
+		import('../i18n/config.js').then(() => {
+			// Set initial language direction based on stored preference or browser
+			const storedLang = localStorage.getItem('islam-station-language');
+			const browserLang = navigator.language || navigator.userLanguage;
+			const initialLang = storedLang || (browserLang.startsWith('ar') ? 'ar' : 'en');
+
+			document.documentElement.lang = initialLang;
+			document.documentElement.dir = initialLang === 'ar' ? 'rtl' : 'ltr';
+		});
 	</script>
 	<script>
   if ('serviceWorker' in navigator) {
